@@ -3,9 +3,8 @@
         <div class="customer-search">
             <h1 class="maintext">거래처 정보 조회 내역</h1>
             <div class="customer-btn">
-                <img src="@/assets/img/pdf.png" class="pdfimage">
                 <button class="customer-edit" @click="goToEditPage">수정</button>
-                <button class="customer-delete">삭제</button>
+                <button class="customer-delete" @click="deleteAccount">삭제</button>
             </div>
         </div>
         <div class="customer-box">
@@ -110,6 +109,15 @@
                 </div>
             </div>
         </div>
+        <!-- 팝업 창 -->
+        <div v-if="showPopup" class="popup-overlay">
+            <div class="popup-content">
+                <h2>삭제 사유 입력</h2>
+                <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
+                <button @click="confirmDelete">확인</button>
+                <button @click="closePopup">취소</button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -121,6 +129,8 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const accountData = ref({});
+const showPopup = ref(false);
+const deleteReason = ref('');
 
 onMounted(async () => {
     const accountId = route.params.accountId;
@@ -134,6 +144,32 @@ onMounted(async () => {
 
 const goToEditPage = () => {
     router.push({ path: `/customer/modify/${route.params.accountId}` });
+};
+
+const deleteAccount = () => {
+    showPopup.value = true;
+};
+
+const closePopup = () => {
+    showPopup.value = false;
+};
+
+const confirmDelete = async () => {
+    const accountId = route.params.accountId;
+    try {
+        const response = await axios.post('http://localhost:7775/account/delete', {
+            accountDeleteRequestReason: deleteReason.value,
+            account: accountData.value
+        });
+        console.log('Account delete request sent successfully:', response.data);
+        alert('삭제 요청이 성공적으로 완료되었습니다.');
+        router.push('/customer/list'); // 삭제 요청 후 이동
+    } catch (error) {
+        console.error('Error sending delete request:', error);
+        alert('삭제 요청 중 오류가 발생했습니다.');
+    } finally {
+        closePopup();
+    }
 };
 </script>
 

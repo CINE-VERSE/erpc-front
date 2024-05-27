@@ -84,7 +84,7 @@ function applyFilter() {
 }
 
 function goToCustomerContents(accountId) {
-    router.push({ path: `/customer/contents/${accountId}` });
+    router.push({ path: `/customer/${accountId}` });
 }
 </script>
 

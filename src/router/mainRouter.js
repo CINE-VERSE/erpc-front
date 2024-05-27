@@ -54,7 +54,7 @@ const routes = [
         component: CustomerList
     },
     {
-        path: '/customer/contents/:accountId',
+        path: '/customer/:accountId',
         component: CustomerContents
     },
     {

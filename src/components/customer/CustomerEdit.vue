@@ -101,7 +101,7 @@ onMounted(async () => {
 const updateAccount = async () => {
     const accountId = route.params.accountId;
     try {
-        await axios.put(`http://localhost:7775/account/${accountId}`, accountData.value);
+        await axios.patch(`http://localhost:7775/account/modify/${accountId}`, accountData.value);
         alert('거래처 정보가 성공적으로 수정되었습니다.');
         router.push({ path: `/customer/${accountId}` });
     } catch (error) {
@@ -137,11 +137,16 @@ const updateAccount = async () => {
 }
 
 .customer-code-box {
+    flex-grow: 1;
     padding: 10px;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 5px;
-    cursor: default;
+    background-color: #BEE7FF;
+    border: 2px solid #BEE7FF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 350px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
 }
 
 .customer-list-box1 {
@@ -203,14 +208,14 @@ const updateAccount = async () => {
 .customer-regist-btn {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #007bff;
+    background-color: #0C2092;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
 .customer-regist-btn:hover {
-    background-color: #0056b3;
+    background-color: #007bff;
 }
 </style>
