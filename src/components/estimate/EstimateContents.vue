@@ -8,9 +8,11 @@
                 <button class="estimate-delete">삭제</button>
             </div>
             <div class="estimate-pdf">
-                <button class="estimate-pdf1">
-                    제품 카탈로그 다운로드<img src="@/assets/img/pdf.png" class="pdfimage1">
-                </button>
+                <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
+                    <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
+                        {{ file.originName }} 다운로드 <img src="@/assets/img/pdf.png" class="pdfimage1">
+                    </button>
+                </div>
             </div>
         </div>
         <div class="estimate-list-box">
@@ -142,6 +144,16 @@ onMounted(async () => {
         console.error('Error fetching quotation data:', error);
     }
 });
+
+const downloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 </script>
 
 <style>
