@@ -10,7 +10,7 @@
             <div class="estimate-pdf">
                 <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
                     <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
-                        {{ file.originName }} 다운로드 <img src="@/assets/img/pdf.png" class="pdfimage1">
+                        {{ file.originName }} 다운로드
                     </button>
                 </div>
             </div>

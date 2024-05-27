@@ -4,7 +4,7 @@
             <h1 class="maintext">거래처 정보 조회 내역</h1>
             <div class="customer-btn">
                 <img src="@/assets/img/pdf.png" class="pdfimage">
-                <button class="customer-edit">수정</button>
+                <button class="customer-edit" @click="goToEditPage">수정</button>
                 <button class="customer-delete">삭제</button>
             </div>
         </div>
@@ -115,10 +115,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
+const router = useRouter();
 const accountData = ref({});
 
 onMounted(async () => {
@@ -130,8 +131,12 @@ onMounted(async () => {
         console.error('Error fetching account data:', error);
     }
 });
+
+const goToEditPage = () => {
+    router.push({ path: `/customer/modify/${route.params.accountId}` });
+};
 </script>
 
 <style>
-@import url('@/assets/css/customer/CustomerContents.css');
+    @import url('@/assets/css/customer/CustomerContents.css');
 </style>

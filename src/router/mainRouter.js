@@ -5,6 +5,7 @@ import Main from '@/components/main/Main.vue';
 import CustomerRegist from '@/components/customer/CustomerRegist.vue';
 import CustomerList from '@/components/customer/CustomerList.vue';
 import CustomerContents from '@/components/customer/CustomerContents.vue';
+import CustomerEdit from '@/components/customer/CustomerEdit.vue';
 
 import EstimateRegist from '@/components/estimate/EstimateRegist.vue';
 import EstimateList from '@/components/estimate/EstimateList.vue';
@@ -55,6 +56,10 @@ const routes = [
     {
         path: '/customer/contents/:accountId',
         component: CustomerContents
+    },
+    {
+        path: '/customer/modify/:accountId',
+        component: CustomerEdit
     },
     {
         path: '/estimate/regist',

@@ -68,8 +68,8 @@
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 350px;
-    height: 150px;
+    width: 500px;
+    height: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -92,7 +92,7 @@
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 430px;
 }
 
 .estimate-pdf1:hover,
