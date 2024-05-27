@@ -28,14 +28,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="estimate in filteredEstimates" :key="estimate.id"  @click="goToEstimateContents(estimate.code)">
-                        <td>{{ estimate.id }}</td>
-                        <td>{{ estimate.projectCode }}</td>
-                        <td>{{ estimate.amount }}</td>
-                        <td>{{ estimate.creationDate }}</td>
-                        <td>{{ estimate.dueDate }}</td>
+                    <tr v-for="(estimate, index) in filteredEstimates" :key="estimate.quotationId" @click="goToEstimateContents(estimate.quotationId)">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ estimate.quotationCode }}</td>
+                        <td>{{ estimate.quotationTotalCost }}</td>
+                        <td>{{ estimate.quotationDate }}</td>
+                        <td>{{ estimate.quotationDueDate }}</td>
                         <td>{{ estimate.status }}</td>
-                        <td>{{ estimate.inCharge }}</td>
+                        <td>{{ estimate.employee.employeeName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -44,18 +44,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
 
-const estimates = ref([
-    { id: 1, projectCode: 'QO-20240427001', amount: '600,000', creationDate: '2024-04-01', dueDate: '2025-04-01', status: '진행중', inCharge: '유관순' },
-    { id: 2, projectCode: 'QO-20240427002', amount: '500,000', creationDate: '2024-04-01', dueDate: '2025-04-01', status: '진행중', inCharge: '이순신' }
-]);
+const estimates = ref([]);
+const filteredEstimates = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('견적서 코드');
-const filteredEstimates = ref(estimates.value);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/quotation');
+        estimates.value = response.data.map(estimate => ({
+            quotationId: estimate.quotationId,
+            quotationCode: estimate.quotationCode,
+            quotationTotalCost: estimate.quotationTotalCost,
+            quotationDate: estimate.quotationDate,
+            quotationDueDate: estimate.quotationDueDate,
+            status: estimate.accountStatus?.statusName || 'N/A', // Assuming you have a status field
+            employee: {
+                employeeName: estimate.employee.employeeName
+            }
+        }));
+        filteredEstimates.value = estimates.value;
+    } catch (error) {
+        console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
+    }
+});
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
@@ -67,18 +85,19 @@ function applyFilter() {
     } else {
         filteredEstimates.value = estimates.value.filter(estimate => {
             if (searchBy.value === '견적서 코드') {
-                return estimate.projectCode.includes(searchQuery.value);
+                return estimate.quotationCode.includes(searchQuery.value);
             } else if (searchBy.value === '담당자') {
-                return estimate.inCharge.includes(searchQuery.value);
+                return estimate.employee.employeeName.includes(searchQuery.value);
             }
         });
     }
 }
 
-function goToEstimateContents(estimateCode) {
-    router.push({ path: '/estimate/contents', query: { code: estimateCode } });
+function goToEstimateContents(quotationId) {
+    router.push({ path: `/estimate/${quotationId}` });
 }
 </script>
+
 
 <style>
     @import url('@/assets/css/estimate/EstimateList.css');

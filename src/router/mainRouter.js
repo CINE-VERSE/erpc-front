@@ -61,11 +61,11 @@ const routes = [
         component: EstimateRegist
     },
     {
-        path: '/estimate/list',
+        path: '/estimate',
         component: EstimateList
     },
     {
-        path: '/estimate/contents',
+        path: '/estimate/:quotationId',
         component: EstimateContents
     },
     {
@@ -77,7 +77,7 @@ const routes = [
         component: ContractList
     },
     {
-        path: '/contract/contents',
+        path: '/contract/contents/:quotationId',
         component: ContractContents
     },
     {

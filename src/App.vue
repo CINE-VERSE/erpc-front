@@ -49,7 +49,7 @@ const menuItems = ref([
     title: '견적서 관리',
     subItems: [
       { title: '견적서 등록', path: '/estimate/regist' },
-      { title: '견적서 목록', path: '/estimate/list' }
+      { title: '견적서 목록', path: '/estimate' }
     ],
     isOpen: false
   },

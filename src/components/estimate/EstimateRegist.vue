@@ -233,7 +233,7 @@ const registerQuotation = async () => {
         quotationProduct: [
             {
                 quotationProductCount: quantity.value,
-                quotationSupplyPrice: productPrice.value,
+                quotationSupplyPrice: supplyValue.value,
                 quotationProductionNote: otherInfo.value,
                 product: { productId: productId.value }  // Product ID 설정
             }

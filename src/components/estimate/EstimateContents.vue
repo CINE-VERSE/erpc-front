@@ -1,17 +1,17 @@
 <template>
-    <div class="regist-content">
+    <div class="regist-content" v-if="quotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
-        <div class="estimate-btn">
-            <button class="estimate-request">결재 요청</button>
-            <button class="estimate-edit">수정</button>
-            <button class="estimate-delete">삭제</button>
-        </div>
-        <div class="estimate-pdf">
-            <button class="estimate-pdf1">
-                제품 카탈로그 다운로드<img src="@/assets/img/pdf.png" class="pdfimage1">
-            </button>
-        </div>
+            <div class="estimate-btn">
+                <button class="estimate-request">결재 요청</button>
+                <button class="estimate-edit">수정</button>
+                <button class="estimate-delete">삭제</button>
+            </div>
+            <div class="estimate-pdf">
+                <button class="estimate-pdf1">
+                    제품 카탈로그 다운로드<img src="@/assets/img/pdf.png" class="pdfimage1">
+                </button>
+            </div>
         </div>
         <div class="estimate-list-box">
             <table class="estimate2-table1">
@@ -26,11 +26,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>QO-20240508001</td>
-                        <td>6,000,000</td>
-                        <td>2024-05-18</td>
-                        <td></td>
-                        <td>2024-05-30</td>
+                        <td>{{ quotationData.quotationCode }}</td>
+                        <td>{{ quotationData.quotationTotalCost }}</td>
+                        <td>{{ quotationData.quotationDate }}</td>
+                        <td>{{ quotationData.quotationDeleteDate }}</td>
+                        <td>{{ quotationData.quotationDueDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -46,13 +46,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>COM-001</td>
-                        <td>LG 콤퓨타</td>
-                        <td>5</td>
-                        <td>1,800,000</td>
-                        <td>9,000,000</td>
-                        <td></td>
+                    <tr v-for="product in quotationData.quotationProduct" :key="product.quotationProductId">
+                        <td>{{ product.product.productCode }}</td>
+                        <td>{{ product.product.productName }}</td>
+                        <td>{{ product.quotationProductCount }}</td>
+                        <td>{{ product.product.productPrice }}</td>
+                        <td>{{ product.quotationSupplyPrice }}</td>
+                        <td>{{ product.quotationProductionNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -70,13 +70,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>WH-001</td>
-                        <td>강남 창고</td>
-                        <td>창고</td>
-                        <td>서울특별시 강남구 강남대로 11</td>
-                        <td>Y</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ quotationData.warehouse.warehouseCode }}</td>
+                        <td>{{ quotationData.warehouse.warehouseName }}</td>
+                        <td>{{ quotationData.warehouse.warehouseType }}</td>
+                        <td>{{ quotationData.warehouse.warehouseLocation }}</td>
+                        <td>{{ quotationData.warehouse.warehouseUsage }}</td>
+                        <td>{{ quotationData.warehouse.productionLineName }}</td>
+                        <td>{{ quotationData.warehouse.outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -91,10 +91,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>PJ-20240508001</td>
-                        <td>유관순</td>
-                        <td>OO상사</td>
-                        <td class="estimate-contents-test1"></td>
+                        <td>{{ quotationData.transaction.transactionCode }}</td>
+                        <td>{{ quotationData.employee.employeeName }}</td>
+                        <td>{{ quotationData.account.accountName }}</td>
+                        <td>{{ quotationData.quotationNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -103,8 +103,8 @@
             <h1 class="estimate-process-text">Process</h1>
             <div class="estimate-process-box-detail">
                 <div class="estimate-process-info">
-                    <h4 class="estimate-process-writer">민중원 과장</h4>
-                    <p class="estimate-process-date">2024-04-01</p>
+                    <h4 class="estimate-process-writer">{{ quotationData.employee.employeeName }}</h4>
+                    <p class="estimate-process-date">{{ quotationData.quotationDate }}</p>
                 </div>
                 <button class="estimate-process-detail">
                     견적서 양식이 일부 수정되었습니다~
@@ -120,10 +120,28 @@
             </div>
         </div>
     </div>
+    <div v-else>
+        <p>Loading...</p>
+    </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+const quotationData = ref(null);
+
+onMounted(async () => {
+    const quotationId = route.params.quotationId;
+    try {
+        const response = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
+        quotationData.value = response.data;
+    } catch (error) {
+        console.error('Error fetching quotation data:', error);
+    }
+});
 </script>
 
 <style>
