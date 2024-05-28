@@ -41,6 +41,11 @@ import NoticeRegist from '@/components/notice/NoticeRegist.vue';
 import NoticeList from '@/components/notice/NoticeList.vue';
 import NoticeContent from '@/components/notice/NoticeContent.vue';
 
+import EmployeeList from '@/components/employee/EmployeeList.vue';
+import EmployeeDetail from '@/components/employee/EmployeeDetail.vue';
+import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
+import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
+
 const routes = [
     {
         path: '/',
@@ -161,7 +166,11 @@ const routes = [
     {
         path: '/notice/:notice_id',
         component: NoticeContent
-    }
+    },
+    { path: '/employees', component: EmployeeList },
+    { path: '/employees/:employeeId', component: EmployeeDetail },
+    { path: '/employees/register', component: RegisterEmployee },
+    { path: '/employees/access', component: EmployeeAccess },
 ];
 
 const router = createRouter({
