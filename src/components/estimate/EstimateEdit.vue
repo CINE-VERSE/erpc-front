@@ -143,7 +143,7 @@ const accountNote = ref('');
 onMounted(async () => {
     const quotationId = route.params.quotationId;
     try {
-        const response = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
+        const response = await axios.get(`http://localhost:7775/quotation/${quotationId}`, { withCredentials: true });
         quotationData.value = response.data;
         populateFields(quotationData.value);
     } catch (error) {
@@ -179,9 +179,8 @@ const populateFields = (data) => {
 
 const fetchProductData = async () => {
     try {
-        const response = await axios.get('/product');
-        console.log('Products response:', response.data);
-        const products = response.data.products || response.data; // 응답 데이터 형식 확인
+        const response = await axios.get('http://localhost:7775/product', { withCredentials: true });
+        const products = response.data.products || response.data;
         const product = products.find(p => p.productCode === itemCode.value);
         if (product) {
             productId.value = product.productId;
@@ -201,9 +200,8 @@ const fetchProductData = async () => {
 
 const fetchWarehouseData = async () => {
     try {
-        const response = await axios.get('/warehouse');
-        console.log('Warehouses response:', response.data);
-        const warehouses = response.data.warehouses || response.data; // 응답 데이터 형식 확인
+        const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
+        const warehouses = response.data.warehouses || response.data;
         const warehouse = warehouses.find(w => w.warehouseCode === warehouseCode.value);
         if (warehouse) {
             warehouseId.value = warehouse.warehouseId;
@@ -226,9 +224,8 @@ const fetchWarehouseData = async () => {
 
 const fetchCustomerData = async () => {
     try {
-        const response = await axios.get('/account/list');
-        console.log('Customers response:', response.data);
-        const customers = response.data.customers || response.data; // 응답 데이터 형식 확인
+        const response = await axios.get('http://localhost:7775/account/list', { withCredentials: true });
+        const customers = response.data.customers || response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
             accountId.value = customer.accountId;
@@ -263,13 +260,14 @@ const downloadFile = (url) => {
 };
 
 const updateQuotation = async () => {
-    const quotationId = route.params.quotationId;
+    const quotationId = route.params.quotationId;  // quotationId 값을 가져옵니다.
     if (!productId.value || !warehouseId.value || !accountId.value) {
         alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
         return;
     }
 
     const quotation = {
+        quotationId: quotationId,  // 여기서 quotationId를 추가합니다.
         quotationNote: accountNote.value,
         quotationTotalCost: supplyValue.value,
         quotationDueDate: dueDate.value,
@@ -296,12 +294,12 @@ const updateQuotation = async () => {
     });
 
     try {
-        await axios.patch(`/quotation/modify/${quotationId}`, formData, {
+        await axios.patch(`http://localhost:7775/quotation/modify`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });
         alert('견적서가 성공적으로 수정되었습니다.');
-        router.push({ path: `/quotation/${quotationId}` });
+        router.push({ path: `/estimate/${quotationId}` });
     } catch (error) {
         console.error('견적서를 수정하는 중 오류가 발생했습니다.', error);
         alert('견적서를 수정하는 중 오류가 발생했습니다.');

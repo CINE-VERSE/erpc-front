@@ -88,6 +88,7 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import router from '@/router/mainRouter';
 
 const brNo = ref('');
 const businessStatus = ref('');
@@ -133,7 +134,7 @@ const registerAccount = async () => {
         accountName: accountName.value,
         corporationNum: businessNumber.value,
         accountDeleteDate: null,
-        accountRepresentitive: accountRepresentative.value,
+        accountRepresentative: accountRepresentative.value,
         corporationStatus: corporationStatus.value,
         accountLocation: accountLocation.value,
         accountContact: accountContact.value,
@@ -152,6 +153,7 @@ const registerAccount = async () => {
         const response = await axios.post('http://localhost:7775/account/regist', postData);
         console.log('등록 응답:', response.data);
         alert('거래처 등록이 완료되었습니다.');
+        router.push({ path: `/customer/list` });
     } catch (error) {
         console.error('등록 중 오류 발생:', error);
         alert('거래처 등록 중 오류가 발생했습니다.');
