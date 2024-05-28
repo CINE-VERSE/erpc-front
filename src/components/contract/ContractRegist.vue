@@ -97,30 +97,37 @@
                             <div class="contract-dropdown1">
                                 <button class="contract-dropdown-btn1">{{ searchBy }} ▼</button>
                                 <div class="contract-dropdown-content1">
-                                    <a href="#" @click.prevent="setSearchBy('일시 납부')">일시 납부</a>
-                                    <a href="#" @click.prevent="setSearchBy('분할 납부')">분할 납부</a>
+                                    <a href="#" @click.prevent="setSearchBy('일시납부')">일시납부</a>
+                                    <a href="#" @click.prevent="setSearchBy('분할납부')">분할납부</a>
                                 </div>
                             </div>
                         </td>
-                        <td><input type="text" class="contract-test6"></td>
-                        <td><input type="text" class="contract-test7"></td>
-                        <td><input type="text" class="contract-test8"></td>
+                        <td>
+                            <input type="text" v-if="searchBy === '일시납부'" v-model="deposit" class="contract-test6">
+                            <input type="text" v-else v-model="deposit" class="contract-test6">
+                        </td>
+                        <td>
+                            <input type="text" v-if="searchBy === '분할납부'" v-model="intermediatePayment" class="contract-test7" :disabled="searchBy === '일시납부'">
+                            <input type="text" v-else value="0" class="contract-test7" disabled>
+                        </td>
+                        <td>
+                            <input type="text" v-if="searchBy === '분할납부'" v-model="finalPayment" class="contract-test8" :disabled="searchBy === '일시납부'">
+                            <input type="text" v-else value="0" class="contract-test8" disabled>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="contract-attachment1">
-            <div class="contract-attachment-header1">
-                <h2 class="contract-file1">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="contract-pdfimage1">
+
+        <div class="contract-attachment">
+            <h2 class="contract-file">첨부파일</h2>
+            <div v-for="(file, index) in files" :key="index" class="file-list">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.name }}</span>
             </div>
-            <div class="contract-attachment-content1">
-                <div class="contract-file-list1">
-                    <span class="contract-file-icon1">📄</span>
-                    <span class="contract-file-name1">견적서.pdf</span>
-                </div>
-            </div>
+            <input type="file" @change="handleFileUpload" multiple />
         </div>
+        
         <div class="contract-regist-btn-div1">
             <button class="contract-regist-btn1">계약 등록하기</button>
         </div>
@@ -131,7 +138,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-const searchBy = ref('일시 납부 or 분할 납부');
+const searchBy = ref('분할납부'); // 기본 값을 분할납부로 설정
 const quotationCode = ref('');
 const productCode = ref('');
 const productName = ref('');
@@ -150,6 +157,12 @@ const warehouseLocation = ref('');
 const warehouseUsage = ref('');
 const productionLineName = ref('');
 const outsourceName = ref('');
+const deposit = ref(0);
+const intermediatePayment = ref(0);
+const finalPayment = ref(0);
+
+// 파일 첨부
+const files = ref([]);
 
 const fetchQuotationData = async () => {
     try {
@@ -210,7 +223,15 @@ const clearQuotationData = () => {
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
+    if (criteria === '일시납부') {
+        intermediatePayment.value = 0;
+        finalPayment.value = 0;
+    }
 }
+
+const handleFileUpload = (event) => {
+    files.value = Array.from(event.target.files);
+};
 </script>
 
 <style>

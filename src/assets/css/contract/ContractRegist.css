@@ -218,33 +218,34 @@
     margin-bottom: 100px;
 }
 
-.contract-attachment1 {
+.contract-attachment {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 100%; /* 너비를 90%로 설정 */
+    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
     height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
 }
 
-.contract-attachment-header1 {
+.contract-attachment-header {
     display: flex;
     align-items: center;
     padding: 5px;
     margin-bottom: -20px;
 }
 
-.contract-pdfimage1 {
+.contract-pdfimage {
     width: 30px;
     padding-bottom: 5px;
     padding-left: 5px;
 }
 
-.contract-attachment-content1 {
+.contract-attachment-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -252,7 +253,7 @@
     height: 100%;
 }
 
-.contract-file-list1 {
+.file-list {
     display: flex;
     align-items: center;
     background-color: white;
@@ -263,12 +264,12 @@
     margin-top: -5px;
 }
 
-.contract-file-icon1 {
+.file-icon {
     font-size: 24px;
     margin-right: 5px;
 }
 
-.contract-file-name1 {
+.file-name {
     font-size: 18px;
 }
 
