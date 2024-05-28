@@ -49,12 +49,12 @@
         <input v-model="addAccess.employee.employeeId" id="employeeId" required>
       </div>
       <div>
-        <label for="accessRights">권한 목록:</label>
-        <div v-for="i in 21" :key="i">
-          <input type="checkbox" :value="i" v-model="selectedAccessRights">
-          권한 {{ i }} - {{ getAccessRight(i) }}
-        </div>
-      </div>
+  <label for="accessRights">권한 목록:</label>
+  <div v-for="i in 21" :key="i">
+    <input type="checkbox" :value="i" v-model="selectedAccessRights">
+    {{ accessRightsMap[i] }} <!-- accessRightsMap에 매핑된 권한 이름 출력 -->
+  </div>
+</div>
       <button type="submit">등록</button>
     </form>
   </div>
@@ -91,7 +91,31 @@
   });
   const selectedAccessRights = ref([]);
   const getAccessRight = (accessId) => {
-  return `권한 ${accessId}`;
+  return ` ${accessId}`;
+};
+const accessRightsMap = {
+  1: "자유게시판 읽기",
+  2: "자유게시판 쓰기",
+  3: "영업기회 읽기",
+  4: "영업기회 쓰기",
+  5: "영업기회 참고사항 쓰기",
+  6: "거래처 읽기",
+  7: "거래처 쓰기",
+  8: "거래처 참고사항 쓰기",
+  9: "견적서 읽기",
+  10: "견적서 쓰기",
+  11: "견적서 참고사항 쓰기",
+  12: "계약서 읽기",
+  13: "계약서 쓰기",
+  14: "수주 읽기",
+  15: "수주 쓰기",
+  16: "수주 참고사항 쓰기",
+  17: "수금 읽기",
+  18: "수금 쓰기",
+  19: "결재 읽기",
+  20: "결재 처리",
+  21: "품목 읽기",
+  // 나머지 권한들을 추가로 매핑
 };
 
   // Function to aggregate all access rights from existing API responses
