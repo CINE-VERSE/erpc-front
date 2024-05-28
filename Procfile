@@ -1,2 +1,2 @@
-web: node server.cjs
+web: node server.js
 run: npm start
