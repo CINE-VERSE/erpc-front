@@ -15,6 +15,7 @@ import EstimateEdit from '@/components/estimate/EstimateEdit.vue';
 import ContractRegist from '@/components/contract/ContractRegist.vue';
 import ContractList from '@/components/contract/ContractList.vue';
 import ContractContents from '@/components/contract/ContractContents.vue';
+import ContractEdit from '@/components/contract/ContractEdit.vue';
 
 import OrderRegist from '@/components/order/OrderRegist.vue';
 import OrderList from '@/components/order/OrderList.vue';
@@ -88,12 +89,16 @@ const routes = [
         component: ContractRegist
     },
     {
-        path: '/contract/list',
+        path: '/contract',
         component: ContractList
     },
     {
-        path: '/contract/contents/:quotationId',
+        path: '/contract/:contractId',
         component: ContractContents
+    },
+    {
+        path: '/contract/modify/:contractId',
+        component: ContractEdit
     },
     {
         path: '/order/regist',

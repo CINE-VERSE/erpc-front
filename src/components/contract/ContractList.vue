@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(contract, index) in filteredContracts" :key="contract.contractId" @click="goToContractContents(contract.contractCode)">
+                    <tr v-for="(contract, index) in filteredContracts" :key="contract.contractId" @click="goToContractContents(contract.contractId)">
                         <td>{{ index + 1 }}</td>
                         <td>{{ contract.contractCode }}</td>
                         <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
@@ -83,8 +83,8 @@ function applyFilter() {
     }
 }
 
-function goToContractContents(contractCode) {
-    router.push({ path: '/contract/contents', query: { code: contractCode } });
+function goToContractContents(contractId) {
+    router.push({ path: `/contract/${contractId}` });
 }
 </script>
 

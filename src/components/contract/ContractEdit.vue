@@ -1,26 +1,7 @@
 <template>
-    <div class="contract-content" v-if="contractData">
-        <div class="contract-search">
-            <h1 class="maintext">계약서 정보 조회 내역</h1>
-            <div class="contract-btn">
-                <button class="contract-request">결재 요청</button>
-                <button class="contract-edit" @click="goToEditPage">수정</button>
-                <button class="contract-delete" @click="deleteContract">삭제</button>
-            </div>
-            <div class="contract-pdf">
-                <div v-if="contractData.contractFile.length > 0">
-                    <div v-for="file in contractData.contractFile" :key="file.fileId" class="file-download">
-                        <button class="contract-pdf2" @click="downloadFile(file.accessUrl)">
-                            {{ file.originName }} 다운로드
-                        </button>
-                    </div>
-                </div>
-                <div v-else class="file-download no-file">
-                    첨부파일 없음
-                </div>
-            </div>
-        </div>
-        <div class="contract-list-box2">
+    <div class="regist-content" v-if="contractData">
+        <h1>계약서 수정</h1>
+        <div class="contract-list-box1">
             <table class="contract2-table1">
                 <thead>
                     <tr>
@@ -103,7 +84,7 @@
                         <td>{{ contractData.account.accountName }}</td>
                         <td>{{ contractData.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contractData.contractDueDate }}</td>
-                        <td class="contract-contents-test1"><input type="text" v-model="contractNote" class="contract-test5"></td>
+                        <td><input type="text" v-model="contractNote" class="contract-test5"></td>
                     </tr>
                 </tbody>
             </table>
@@ -140,39 +121,19 @@
                 </tbody>
             </table>
         </div>
-        <div class="contract-process-box">
-            <h1 class="contract-process-text">Process</h1>
-            <div class="contract-process-box-detail">
-                <div class="contract-process-info">
-                    <h4 class="contract-process-writer">{{ contractData.employee.employeeName }} {{
-                        contractData.employee.employeeRank.employeeRank }}</h4>
-                    <p class="contract-process-date">{{ contractData.contractDate }}</p>
-                </div>
-                <button class="contract-process-detail">
-                    계약 진행 정보 공유합니다~
-                </button>
-                <div class="contract-process-btn">
-                    <button class="contract-process-edit">수정</button>
-                    <button class="contract-process-delete">삭제</button>
-                </div>
-                <div class="contract-process-reply">
-                    <input type="text" id="contract-process-reply-box" class="contract-process-reply-box"
-                        placeholder="내용을 입력해주세요.">
-                    <button class="contract-process-regist">등록하기</button>
-                </div>
+        <div class="contract-attachment">
+            <h2 class="contract-file">첨부파일</h2>
+            <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.originName }}</span>
+                <button @click="downloadFile(file.accessUrl)">다운로드</button>
             </div>
+            <input type="file" @change="handleFileUpload" multiple />
         </div>
+        <button @click="updateContract" class="contract-regist-btn">계약 수정하기</button>
     </div>
     <div v-else>
         <p>Loading...</p>
-    </div>
-    <div v-if="showPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>삭제 요청 사유 입력</h2>
-            <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
-        </div>
     </div>
 </template>
 
@@ -184,8 +145,7 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const contractData = ref(null);
-const showPopup = ref(false);
-const deleteReason = ref('');
+const files = ref([]);
 
 const contractNote = ref('');
 const downPayment = ref(0);
@@ -196,7 +156,7 @@ const searchBy = ref('분할납부');
 onMounted(async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.get(`http://localhost:7775/contract/${contractId}`);
+        const response = await axios.get(`http://localhost:7775/contract/${contractId}`, { withCredentials: true });
         contractData.value = response.data;
         populateFields(contractData.value);
     } catch (error) {
@@ -212,8 +172,8 @@ const populateFields = (data) => {
     searchBy.value = data.contractCategory.contractCategoryId === 1 ? '일시납부' : '분할납부';
 };
 
-const goToEditPage = () => {
-    router.push({ path: `/contract/modify/${route.params.contractId}` });
+const handleFileUpload = (event) => {
+    files.value = Array.from(event.target.files);
 };
 
 const downloadFile = (url) => {
@@ -226,32 +186,6 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
-const deleteContract = () => {
-    showPopup.value = true;
-};
-
-const closePopup = () => {
-    showPopup.value = false;
-};
-
-const confirmDelete = async () => {
-    const contractId = route.params.contractId;
-    try {
-        const response = await axios.post('http://localhost:7775/contract/delete', {
-            contractDeleteRequestReason: deleteReason.value,
-            contract: contractData.value 
-        });
-        console.log('Contract delete request sent successfully:', response.data);
-        alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/contract'); // 삭제 요청 후 이동
-    } catch (error) {
-        console.error('Error sending delete request:', error);
-        alert('삭제 요청 중 오류가 발생했습니다.');
-    } finally {
-        closePopup();
-    }
-};
-
 const setSearchBy = (criteria) => {
     searchBy.value = criteria;
     if (criteria === '일시납부') {
@@ -260,8 +194,269 @@ const setSearchBy = (criteria) => {
     }
 };
 
+const updateContract = async () => {
+    const contractId = route.params.contractId;
+
+    const contract = {
+        contractId: contractId,
+        contractNote: contractNote.value,
+        contractTotalPrice: contractData.value.contractTotalPrice,
+        contractDueDate: contractData.value.contractDueDate,
+        downPayment: downPayment.value,
+        progressPayment: progressPayment.value,
+        balance: balance.value,
+        employee: contractData.value.employee,
+        account: contractData.value.account,
+        warehouse: contractData.value.warehouse,
+        contractProduct: contractData.value.contractProduct.map(product => ({
+            contractProductCount: product.contractProductCount,
+            contractSupplyPrice: product.contractSupplyPrice,
+            contractProductionNote: product.contractProductionNote,
+            product: product.product
+        }))
+    };
+
+    const formData = new FormData();
+    formData.append('contract', JSON.stringify(contract));
+    files.value.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        await axios.patch(`http://localhost:7775/contract/modify/${contractId}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            withCredentials: true
+        });
+        alert('계약서가 성공적으로 수정되었습니다.');
+        router.push({ path: `/contract/${contractId}` });
+    } catch (error) {
+        console.error('계약서를 수정하는 중 오류가 발생했습니다.', error);
+        alert('계약서를 수정하는 중 오류가 발생했습니다.');
+    }
+};
 </script>
 
 <style>
-@import url('@/assets/css/contract/ContractContents.css');
+.regist-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.contract-regist {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.contract-list-box1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    margin-bottom: 20px;
+    gap: 1px;
+}
+
+.contract-table1,
+.contract-table2,
+.contract-table3,
+.contract-table4,
+.contract-table5 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.contract-test1,
+.contract-test2 {
+    width: 100px;
+}
+
+.contract-table1 th,
+.contract-table1 td,
+.contract-table2 th,
+.contract-table2 td,
+.contract-table3 th,
+.contract-table3 td,
+.contract-table4 th,
+.contract-table4 td,
+.contract-table5 th,
+.contract-table5 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.contract-table1 th,
+.contract-table1 td,
+.contract-table3 th,
+.contract-table3 td,
+.contract-table4 th,
+.contract-table4 td,
+.contract-table5 th,
+.contract-table5 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+    width: 160px;
+}
+
+.contract-table1 th,
+.contract-table2 th,
+.contract-table3 th,
+.contract-table4 th,
+.contract-table5 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.contract-table1 td,
+.contract-table2 td,
+.contract-table3 td,
+.contract-table4 td,
+.contract-table5 td {
+    height: 40px;
+}
+
+.contract-dropdown1 {
+    position: relative;
+    display: inline-block;
+    width: 160px;
+}
+
+.contract-dropdown-btn1,
+.contract-pdf1-btn {
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    color: #0C2092;
+}
+
+.contract-dropdown-content1 {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.contract-dropdown-content1 a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ccc;
+}
+
+.contract-dropdown-content1 a:hover {
+    background-color: #d5e6ff;
+}
+
+.contract-dropdown1:hover .contract-dropdown-content1 {
+    display: block;
+}
+
+.contract-attachment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    height: 200px;
+    background-color: #d5e6ff;
+    border-radius: 10px;
+    margin-bottom: 50px;
+}
+
+.contract-attachment-header {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: -20px;
+}
+
+.contract-pdfimage {
+    width: 30px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.contract-attachment-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.file-list {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    height: 70px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: -5px;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.file-name {
+    font-size: 18px;
+}
+
+.contract-test3,
+.contract-test5,
+.contract-test6,
+.contract-test7,
+.contract-test8 {
+    height: 35px;
+}
+
+.contract-regist-btn {
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 320px;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
 </style>

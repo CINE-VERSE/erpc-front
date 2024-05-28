@@ -57,7 +57,7 @@ const menuItems = ref([
     title: '계약서 관리',
     subItems: [
       { title: '계약서 등록', path: '/contract/regist' },
-      { title: '계약서 목록', path: '/contract/list' }
+      { title: '계약서 목록', path: '/contract' }
     ],
     isOpen: false
   },
