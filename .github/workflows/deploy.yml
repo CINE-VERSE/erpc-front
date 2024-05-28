@@ -26,8 +26,10 @@ jobs:
       - name: Zip Files
         run: |
           mkdir -p deploy
-          cp Procfile dist/
-          zip -r deploy/deploy.zip dist server.js package.json
+          cp -r dist/* deploy/
+          cp server.js package.json Procfile deploy/
+          cd deploy
+          zip -r ../deploy.zip .
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v22
@@ -38,4 +40,4 @@ jobs:
           environment_name: Erpc-frontend-env
           version_label: github-action-${{ github.run_id }}
           region: ap-northeast-2
-          deployment_package: deploy/deploy.zip
+          deployment_package: deploy.zip
