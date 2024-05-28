@@ -102,15 +102,10 @@
     </div>
 </template>
 
-
-
 <script setup>
 import { ref, watch } from 'vue';
 import axios from 'axios';
-
-// Axios 기본 설정
-axios.defaults.withCredentials = true;
-axios.defaults.baseURL = 'http://localhost:7775'; // 서버 URL
+import router from '@/router/mainRouter';
 
 // 상품 정보
 const itemCode = ref('');
@@ -144,7 +139,7 @@ const files = ref([]);
 
 const fetchProductData = async () => {
     try {
-        const response = await axios.get('/product');
+        const response = await axios.get('http://localhost:7775/product', { withCredentials: true });
         const products = response.data;
         const product = products.find(p => p.productCode === itemCode.value);
         if (product) {
@@ -165,7 +160,7 @@ const fetchProductData = async () => {
 
 const fetchWarehouseData = async () => {
     try {
-        const response = await axios.get('/warehouse');
+        const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
         const warehouses = response.data;
         const warehouse = warehouses.find(w => w.warehouseCode === warehouseCode.value);
         if (warehouse) {
@@ -189,7 +184,7 @@ const fetchWarehouseData = async () => {
 
 const fetchCustomerData = async () => {
     try {
-        const response = await axios.get('/account/list');
+        const response = await axios.get('http://localhost:7775/account/list', { withCredentials: true });
         const customers = response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
@@ -247,11 +242,12 @@ const registerQuotation = async () => {
     });
 
     try {
-        const response = await axios.post('/quotation/regist', formData, {
+        const response = await axios.post('http://localhost:7775/quotation/regist', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true // 쿠키를 포함하도록 설정
         });
         alert('견적서가 성공적으로 등록되었습니다.');
+        router.push({ path: `/estimate` });
     } catch (error) {
         console.error('견적서를 등록하는 중 오류가 발생했습니다.', error);
         alert('견적서를 등록하는 중 오류가 발생했습니다.');
@@ -289,8 +285,6 @@ watch(quantity, (newQuantity) => {
     updateSupplyValue();
 });
 </script>
-
-
 
 <style>
 @import url('@/assets/css/estimate/EstimateRegist.css');
