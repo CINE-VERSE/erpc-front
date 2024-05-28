@@ -7,10 +7,10 @@
             <h3>견적서 불러오기</h3>
             <div class="contract-number">
                 <p class="contract-number-text">견적서 코드</p>
-                <input type="text" id="contract-number-box" class="contract-number-box" placeholder="견적서 코드를 입력해주세요.">
+                <input type="text" v-model="quotationCode" class="contract-number-box" placeholder="견적서 코드를 입력해주세요.">
             </div>
             <div class="contract-search-btn-div1">
-                <button class="contract-search-btn1">조회하기</button>
+                <button @click="fetchQuotationData" class="contract-search-btn1">조회하기</button>
             </div>
         </div>
         <div class="contract-list-box1">
@@ -27,12 +27,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>COM-001</td>
-                        <td>LG 콤퓨타</td>
-                        <td>5</td>
-                        <td>1,800,000</td>
-                        <td>9,000,000</td>
-                        <td></td>
+                        <td>{{ productCode }}</td>
+                        <td>{{ productName }}</td>
+                        <td>{{ quantity }}</td>
+                        <td>{{ unitPrice }}</td>
+                        <td>{{ totalCost }}</td>
+                        <td>{{ additionalInfo }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -63,7 +63,7 @@
             <table class="contract-table3">
                 <thead>
                     <tr>
-                        <th>프로젝트 코드</th>
+                        <th>견적서 코드</th>
                         <th>담당자</th>
                         <th>거래처명</th>
                         <th>수주 금액</th>
@@ -73,12 +73,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>PJ-20240508001</td>
-                        <td>유관순</td>
-                        <td>OO상사</td>
-                        <td><input type="text" class="contract-test3"></td>
-                        <td><input type="text" class="contract-test4"></td>
-                        <td><input type="text" class="contract-test5"></td>
+                        <td>{{ quotationCode }}</td>
+                        <td>{{ employeeName }}</td>
+                        <td>{{ accountName }}</td>
+                        <td>{{ totalCost }}</td>
+                        <td>{{ dueDate }}</td>
+                        <td><input type="text" v-model="quotationNote" class="contract-test5"></td>
                     </tr>
                 </tbody>
             </table>
@@ -129,18 +129,65 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
+import axios from 'axios';
 
 const searchBy = ref('일시 납부 or 분할 납부');
+const quotationCode = ref('');
+const productCode = ref('');
+const productName = ref('');
+const quantity = ref(0);
+const unitPrice = ref(0);
+const totalCost = ref(0);
+const additionalInfo = ref('');
+const dueDate = ref('');
+const quotationNote = ref('');
+const employeeName = ref('');
+const accountName = ref('');
+
+const fetchQuotationData = async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/quotation', { withCredentials: true });
+        const quotations = response.data;
+        const quotation = quotations.find(q => q.quotationCode === quotationCode.value);
+        if (quotation) {
+            productCode.value = 'COM-001'; // Replace with actual product code from quotation data
+            productName.value = 'LG 콤퓨타'; // Replace with actual product name from quotation data
+            quantity.value = 5; // Replace with actual quantity from quotation data
+            unitPrice.value = 1800000; // Replace with actual unit price from quotation data
+            totalCost.value = quotation.quotationTotalCost;
+            additionalInfo.value = ''; // Replace with actual additional info from quotation data
+            dueDate.value = quotation.quotationDueDate;
+            quotationNote.value = quotation.quotationNote;
+            employeeName.value = quotation.employee.employeeName; // 담당자
+            accountName.value = quotation.account.accountName; // 거래처명
+        } else {
+            alert('해당 견적서 코드를 찾을 수 없습니다.');
+            clearQuotationData();
+        }
+    } catch (error) {
+        console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
+        alert('견적서 정보를 조회하는 중 오류가 발생했습니다.');
+        clearQuotationData();
+    }
+};
+
+const clearQuotationData = () => {
+    productCode.value = '';
+    productName.value = '';
+    quantity.value = 0;
+    unitPrice.value = 0;
+    totalCost.value = 0;
+    additionalInfo.value = '';
+    dueDate.value = '';
+    quotationNote.value = '';
+    employeeName.value = '';
+    accountName.value = '';
+};
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
 }
 </script>
-
-
 
 <style>
     @import url('@/assets/css/contract/ContractRegist.css');
