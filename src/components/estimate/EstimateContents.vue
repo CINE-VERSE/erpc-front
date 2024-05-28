@@ -8,10 +8,15 @@
                 <button class="estimate-delete" @click="deleteQuotation">삭제</button>
             </div>
             <div class="estimate-pdf">
-                <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
-                    <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
-                        {{ file.originName }} 다운로드
-                    </button>
+                <div v-if="quotationData.quotationFile.length > 0">
+                    <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
+                        <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
+                            {{ file.originName }} 다운로드
+                        </button>
+                    </div>
+                </div>
+                <div v-else class="file-download no-file">
+                    첨부파일 없음
                 </div>
             </div>
         </div>
@@ -133,7 +138,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -195,7 +199,6 @@ const confirmDelete = async () => {
     }
 };
 </script>
-
 
 <style>
     @import url('@/assets/css/estimate/EstimateContents.css');

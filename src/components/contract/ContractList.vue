@@ -72,11 +72,12 @@ function applyFilter() {
     if (!searchQuery.value) {
         filteredContracts.value = contracts.value;
     } else {
+        const query = searchQuery.value.toUpperCase(); // 검색어를 대문자로 변환
         filteredContracts.value = contracts.value.filter(contract => {
             if (searchBy.value === '계약서 코드') {
-                return contract.contractCode.includes(searchQuery.value);
+                return contract.contractCode.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             } else if (searchBy.value === '담당자') {
-                return contract.employee.employeeName.includes(searchQuery.value);
+                return contract.employee.employeeName.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             }
         });
     }
