@@ -50,13 +50,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>WH-001</td>
-                        <td>강남 창고</td>
-                        <td class="contract-test1">창고</td>
-                        <td>서울특별시 강남구 강남대로 11</td>
-                        <td class="contract-test2">Y</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ warehouseCode }}</td>
+                        <td>{{ warehouseName }}</td>
+                        <td>{{ warehouseType }}</td>
+                        <td>{{ warehouseLocation }}</td>
+                        <td>{{ warehouseUsage }}</td>
+                        <td>{{ productionLineName }}</td>
+                        <td>{{ outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -143,27 +143,44 @@ const dueDate = ref('');
 const quotationNote = ref('');
 const employeeName = ref('');
 const accountName = ref('');
+const warehouseCode = ref('');
+const warehouseName = ref('');
+const warehouseType = ref('');
+const warehouseLocation = ref('');
+const warehouseUsage = ref('');
+const productionLineName = ref('');
+const outsourceName = ref('');
 
 const fetchQuotationData = async () => {
     try {
-        const response = await axios.get('http://localhost:7775/quotation', { withCredentials: true });
-        const quotations = response.data;
-        const quotation = quotations.find(q => q.quotationCode === quotationCode.value);
-        if (quotation) {
-            productCode.value = 'COM-001'; // Replace with actual product code from quotation data
-            productName.value = 'LG 콤퓨타'; // Replace with actual product name from quotation data
-            quantity.value = 5; // Replace with actual quantity from quotation data
-            unitPrice.value = 1800000; // Replace with actual unit price from quotation data
-            totalCost.value = quotation.quotationTotalCost;
-            additionalInfo.value = ''; // Replace with actual additional info from quotation data
-            dueDate.value = quotation.quotationDueDate;
-            quotationNote.value = quotation.quotationNote;
-            employeeName.value = quotation.employee.employeeName; // 담당자
-            accountName.value = quotation.account.accountName; // 거래처명
-        } else {
-            alert('해당 견적서 코드를 찾을 수 없습니다.');
-            clearQuotationData();
+        const response = await axios.get('http://localhost:7775/quotation/code', {
+            params: {
+                quotationCode: quotationCode.value
+            }
+        });
+        const quotation = response.data;
+
+        if (quotation.quotationProduct.length > 0) {
+            const product = quotation.quotationProduct[0].product;
+            productCode.value = product.productCode;
+            productName.value = product.productName;
+            quantity.value = quotation.quotationProduct[0].quotationProductCount;
+            unitPrice.value = product.productPrice;
+            additionalInfo.value = quotation.quotationProduct[0].quotationProductionNote;
         }
+
+        totalCost.value = quotation.quotationTotalCost;
+        dueDate.value = quotation.quotationDueDate;
+        quotationNote.value = quotation.quotationNote;
+        employeeName.value = quotation.employee.employeeName;
+        accountName.value = quotation.account.accountName;
+        warehouseCode.value = quotation.warehouse.warehouseCode;
+        warehouseName.value = quotation.warehouse.warehouseName;
+        warehouseType.value = quotation.warehouse.warehouseType;
+        warehouseLocation.value = quotation.warehouse.warehouseLocation;
+        warehouseUsage.value = quotation.warehouse.warehouseUsage;
+        productionLineName.value = quotation.warehouse.productionLineName;
+        outsourceName.value = quotation.warehouse.outsourceName;
     } catch (error) {
         console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('견적서 정보를 조회하는 중 오류가 발생했습니다.');
@@ -182,6 +199,13 @@ const clearQuotationData = () => {
     quotationNote.value = '';
     employeeName.value = '';
     accountName.value = '';
+    warehouseCode.value = '';
+    warehouseName.value = '';
+    warehouseType.value = '';
+    warehouseLocation.value = '';
+    warehouseUsage.value = '';
+    productionLineName.value = '';
+    outsourceName.value = '';
 };
 
 function setSearchBy(criteria) {
