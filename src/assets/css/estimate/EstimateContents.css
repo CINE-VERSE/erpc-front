@@ -346,3 +346,7 @@
 .popup-content button {
     margin: 5px;
 }
+
+.file-download.no-file {
+    cursor: default;
+}

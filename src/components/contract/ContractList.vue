@@ -28,14 +28,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="contract in filteredContracts" :key="contract.id"  @click="goToContractContents(contract.code)">
-                        <td>{{ contract.id }}</td>
-                        <td>{{ contract.code }}</td>
-                        <td>{{ contract.amount }}</td>
-                        <td>{{ contract.creationDate }}</td>
-                        <td>{{ contract.dueDate }}</td>
-                        <td>{{ contract.status }}</td>
-                        <td>{{ contract.inCharge }}</td>
+                    <tr v-for="(contract, index) in filteredContracts" :key="contract.contractId" @click="goToContractContents(contract.contractId)">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ contract.contractCode }}</td>
+                        <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
+                        <td>{{ contract.contractDate }}</td>
+                        <td>{{ contract.contractDueDate }}</td>
+                        <td>{{ contract.contractStatus || 'N/A' }}</td>
+                        <td>{{ contract.employee.employeeName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -44,18 +44,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
-
-const contracts = ref([
-    { id: 1, code: 'CO-20240427001', amount: '600,000', creationDate: '2024-04-01', dueDate: '2025-04-01', status: '진행중', inCharge: '유관순' },
-    { id: 2, code: 'CO-20240427002', amount: '500,000', creationDate: '2024-04-01', dueDate: '2025-04-01', status: '진행중', inCharge: '이순신' }
-]);
+const contracts = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('계약서 코드');
-const filteredContracts = ref(contracts.value);
+const filteredContracts = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/contract');
+        contracts.value = response.data;
+        filteredContracts.value = contracts.value; // 기본적으로 모든 계약서를 표시
+    } catch (error) {
+        console.error('계약서 정보를 불러오는 중 오류가 발생했습니다.', error);
+    }
+});
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
@@ -65,18 +72,19 @@ function applyFilter() {
     if (!searchQuery.value) {
         filteredContracts.value = contracts.value;
     } else {
+        const query = searchQuery.value.toUpperCase(); // 검색어를 대문자로 변환
         filteredContracts.value = contracts.value.filter(contract => {
             if (searchBy.value === '계약서 코드') {
-                return contract.code.includes(searchQuery.value);
+                return contract.contractCode.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             } else if (searchBy.value === '담당자') {
-                return contract.inCharge.includes(searchQuery.value);
+                return contract.employee.employeeName.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             }
         });
     }
 }
 
-function goToContractContents(contractCode) {
-    router.push({ path: '/contract/contents', query: { code: contractCode } });
+function goToContractContents(contractId) {
+    router.push({ path: `/contract/${contractId}` });
 }
 </script>
 

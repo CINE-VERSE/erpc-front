@@ -83,11 +83,12 @@ function applyFilter() {
     if (!searchQuery.value) {
         filteredEstimates.value = estimates.value;
     } else {
+        const query = searchQuery.value.toUpperCase(); // 검색어를 대문자로 변환
         filteredEstimates.value = estimates.value.filter(estimate => {
             if (searchBy.value === '견적서 코드') {
-                return estimate.quotationCode.includes(searchQuery.value);
+                return estimate.quotationCode.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             } else if (searchBy.value === '담당자') {
-                return estimate.employee.employeeName.includes(searchQuery.value);
+                return estimate.employee.employeeName.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
             }
         });
     }
@@ -98,7 +99,6 @@ function goToEstimateContents(quotationId) {
 }
 </script>
 
-
 <style>
-    @import url('@/assets/css/estimate/EstimateList.css');
+@import url('@/assets/css/estimate/EstimateList.css');
 </style>

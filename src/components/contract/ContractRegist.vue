@@ -26,13 +26,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>{{ productCode }}</td>
-                        <td>{{ productName }}</td>
-                        <td>{{ quantity }}</td>
-                        <td>{{ unitPrice }}</td>
-                        <td>{{ totalCost }}</td>
-                        <td>{{ additionalInfo }}</td>
+                    <tr v-if="quotationProductList.length === 0">
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr v-for="product in quotationProductList" :key="product.product.productCode">
+                        <td>{{ product.product.productCode }}</td>
+                        <td>{{ product.product.productName }}</td>
+                        <td>{{ product.quotationProductCount }}</td>
+                        <td>{{ product.product.productPrice }}</td>
+                        <td>{{ product.quotationSupplyPrice }}</td>
+                        <td>{{ product.quotationProductionNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -50,13 +58,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ warehouseCode }}</td>
-                        <td>{{ warehouseName }}</td>
-                        <td>{{ warehouseType }}</td>
-                        <td>{{ warehouseLocation }}</td>
-                        <td>{{ warehouseUsage }}</td>
-                        <td>{{ productionLineName }}</td>
-                        <td>{{ outsourceName }}</td>
+                        <td>{{ warehouse.warehouseCode }}</td>
+                        <td>{{ warehouse.warehouseName }}</td>
+                        <td>{{ warehouse.warehouseType }}</td>
+                        <td>{{ warehouse.warehouseLocation }}</td>
+                        <td>{{ warehouse.warehouseUsage }}</td>
+                        <td>{{ warehouse.productionLineName }}</td>
+                        <td>{{ warehouse.outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -73,11 +81,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ quotationCode }}</td>
-                        <td>{{ employeeName }}</td>
-                        <td>{{ accountName }}</td>
-                        <td>{{ totalCost }}</td>
-                        <td>{{ dueDate }}</td>
+                        <td>{{ quotation.quotationCode }}</td>
+                        <td>{{ employee.employeeName }}</td>
+                        <td>{{ account.accountName }}</td>
+                        <td>{{ quotation.quotationTotalCost }}</td>
+                        <td>{{ quotation.quotationDueDate }}</td>
                         <td><input type="text" v-model="quotationNote" class="contract-test5"></td>
                     </tr>
                 </tbody>
@@ -97,32 +105,36 @@
                             <div class="contract-dropdown1">
                                 <button class="contract-dropdown-btn1">{{ searchBy }} ▼</button>
                                 <div class="contract-dropdown-content1">
-                                    <a href="#" @click.prevent="setSearchBy('일시 납부')">일시 납부</a>
-                                    <a href="#" @click.prevent="setSearchBy('분할 납부')">분할 납부</a>
+                                    <a href="#" @click.prevent="setSearchBy('일시납부')">일시납부</a>
+                                    <a href="#" @click.prevent="setSearchBy('분할납부')">분할납부</a>
                                 </div>
                             </div>
                         </td>
-                        <td><input type="text" class="contract-test6"></td>
-                        <td><input type="text" class="contract-test7"></td>
-                        <td><input type="text" class="contract-test8"></td>
+                        <td>
+                            <input type="text" v-model="deposit" class="contract-test6">
+                        </td>
+                        <td>
+                            <input type="text" v-model="intermediatePayment" class="contract-test7" :disabled="searchBy === '일시납부'">
+                        </td>
+                        <td>
+                            <input type="text" v-model="finalPayment" class="contract-test8" :disabled="searchBy === '일시납부'">
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="contract-attachment1">
-            <div class="contract-attachment-header1">
-                <h2 class="contract-file1">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="contract-pdfimage1">
+
+        <div class="contract-attachment">
+            <h2 class="contract-file">첨부파일</h2>
+            <div v-for="(file, index) in files" :key="index" class="file-list">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.name }}</span>
             </div>
-            <div class="contract-attachment-content1">
-                <div class="contract-file-list1">
-                    <span class="contract-file-icon1">📄</span>
-                    <span class="contract-file-name1">견적서.pdf</span>
-                </div>
-            </div>
+            <input type="file" @change="handleFileUpload" multiple />
         </div>
+        
         <div class="contract-regist-btn-div1">
-            <button class="contract-regist-btn1">계약 등록하기</button>
+            <button @click="registerContract" class="contract-regist-btn1">계약 등록하기</button>
         </div>
     </div>
 </template>
@@ -130,26 +142,24 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import router from '@/router/mainRouter';
 
-const searchBy = ref('일시 납부 or 분할 납부');
+const searchBy = ref('분할납부'); // 기본 값을 분할납부로 설정
 const quotationCode = ref('');
-const productCode = ref('');
-const productName = ref('');
-const quantity = ref(0);
-const unitPrice = ref(0);
-const totalCost = ref(0);
-const additionalInfo = ref('');
-const dueDate = ref('');
 const quotationNote = ref('');
-const employeeName = ref('');
-const accountName = ref('');
-const warehouseCode = ref('');
-const warehouseName = ref('');
-const warehouseType = ref('');
-const warehouseLocation = ref('');
-const warehouseUsage = ref('');
-const productionLineName = ref('');
-const outsourceName = ref('');
+const deposit = ref(0);
+const intermediatePayment = ref(0);
+const finalPayment = ref(0);
+
+// 견적서 데이터
+const quotation = ref({});
+const employee = ref({});
+const account = ref({});
+const warehouse = ref({});
+const quotationProductList = ref([]);
+
+// 파일 첨부
+const files = ref([]);
 
 const fetchQuotationData = async () => {
     try {
@@ -158,29 +168,13 @@ const fetchQuotationData = async () => {
                 quotationCode: quotationCode.value
             }
         });
-        const quotation = response.data;
-
-        if (quotation.quotationProduct.length > 0) {
-            const product = quotation.quotationProduct[0].product;
-            productCode.value = product.productCode;
-            productName.value = product.productName;
-            quantity.value = quotation.quotationProduct[0].quotationProductCount;
-            unitPrice.value = product.productPrice;
-            additionalInfo.value = quotation.quotationProduct[0].quotationProductionNote;
-        }
-
-        totalCost.value = quotation.quotationTotalCost;
-        dueDate.value = quotation.quotationDueDate;
-        quotationNote.value = quotation.quotationNote;
-        employeeName.value = quotation.employee.employeeName;
-        accountName.value = quotation.account.accountName;
-        warehouseCode.value = quotation.warehouse.warehouseCode;
-        warehouseName.value = quotation.warehouse.warehouseName;
-        warehouseType.value = quotation.warehouse.warehouseType;
-        warehouseLocation.value = quotation.warehouse.warehouseLocation;
-        warehouseUsage.value = quotation.warehouse.warehouseUsage;
-        productionLineName.value = quotation.warehouse.productionLineName;
-        outsourceName.value = quotation.warehouse.outsourceName;
+        const data = response.data;
+        quotation.value = data;
+        employee.value = data.employee;
+        account.value = data.account;
+        warehouse.value = data.warehouse;
+        quotationProductList.value = data.quotationProduct;
+        quotationNote.value = data.quotationNote; // 견적서 비고 내역을 계약서 비고 내역으로 사용
     } catch (error) {
         console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('견적서 정보를 조회하는 중 오류가 발생했습니다.');
@@ -189,28 +183,92 @@ const fetchQuotationData = async () => {
 };
 
 const clearQuotationData = () => {
-    productCode.value = '';
-    productName.value = '';
-    quantity.value = 0;
-    unitPrice.value = 0;
-    totalCost.value = 0;
-    additionalInfo.value = '';
-    dueDate.value = '';
+    quotation.value = {};
+    employee.value = {};
+    account.value = {};
+    warehouse.value = {};
+    quotationProductList.value = [];
     quotationNote.value = '';
-    employeeName.value = '';
-    accountName.value = '';
-    warehouseCode.value = '';
-    warehouseName.value = '';
-    warehouseType.value = '';
-    warehouseLocation.value = '';
-    warehouseUsage.value = '';
-    productionLineName.value = '';
-    outsourceName.value = '';
 };
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
+    if (criteria === '일시납부') {
+        intermediatePayment.value = 0;
+        finalPayment.value = 0;
+    }
 }
+
+const handleFileUpload = (event) => {
+    files.value = Array.from(event.target.files);
+};
+
+const registerContract = async () => {
+    if (!quotation.value.quotationCode) {
+        alert('먼저 견적서 정보를 불러오세요.');
+        return;
+    }
+
+    if (files.value.length === 0) {
+        alert('첨부파일을 등록해주세요.');
+        return;
+    }
+
+    const contractCategoryId = searchBy.value === '일시납부' ? 1 : 2;
+
+    const contractData = {
+        contractNote: quotationNote.value,
+        contractTotalPrice: quotation.value.quotationTotalCost,
+        contractDueDate: quotation.value.quotationDueDate,
+        downPayment: deposit.value,
+        progressPayment: intermediatePayment.value,
+        balance: finalPayment.value,
+        employee: {
+            employeeId: employee.value.employeeId,
+            employeeCode:"123"
+        },
+        account: {
+            accountId: account.value.accountId
+        },
+        warehouse: {
+            warehouseId: warehouse.value.warehouseId
+        },
+        transaction: {
+            transactionId: quotation.value.transaction.transactionId
+        },
+        contractCategory: {
+            contractCategoryId: contractCategoryId // 선택된 납부 형태에 따라 설정
+        },
+        contractProduct: quotationProductList.value.map(product => ({
+            contractProductCount: product.quotationProductCount,
+            contractSupplyPrice: product.quotationSupplyPrice,
+            contractProductionNote: product.quotationProductionNote,
+            product: {
+                productId: product.product.productId
+            }
+        }))
+    };
+
+    const formData = new FormData();
+    formData.append('contract', JSON.stringify(contractData));
+    files.value.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        const response = await axios.post('http://localhost:7775/contract/regist', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+            withCredentials: true // 필요한 경우 쿠키를 포함하도록 설정
+        });
+        alert('계약서가 성공적으로 등록되었습니다.');
+        router.push({ path: `/contract` });
+    } catch (error) {
+        console.error('계약서를 등록하는 중 오류가 발생했습니다.', error);
+        alert('계약서를 등록하는 중 오류가 발생했습니다.');
+    }
+};
 </script>
 
 <style>
