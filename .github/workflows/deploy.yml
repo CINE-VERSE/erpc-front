@@ -26,6 +26,7 @@ jobs:
       - name: Zip Files
         run: |
           mkdir -p deploy
+          cp Procfile dist/
           zip -r deploy/deploy.zip dist server.js package.json
 
       - name: Beanstalk Deploy
