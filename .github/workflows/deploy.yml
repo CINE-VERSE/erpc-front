@@ -23,10 +23,10 @@ jobs:
       - name: Build Project
         run: npm run build
 
-      - name: Zip Files
+      - name: Prepare Deployment Package
         run: |
           mkdir -p deploy
-          cp -r dist/* deploy/
+          cp -r dist deploy/
           cp server.js package.json Procfile deploy/
           cd deploy
           zip -r ../deploy.zip .
