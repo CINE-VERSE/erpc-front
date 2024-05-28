@@ -4,8 +4,8 @@
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
                 <button class="estimate-request">결재 요청</button>
-                <button class="estimate-edit">수정</button>
-                <button class="estimate-delete">삭제</button>
+                <button class="estimate-edit" @click="goToQuotationPage">수정</button>
+                <button class="estimate-delete" @click="deleteQuotation">삭제</button>
             </div>
             <div class="estimate-pdf">
                 <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
@@ -85,7 +85,6 @@
             <table class="estimate2-table4">
                 <thead>
                     <tr>
-                        <th>프로젝트 코드</th>
                         <th>담당자</th>
                         <th>거래처명</th>
                         <th>비고</th>
@@ -93,7 +92,6 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ quotationData.transaction.transactionCode }}</td>
                         <td>{{ quotationData.employee.employeeName }}</td>
                         <td>{{ quotationData.account.accountName }}</td>
                         <td>{{ quotationData.quotationNote }}</td>
@@ -125,15 +123,27 @@
     <div v-else>
         <p>Loading...</p>
     </div>
+    <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>삭제 요청 사유 입력</h2>
+            <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
+            <button @click="confirmDelete">확인</button>
+            <button @click="closePopup">취소</button>
+        </div>
+    </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 const quotationData = ref(null);
+const showPopup = ref(false);
+const deleteReason = ref('');
 
 onMounted(async () => {
     const quotationId = route.params.quotationId;
@@ -145,6 +155,10 @@ onMounted(async () => {
     }
 });
 
+const goToQuotationPage = () => {
+    router.push({ path: `/estimate/modify/${route.params.quotationId}` });
+};
+
 const downloadFile = (url) => {
     const link = document.createElement('a');
     link.href = url;
@@ -154,7 +168,34 @@ const downloadFile = (url) => {
     link.click();
     document.body.removeChild(link);
 };
+
+const deleteQuotation = () => {
+    showPopup.value = true;
+};
+
+const closePopup = () => {
+    showPopup.value = false;
+};
+
+const confirmDelete = async () => {
+    const quotationId = route.params.quotationId;
+    try {
+        const response = await axios.post('http://localhost:7775/quotation/delete', {
+            quotationDeleteRequestReason: deleteReason.value,
+            quotation: quotationData.value
+        });
+        console.log('Quotation delete request sent successfully:', response.data);
+        alert('삭제 요청이 성공적으로 완료되었습니다.');
+        router.push('/estimate'); // 삭제 요청 후 이동
+    } catch (error) {
+        console.error('Error sending delete request:', error);
+        alert('삭제 요청 중 오류가 발생했습니다.');
+    } finally {
+        closePopup();
+    }
+};
 </script>
+
 
 <style>
     @import url('@/assets/css/estimate/EstimateContents.css');

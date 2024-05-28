@@ -10,6 +10,7 @@ import CustomerEdit from '@/components/customer/CustomerEdit.vue';
 import EstimateRegist from '@/components/estimate/EstimateRegist.vue';
 import EstimateList from '@/components/estimate/EstimateList.vue';
 import EstimateContents from '@/components/estimate/EstimateContents.vue';
+import EstimateEdit from '@/components/estimate/EstimateEdit.vue';
 
 import ContractRegist from '@/components/contract/ContractRegist.vue';
 import ContractList from '@/components/contract/ContractList.vue';
@@ -72,6 +73,10 @@ const routes = [
     {
         path: '/estimate/:quotationId',
         component: EstimateContents
+    },
+    {
+        path: '/estimate/modify/:quotationId',
+        component: EstimateEdit
     },
     {
         path: '/contract/regist',
