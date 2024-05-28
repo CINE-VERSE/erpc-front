@@ -20,9 +20,6 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Docs
-        run: npm run build:docs
-
       - name: Deploy Docs
         uses: peaceiris/actions-gh-pages@v3
         with:
