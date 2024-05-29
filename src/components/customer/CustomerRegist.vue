@@ -119,6 +119,9 @@ const fetchBusinessData = async () => {
             if (taxType.value === "국세청에 등록되지 않은 사업자등록번호입니다.") {
                 alert(taxType.value);
             }
+            if (businessStatus.value === "계속사업자") {
+                businessStatus.value = "영업중";
+            }
         } else {
             alert('조회된 결과가 없습니다.');
             console.warn('조회된 결과가 없습니다.');
@@ -145,7 +148,7 @@ const registerAccount = async () => {
             employeeId: 1
         },
         accountStatus: {
-            accountStatusId: 4
+            accountStatusId: businessStatus.value === "영업중" ? 1 : 4 // Assume 1 is the ID for "영업중"
         }
     };
 
@@ -162,5 +165,5 @@ const registerAccount = async () => {
 </script>
 
 <style>
-    @import url('@/assets/css/customer/CustomerRegist.css');
+@import url('@/assets/css/customer/CustomerRegist.css');
 </style>

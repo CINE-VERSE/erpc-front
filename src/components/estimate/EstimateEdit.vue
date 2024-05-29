@@ -14,20 +14,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
-                                <button @click="fetchProductData" class="item-code-btn2">확인</button>
+                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
+                                <div class="button-group">
+                                    <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
+                                    <button @click="addProductRow" class="item-add-btn2">추가</button>
+                                    <button @click="removeProductRow(index)" class="item-delete-btn2">삭제</button>
+                                </div>
                             </div>
                         </td>
-                        <td>{{ productName }}</td>
+                        <td>{{ product.productName }}</td>
                         <td class="narrow-column">
-                            <input type="number" v-model.number="quantity" class="estimate-test2" />
+                            <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
                         </td>
-                        <td>{{ productPrice }}</td>
-                        <td>{{ supplyValue }}</td>
-                        <td><input type="text" v-model="otherInfo" class="estimate-test3"/></td>
+                        <td>{{ product.productPrice }}</td>
+                        <td>{{ product.supplyValue }}</td>
+                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -81,7 +85,7 @@
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td><input type="text" v-model="responsiblePerson" class="estimate-test7"/></td>
+                        <td>{{ employeeName }}</td> 
                         <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
                         <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
                     </tr>
@@ -91,10 +95,19 @@
 
         <div class="estimate-attachment">
             <h2 class="estimate-file">첨부파일</h2>
-            <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list">
-                <span class="file-icon">📄</span>
-                <span class="file-name">{{ file.originName }}</span>
-                <button @click="downloadFile(file.accessUrl)">다운로드</button>
+            <div v-if="files.length > 0">
+                <div v-for="(file, index) in files" :key="index" class="file-list">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.name }}</span>
+                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                </div>
+            </div>
+            <div v-else>
+                <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.originName }}</span>
+                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                </div>
             </div>
             <input type="file" @change="handleFileUpload" multiple />
         </div>
@@ -116,13 +129,7 @@ const router = useRouter();
 const quotationData = ref(null);
 const files = ref([]);
 
-const itemCode = ref('');
-const productId = ref(null);
-const productName = ref('');
-const productPrice = ref(0);
-const quantity = ref(0);
-const supplyValue = ref(0);
-const otherInfo = ref('');
+const products = ref([createNewProduct()]);
 
 const warehouseCode = ref('');
 const warehouseId = ref(null);
@@ -139,6 +146,20 @@ const customerName = ref('');
 const responsiblePerson = ref('');
 const dueDate = ref('');
 const accountNote = ref('');
+const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
+const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
+
+function createNewProduct() {
+    return {
+        itemCode: '',
+        productId: null,
+        productName: '',
+        productPrice: 0,
+        quantity: 0,
+        supplyValue: 0,
+        otherInfo: ''
+    };
+}
 
 onMounted(async () => {
     const quotationId = route.params.quotationId;
@@ -149,16 +170,19 @@ onMounted(async () => {
     } catch (error) {
         console.error('Error fetching quotation data:', error);
     }
+    fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
 });
 
 const populateFields = (data) => {
-    itemCode.value = data.quotationProduct[0].product.productCode;
-    productId.value = data.quotationProduct[0].product.productId;
-    productName.value = data.quotationProduct[0].product.productName;
-    productPrice.value = data.quotationProduct[0].product.productPrice;
-    quantity.value = data.quotationProduct[0].quotationProductCount;
-    supplyValue.value = data.quotationTotalCost;
-    otherInfo.value = data.quotationProduct[0].quotationProductionNote;
+    products.value = data.quotationProduct.map(product => ({
+        itemCode: product.product.productCode,
+        productId: product.product.productId,
+        productName: product.product.productName,
+        productPrice: product.product.productPrice,
+        quantity: product.quotationProductCount,
+        supplyValue: product.quotationSupplyPrice,
+        otherInfo: product.quotationProductionNote
+    }));
 
     warehouseCode.value = data.warehouse.warehouseCode;
     warehouseId.value = data.warehouse.warehouseId;
@@ -177,34 +201,35 @@ const populateFields = (data) => {
     accountNote.value = data.quotationNote;
 };
 
-const fetchProductData = async () => {
+const fetchProductData = async (index) => {
+    const product = products.value[index];
     try {
         const response = await axios.get('http://localhost:7775/product', { withCredentials: true });
-        const products = response.data.products || response.data;
-        const product = products.find(p => p.productCode === itemCode.value);
-        if (product) {
-            productId.value = product.productId;
-            productName.value = product.productName;
-            productPrice.value = product.productPrice;
-            updateSupplyValue();
+        const productsData = response.data;
+        const productData = productsData.find(p => p.productCode === product.itemCode);
+        if (productData) {
+            product.productId = productData.productId; // Product ID 저장
+            product.productName = productData.productName;
+            product.productPrice = productData.productPrice;
+            updateSupplyValue(index);
         } else {
             alert('해당 품목 코드를 찾을 수 없습니다.');
-            clearProductData();
+            clearProductData(index);
         }
     } catch (error) {
         console.error('제품 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('제품 정보를 조회하는 중 오류가 발생했습니다.');
-        clearProductData();
+        clearProductData(index);
     }
 };
 
 const fetchWarehouseData = async () => {
     try {
         const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
-        const warehouses = response.data.warehouses || response.data;
+        const warehouses = response.data;
         const warehouse = warehouses.find(w => w.warehouseCode === warehouseCode.value);
         if (warehouse) {
-            warehouseId.value = warehouse.warehouseId;
+            warehouseId.value = warehouse.warehouseId; // Warehouse ID 저장
             warehouseName.value = warehouse.warehouseName;
             warehouseType.value = warehouse.warehouseType;
             warehouseLocation.value = warehouse.warehouseLocation;
@@ -225,10 +250,10 @@ const fetchWarehouseData = async () => {
 const fetchCustomerData = async () => {
     try {
         const response = await axios.get('http://localhost:7775/account/list', { withCredentials: true });
-        const customers = response.data.customers || response.data;
+        const customers = response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
-            accountId.value = customer.accountId;
+            accountId.value = customer.accountId; // Account ID 저장
             customerName.value = customer.accountName;
         } else {
             alert('해당 거래처 코드를 찾을 수 없습니다.');
@@ -241,50 +266,67 @@ const fetchCustomerData = async () => {
     }
 };
 
-const updateSupplyValue = () => {
-    supplyValue.value = productPrice.value * quantity.value;
+const fetchEmployeeData = async () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        try {
+            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
+            const employeeData = response.data;
+            employeeId.value = employeeData.employeeId;
+            employeeName.value = employeeData.employeeName;
+        } catch (error) {
+            console.error('직원 정보를 조회하는 중 오류가 발생했습니다.', error);
+            alert('직원 정보를 조회하는 중 오류가 발생했습니다.');
+        }
+    }
+};
+
+const updateSupplyValue = (index) => {
+    const product = products.value[index];
+    product.supplyValue = product.productPrice * product.quantity;
 };
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
+    quotationData.value.quotationFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+const addProductRow = () => {
+    products.value.push(createNewProduct());
+};
+
+const removeProductRow = (index) => {
+    if (products.value.length > 1) {
+        products.value.splice(index, 1);
+    } else {
+        alert('최소한 한 개의 품목은 필요합니다.');
+    }
 };
 
 const updateQuotation = async () => {
-    const quotationId = route.params.quotationId;  // quotationId 값을 가져옵니다.
-    if (!productId.value || !warehouseId.value || !accountId.value) {
+    const quotationId = route.params.quotationId; // quotationId 값을 가져옵니다.
+    if (!products.value.every(product => product.productId) || !warehouseId.value || !accountId.value) {
         alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
         return;
     }
 
     const quotation = {
-        quotationId: quotationId,  // 여기서 quotationId를 추가합니다.
+        quotationId: quotationId, // 여기서 quotationId를 추가합니다.
         quotationNote: accountNote.value,
-        quotationTotalCost: supplyValue.value,
+        quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
         employee: { 
-            employeeId: 1,
-            employeeCode: "123"
+            employeeId: employeeId.value, // 수정: employeeId 값 설정
+            employeeName: employeeName.value // 수정: employeeName 값 설정
         },
         account: { accountId: accountId.value },
         warehouse: { warehouseId: warehouseId.value },
-        quotationProduct: [
-            {
-                quotationProductCount: quantity.value,
-                quotationSupplyPrice: supplyValue.value,
-                quotationProductionNote: otherInfo.value,
-                product: { productId: productId.value }
-            }
-        ]
+        quotationProduct: products.value.map(product => ({
+            quotationProductCount: product.quantity,
+            quotationSupplyPrice: product.supplyValue,
+            quotationProductionNote: product.otherInfo,
+            product: { productId: product.productId }
+        }))
     };
 
     const formData = new FormData();
@@ -306,12 +348,13 @@ const updateQuotation = async () => {
     }
 };
 
-const clearProductData = () => {
-    productId.value = null;
-    productName.value = '';
-    productPrice.value = 0;
-    quantity.value = 0;
-    supplyValue.value = 0;
+const clearProductData = (index) => {
+    const product = products.value[index];
+    product.productId = null;
+    product.productName = '';
+    product.productPrice = 0;
+    product.quantity = 0;
+    product.supplyValue = 0;
 };
 
 const clearWarehouseData = () => {
@@ -327,17 +370,223 @@ const clearWarehouseData = () => {
 const clearCustomerData = () => {
     accountId.value = null;
     customerName.value = '';
+    responsiblePerson.value = '';
 };
 
 // 수량이 변경될 때 공급가액을 자동으로 업데이트
-watch(quantity, (newQuantity) => {
-    if (newQuantity < 0) {
-        quantity.value = 0;
-    }
-    updateSupplyValue();
-});
+watch(products, (newProducts) => {
+    newProducts.forEach((product, index) => {
+        if (product.quantity < 0) {
+            product.quantity = 0;
+        }
+        updateSupplyValue(index);
+    });
+}, { deep: true });
 </script>
 
 <style>
-    @import url('@/assets/css/estimate/EstimateEdit.css');
+.regist-content {
+    margin-top: 8%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px); /* main1의 너비를 뺀 나머지 공간 */
+}
+
+.estimate-regist {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.estimate-list-box {
+    width: 90%; /* 너비를 90%로 설정 */
+    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    margin: 20px auto;
+    gap: 1px;
+}
+
+.estimate-table1,
+.estimate-table2,
+.estimate-table3 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.estimate-table1 th,
+.estimate-table1 td,
+.estimate-table2 th,
+.estimate-table2 td,
+.estimate-table3 th,
+.estimate-table3 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.estimate-table1 th,
+.estimate-table2 th,
+.estimate-table3 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.estimate-table1 td,
+.estimate-table2 td,
+.estimate-table3 td {
+    height: 40px;
+    width: 14.28%; /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.estimate-test2 {
+    width: 80px; /* 수량 필드의 너비를 좁게 설정 */
+    height: 35px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.estimate-test1,
+.estimate-test3,
+.estimate-test4,
+.estimate-test5,
+.estimate-test6,
+.estimate-test7,
+.estimate-test8 {
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.item-code-box2,
+.storage-code-box2,
+.customer-code-box2,
+.due-date-box {
+    width: 100%;
+    height: 35px; 
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.item-code-btn2,
+.storage-code-btn2,
+.customer-code-btn2,
+.item-add-btn2,
+.item-delete-btn2 {
+    border-radius: 5px;
+    border: 2px solid #0C2092;
+    margin-top: 5px;
+    height: 30px;
+    width: auto;
+    background-color: #0C2092;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 5px; /* Add spacing between buttons */
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.estimate-attachment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 90%; /* 너비를 90%로 설정 */
+    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    height: 200px;
+    background-color: #d5e6ff;
+    border-radius: 10px;
+    margin-bottom: 50px;
+}
+
+.estimate-attachment-header {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: -20px;
+}
+
+.estimate-pdfimage {
+    width: 30px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.estimate-attachment-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.file-list {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    height: 70px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: -5px;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.file-name {
+    font-size: 18px;
+}
+
+.estimate-regist-btn-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.estimate-regist-btn {
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 320px;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
+
 </style>

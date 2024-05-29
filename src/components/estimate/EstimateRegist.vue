@@ -18,8 +18,11 @@
                         <td>
                             <div class="item-code-div2">
                                 <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
-                                <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
-                                <button @click="addProductRow" class="item-add-btn2">추가하기</button>
+                                <div class="button-group">
+                                    <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
+                                    <button @click="addProductRow" class="item-add-btn2">추가</button>
+                                    <button @click="removeProductRow(index)" class="item-delete-btn2">삭제</button>
+                                </div>
                             </div>
                         </td>
                         <td>{{ product.productName }}</td>
@@ -82,7 +85,7 @@
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td><input type="text" v-model="responsiblePerson" class="estimate-test7"/></td>
+                        <td>{{ employeeName }}</td> 
                         <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
                         <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
                     </tr>
@@ -103,8 +106,9 @@
     </div>
 </template>
 
+
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import router from '@/router/mainRouter';
 
@@ -128,6 +132,8 @@ const customerName = ref('');
 const responsiblePerson = ref('');
 const dueDate = ref('');
 const accountNote = ref('');
+const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
+const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
 
 // 파일 첨부
 const files = ref([]);
@@ -209,6 +215,25 @@ const fetchCustomerData = async () => {
     }
 };
 
+const fetchEmployeeData = async () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        try {
+            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
+            const employeeData = response.data;
+            employeeId.value = employeeData.employeeId;
+            employeeName.value = employeeData.employeeName;
+        } catch (error) {
+            console.error('직원 정보를 조회하는 중 오류가 발생했습니다.', error);
+            alert('직원 정보를 조회하는 중 오류가 발생했습니다.');
+        }
+    }
+};
+
+onMounted(() => {
+    fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
+});
+
 const updateSupplyValue = (index) => {
     const product = products.value[index];
     product.supplyValue = product.productPrice * product.quantity;
@@ -222,6 +247,10 @@ const addProductRow = () => {
     products.value.push(createNewProduct());
 };
 
+const removeProductRow = (index) => {
+    products.value.splice(index, 1);
+};
+
 const registerQuotation = async () => {
     if (!products.value.every(product => product.productId)) {
         alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
@@ -233,9 +262,9 @@ const registerQuotation = async () => {
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
         employee: { 
-            employeeId: 1,
-            employeeCode: "123"
-         },  // Employee ID를 적절히 설정
+            employeeId: employeeId.value, // 수정: employeeId 값 설정
+            employeeName: employeeName.value // 수정: employeeName 값 설정
+        },
         account: { accountId: accountId.value },  // Account ID 설정
         warehouse: { warehouseId: warehouseId.value },  // Warehouse ID 설정
         quotationProduct: products.value.map(product => ({
@@ -287,6 +316,7 @@ const clearWarehouseData = () => {
 const clearCustomerData = () => {
     accountId.value = null;
     customerName.value = '';
+    employeeName.value = ''; // 추가: employeeName 값 초기화
 };
 
 // 수량이 변경될 때 공급가액을 자동으로 업데이트
@@ -299,6 +329,7 @@ watch(products, (newProducts) => {
     });
 }, { deep: true });
 </script>
+
 
 <style>
 .regist-content9 {
@@ -406,7 +437,8 @@ watch(products, (newProducts) => {
 .item-code-btn2,
 .storage-code-btn2,
 .customer-code-btn2,
-.item-add-btn2 {
+.item-add-btn2,
+.item-delete-btn2 {
     border-radius: 5px;
     border: 2px solid #0C2092;
     margin-top: 5px;
@@ -417,6 +449,13 @@ watch(products, (newProducts) => {
     font-size: 14px;
     cursor: pointer;
     margin-left: 5px; /* Add spacing between buttons */
+}
+
+.button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5px;
 }
 
 .estimate-attachment {
