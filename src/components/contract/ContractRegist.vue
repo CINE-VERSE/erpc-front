@@ -225,7 +225,7 @@ const registerContract = async () => {
         balance: finalPayment.value,
         employee: {
             employeeId: employee.value.employeeId,
-            employeeCode:"123"
+            // employeeCode:"123"
         },
         account: {
             accountId: account.value.accountId

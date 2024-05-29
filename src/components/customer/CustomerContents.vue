@@ -92,7 +92,7 @@
             <h1 class="customer-process-text">Process</h1>
             <div v-for="note in filteredAccountNotes" :key="note.accountNoteId" class="customer-process-box-detail">
                 <div class="customer-process-info">
-                    <h4 class="customer-process-writer">{{ note.employee?.employeeName }}</h4>
+                    <h4 class="customer-process-writer">{{ employeeName }}</h4>
                     <p class="customer-process-date">{{ note.accountNoteDate }}</p>
                 </div>
                 <button class="customer-process-detail">
@@ -118,6 +118,8 @@
     </div>
 </template>
 
+
+
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -130,6 +132,7 @@ const accountNoteData = ref([]);
 const showPopup = ref(false);
 const deleteReason = ref('');
 const newNote = ref('');
+const employeeName = ref(''); // 추가: Employee Name을 저장하기 위한 ref
 
 const filteredAccountNotes = computed(() => {
     return accountNoteData.value.filter(note => note.accountDeleteDate === null);
@@ -137,12 +140,19 @@ const filteredAccountNotes = computed(() => {
 
 onMounted(async () => {
     const accountId = route.params.accountId;
+    const userId = localStorage.getItem('userId'); // 추가: userId를 localStorage에서 가져오기
+
     try {
         const accountResponse = await axios.get(`http://localhost:7775/account/${accountId}`);
         accountData.value = accountResponse.data;
 
         const noteResponse = await axios.get(`http://localhost:7775/account_note/${accountId}`);
         accountNoteData.value = noteResponse.data;
+
+        // 추가: userId로 employeeName 가져오기
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
+        employeeName.value = employeeResponse.data.employeeName;
+
     } catch (error) {
         console.error('Error fetching account data:', error);
     }
@@ -180,16 +190,18 @@ const confirmDelete = async () => {
 
 const addNote = async () => {
     const accountId = route.params.accountId;
+    const userId = localStorage.getItem('userId'); // 추가: userId를 localStorage에서 가져오기
     try {
         const response = await axios.post('http://localhost:7775/account_note/regist', {
             accountNote: newNote.value,
             account: { accountId: accountData.value.accountId },
-            employee: { employeeId: 1 } 
+            employee: { employeeId: userId } // 수정: employeeId를 userId로 설정
         });
         alert('process 등록되었습니다.');
         console.log('Account note added successfully:', response.data);
         accountNoteData.value.push(response.data);
         newNote.value = ''; 
+        location.reload(); // 페이지 새로고침 추가
     } catch (error) {
         console.error('Error adding account note:', error);
         alert('노트 추가 중 오류가 발생했습니다.');
@@ -211,6 +223,8 @@ const deleteNote = async (accountNoteId) => {
     }
 };
 </script>
+
+
 
 <style>
 @import url('@/assets/css/customer/CustomerContents.css');

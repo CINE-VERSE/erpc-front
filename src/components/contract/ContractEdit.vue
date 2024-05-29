@@ -123,10 +123,19 @@
         </div>
         <div class="contract-attachment">
             <h2 class="contract-file">첨부파일</h2>
-            <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
-                <span class="file-icon">📄</span>
-                <span class="file-name">{{ file.originName }}</span>
-                <button @click="downloadFile(file.accessUrl)">다운로드</button>
+            <div v-if="files.length > 0">
+                <div v-for="(file, index) in files" :key="index" class="file-list">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.name }}</span>
+                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                </div>
+            </div>
+            <div v-else>
+                <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.originName }}</span>
+                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                </div>
             </div>
             <input type="file" @change="handleFileUpload" multiple />
         </div>
@@ -174,6 +183,7 @@ const populateFields = (data) => {
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
+    contractData.value.contractFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
 const downloadFile = (url) => {
