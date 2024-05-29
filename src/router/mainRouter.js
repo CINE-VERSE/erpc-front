@@ -58,12 +58,23 @@ const getUserIdFromLocalStorage = () => {
 };
 const getEmployeeAccess = async (userId) => {
     try {
-
         const response = await axios.get(`http://localhost:7775/access/find_access/${userId}`);
         console.log('응답 데이터:', response.data); // 서버 응답 데이터 출력
-        const accessId = Response.data.accessId;
         
-        return accessId;
+        // 배열 요소를 순회하며 accessId가 1인 경우를 찾음
+        let accessId = null;
+        response.data.forEach(item => {
+            if (item.accessRight.accessId === 1) {
+                accessId = item.accessRight.accessId;
+            }
+        });
+
+        if (accessId !== null) {
+            return accessId;
+        } else {
+            console.error('사용자의 accessId가 1이 아님');
+            throw new Error('사용자의 accessId가 1이 아님');
+        }
     } catch (error) {
         console.error('사용자 권한 조회 중 오류:', error);
         throw error;
