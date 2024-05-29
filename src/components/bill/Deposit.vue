@@ -32,11 +32,11 @@
                 <tbody>
                     <tr v-for="(deposit, index) in filteredDeposits" :key="index">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ deposit.code }}</td>
-                        <td>{{ deposit.depositor }}</td>
-                        <td>{{ deposit.account }}</td>
-                        <td>{{ deposit.amount }}</td>
-                        <td>{{ deposit.date }}</td>
+                        <td>{{ deposit.depositCode }}</td>
+                        <td>{{ deposit.depositPic }}</td>
+                        <td>{{ deposit.depositAccount }}</td>
+                        <td>{{ deposit.depositPrice.toLocaleString() }}</td>
+                        <td>{{ deposit.depositDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -45,21 +45,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-const deposits = ref([
-    { code: 'DP-20240430001', depositor: '홍길동', account: '0000-00-0000000', amount: '600,000', date: '2024-04-01' },
-    { code: 'DP-20240430002', depositor: '이순신', account: '0000-00-0000000', amount: '500,000', date: '2024-04-01' },
-    { code: 'DP-20240430003', depositor: '장보고', account: '0000-00-0000000', amount: '7,000,000', date: '2024-03-31' }
-]);
+const deposits = ref([]);
 const startDate = ref('');
 const endDate = ref('');
 const filteredDeposits = ref(deposits.value);  
 
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/collection');
+        deposits.value = response.data;
+        filteredDeposits.value = deposits.value;
+    } catch (error) {
+        console.error('Error fetching deposits:', error);
+    }
+});
+
 function applyFilter() {
     if (startDate.value && endDate.value) {
         filteredDeposits.value = deposits.value.filter(deposit => {
-            return deposit.date >= startDate.value && deposit.date <= endDate.value;
+            return deposit.depositDate >= startDate.value && deposit.depositDate <= endDate.value;
         });
     } else {
         filteredDeposits.value = deposits.value;
@@ -68,5 +75,135 @@ function applyFilter() {
 </script>
 
 <style>
-    @import url('@/assets/css/bill/Deposit.css');
+.deposit-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.deposit-search,
+.deposit-search2 {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.deposit-search-text {
+    margin-top: 5%;
+    margin-bottom: 30px;
+}
+
+.deposit-search2-text {
+    margin-top: 100px;
+}
+
+.deposit-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    background-color: whitesmoke;
+    height: auto;
+    width: 100%;
+    margin: 20px auto;
+    gap: 1px;
+    max-width: 300px;
+}
+
+.search-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-start-date-text,
+.search-end-date-text {
+    min-width: 50px;
+    margin-right: 10px;
+    margin-bottom: 2px;
+}
+
+.search-start-date-box,
+.search-end-date-box {
+    flex-grow: 1;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 220px;
+}
+
+.deposit-search-btn-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.deposit-search-btn {
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    max-width: 320px;
+}
+
+.deposit-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    margin-bottom: 7%;
+    gap: 1px;
+}
+
+.deposit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.deposit-table th,
+.deposit-table td {
+    text-align: center;
+    border: 1px solid #ccc;
+    width: 160px; /* 너비 조절 */
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.deposit-table th {
+    background-color: #0C2092;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.deposit-table tr:hover {
+    background-color: #d5e6ff;
+}
 </style>

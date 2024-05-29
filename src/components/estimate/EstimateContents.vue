@@ -6,6 +6,7 @@
                 <button class="estimate-request">결재 요청</button>
                 <button class="estimate-edit" @click="goToQuotationPage">수정</button>
                 <button class="estimate-delete" @click="deleteQuotation">삭제</button>
+                <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="estimate-pdf">
                 <div v-if="quotationData.quotationFile.length > 0">
@@ -173,6 +174,18 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
+const downloadExcel = () => {
+    const quotationId = route.params.quotationId;
+    const url = `http://localhost:7775/excel/quotation/${quotationId}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `quotation_${quotationId}.xlsx`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
 const deleteQuotation = () => {
     showPopup.value = true;
 };
@@ -201,5 +214,341 @@ const confirmDelete = async () => {
 </script>
 
 <style>
-    @import url('@/assets/css/estimate/EstimateContents.css');
+.regist-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.order-search {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.maintext,
+.maintext2,
+.maintext3,
+.maintext4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maintext2,
+.maintext4 {
+    color: #0C2092;
+}
+
+.estimate-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.pdfimage {
+    width: 50px;
+    height: auto;
+    cursor: pointer;
+}
+
+.estimate-edit,
+.estimate-delete,
+.estimate-request,
+.estimate-excel {
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.estimate-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #BEE7FF;
+    border: 2px solid #BEE7FF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 430px;
+    height: 150px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.estimate-pdf1 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 270px;
+}
+
+.estimate-pdf1:hover {
+    background-color: #d5e6ff;
+}
+
+.estimate-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    margin-bottom: 20px;
+    gap: 1px;
+}
+
+.estimate2-table1,
+.estimate2-table2,
+.estimate2-table3,
+.estimate2-table4 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.estimate2-table1 th,
+.estimate2-table1 td,
+.estimate2-table2 th,
+.estimate2-table2 td,
+.estimate2-table3 th,
+.estimate2-table3 td,
+.estimate2-table4 th,
+.estimate2-table4 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.estimate2-table1 th,
+.estimate2-table2 th,
+.estimate2-table3 th,
+.estimate2-table4 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.estimate2-table1 td,
+.estimate2-table2 td,
+.estimate2-table3 td,
+.estimate2-table4 td {
+    height: 40px;
+}
+
+.test {
+    background-color: #d5e6ff;
+}
+
+.estimate-process-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #CCEAFF;
+    border: 2px solid #CCEAFF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    margin-top: 30px;
+    height: auto;
+    flex-direction: column;
+    margin-bottom: 7%;
+}
+
+.estimate-process-text {
+    margin-bottom: 20px;
+    color: #0C2092;
+}
+
+.estimate-process-box-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.estimate-process-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.estimate-process-writer {
+    margin: 0;
+    margin-left: 45px;
+}
+
+.estimate-process-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 93%;
+    height: auto;
+    margin-left: 40px;
+    margin-top: -10px;
+    font-weight: normal;
+}
+
+.estimate-process-date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F6E5FF;
+    border: 2px solid #F6E5FF;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: normal;
+    color: black;
+    margin-right: 45px;
+}
+
+.estimate-process-btn {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.estimate-process-edit,
+.estimate-process-delete {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.estimate-process-delete {
+    margin-right: 46px;
+}
+
+.estimate-process-reply {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.estimate-process-reply-box {
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    width: 90.5%;
+    height: auto;
+    font-weight: normal;
+}
+
+.estimate-process-regist {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    width: 95px;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-left: 992px;
+    cursor: pointer;
+    margin-bottom: 7px;
+}
+
+.estimate-contents-test1 {
+    width: 500px;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
+}
+
+.file-download.no-file {
+    cursor: default;
+}
 </style>
