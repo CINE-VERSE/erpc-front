@@ -1,42 +1,42 @@
 <template>
-    <div class="wrapper">
-      <div class="noticevboard">
-        <div class="clickdiv" @click="mainBoard()">
-          <h1 class="boardname">영업 게시판</h1> 
-        </div>
+  <div class="wrapper">
+    <div class="noticevboard">
+      <div class="clickdiv" @click="mainBoard()">
+        <h1 class="boardname">영업 게시판</h1> 
       </div>
-      <hr class="boardtitleLine">
-      <div class="allboard">
-        <div class="boardtitlediv">
-          <h2 class="boardtitle">{{ notice.noticeTitle }}</h2>
-        </div>
-        <div class="datediv">
-          <h3 class="date">작성일: {{ notice.noticeDate }}</h3>
-        </div>
-        <div class="writerdiv">
-          <h3 class="writer">작성자: {{ notice && notice.employee ? notice.employee.employeeName : 'Unknown' }}</h3>
-        </div>
-        <div class="edit">
-          <button type="button" @click="editPost" class="editbtn">수정</button>
-        </div>
-        <div class="delete">
-          <button type="button" @click="deletePost" class="deletebtn">삭제</button>
-        </div>
-      </div>
-      <hr class="titleLine">
-      <div class="maincontent">
-        <div v-if="notice.images && notice.images.length > 0" class="image-container">
-          <img v-for="(image, index) in notice.images" :key="index" :src="image.accessUrl" :alt="'Image ' + (index + 1)" class="notice-image">
-        </div>
-      </div>
-      <div class="content">
-        <p v-html="notice.noticeContent"></p>
-      </div>
-      <FreeReply/>
     </div>
-  </template>
-  
-  <script setup>
+    <hr class="boardtitleLine">
+    <div class="allboard">
+      <div class="boardtitlediv">
+        <h2 class="boardtitle">{{ notice.noticeTitle }}</h2>
+      </div>
+      <div class="datediv">
+        <h3 class="date">작성일: {{ notice.noticeDate }}</h3>
+      </div>
+      <div class="writerdiv">
+        <h3 class="writer">작성자: {{ notice && notice.employee ? notice.employee.employeeName : 'Unknown' }}</h3>
+      </div>
+      <div class="edit">
+        <button type="button" @click="editPost" class="editbtn">수정</button>
+      </div>
+      <div class="delete">
+        <button type="button" @click="deletePost" class="deletebtn">삭제</button>
+      </div>
+    </div>
+    <hr class="titleLine">
+    <div class="maincontent">
+      <div v-if="notice.images && notice.images.length > 0" class="image-container">
+        <img v-for="(image, index) in notice.images" :key="index" :src="image.accessUrl" :alt="'Image ' + (index + 1)" class="notice-image">
+      </div>
+    </div>
+    <div class="content">
+      <p v-html="notice.noticeContent"></p>
+    </div>
+    <FreeReply/>
+  </div>
+</template>
+
+<script setup>
 import router from '@/router/mainRouter';
 import FreeReply from "@/components/notice/FreeReply.vue";
 import axios from "axios";
@@ -44,58 +44,181 @@ import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 const notice = ref({});
-let noticeId = null;
+const route = useRoute();
 
-const setupNoticeId = () => {
-  // useRoute()를 호출하기 전에 value가 존재하는지 확인
-  const route = useRoute();
-  if (route && route.params && route.params.noticeId) {
-    noticeId = route.params.noticeId;
-  } else {
-    console.error('Notice ID가 존재하지 않습니다.');
+const fetchNotice = async (noticeId) => {
+  try {
+    const response = await axios.get(`http://localhost:7775/notice_board/${noticeId}`);
+    notice.value = response.data;
+    console.log('서버로부터 받은 정보:', response.data);
+  } catch (error) {
+    console.error("Error fetching notice:", error);
   }
-};
-
-const fetchNotice = () => {
-  axios.get(`http://localhost:7775/notice_board/${noticeId}`)
-    .then(response => {
-      notice.value = response.data;
-      console.log('서버로부터 받은 정보:', response.data);
-    })
-    .catch(error => {
-      console.error("Error fetching notice:", error);
-    });
 };
 
 onMounted(() => {
-  setupNoticeId(); // useRoute()를 호출하여 noticeId 설정
-  if (noticeId) {
-    fetchNotice();
-  }
+  const noticeId = route.params.noticeId;
+  fetchNotice(noticeId);
 });
 
 function mainBoard() {
-  router.push('/notice_board');
+  router.push('/notice/list');
 }
 
-function deletePost() {
-  if (noticeId) {
-    axios.patch(`http://localhost:7775/notice_board/delete/${noticeId}`)
-      .then(response => {
-        console.log('게시물이 성공적으로 삭제되었습니다.');
-        router.push('/notice_board');
-      })
-      .catch(error => {
-        console.error("Error deleting post:", error);
-      });
+async function deletePost() {
+  const noticeId = route.params.noticeId;
+  try {
+    const response = await axios.patch(`http://localhost:7775/notice_board/delete/${noticeId}`);
+    console.log('게시물이 성공적으로 삭제되었습니다.');
+    router.push('/notice/list');
+  } catch (error) {
+    console.error("Error deleting post:", error);
   }
 }
 
 function editPost() {
-  router.push("/ready");
+  router.push({ path: `/notice/modify/${route.params.noticeId}` });
 }
-  </script>
-  
-  <style scoped>
-  /* @import url('@/assets/css/notice/NoticeContent.css');  */
-  </style>
+</script>
+
+<style scoped>
+template {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+}
+
+button {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    background-color: #6c7aa1;
+    color: rgb(229, 227, 227);
+    border: 1px solid  rgb(229, 227, 227);
+}
+
+.free-board{
+    display: flex;
+    justify-content: left;
+    width: 1100px;
+    height: 70px;
+}
+
+.clickdiv {
+    width: 190px;
+}
+
+.category {
+    font-size: 15px;
+    margin-right: 720px;
+    padding-top: 17px;
+    color: rgb(142, 140, 140);
+}
+
+.boardtitleLine {
+    width:1110px;
+    height: 3px;
+    border: 0;
+    background-color: #6c7aa1;
+}
+
+.titleLine {
+    width:1110px;
+    height: 3px;
+    border: 0;
+    background-color: #6c7aa1;
+}
+
+.wrapper {
+    height: auto;
+    min-height: 100%;
+    width: 68%;
+    margin-top: 50px;
+    padding-bottom: 100px;
+    margin-left: 20%;
+    margin-right: 16%;
+}
+
+.boardname {
+    font-size: 32px;
+    cursor: pointer;
+}
+
+.boardtitle {
+    font-size: 100%;
+    margin-top: 18px;  
+    margin-left: 10px;
+}
+
+.writer {
+    font-size: 12px;
+}
+
+.allboard {
+    display: flex;
+    flex-direction: rows;
+    justify-content: center;
+    width: 1100px;
+}
+
+.boardtitlediv {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 0%;
+    width: 500px;
+}
+
+.writerdiv {
+    width: 18%;
+    margin-top: 13px;
+}
+
+.datediv {
+    width:18%;
+    float:right;
+    font-size: 10px;
+    margin-top: 13px;
+    margin-left: 30px;
+}
+.editbtn {
+    width: 50px;
+    height: 30px;
+    margin-top: 17px;
+    border-radius: 5px;
+}
+
+.deletebtn {
+    width: 50px;
+    height: 30px;
+    margin-top: 17px;
+    border-radius: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.maincontent {
+    max-width: 80%;
+    margin-right: 15%;
+    margin-top: 3%;
+}
+
+.image-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+    grid-auto-rows: 1fr; 
+    align-items: stretch; 
+    margin-bottom: 20px;
+    gap: 10px;
+    width: 1100px;
+}
+
+.image-container img {
+    width: 100%; 
+    object-fit: cover; 
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+.content {
+    clear: both;        
+    width: 1100px;
+}
+</style>

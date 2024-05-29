@@ -42,12 +42,56 @@ import StorageList from '@/components/logistics/StorageList.vue';
 import NoticeRegist from '@/components/notice/NoticeRegist.vue';
 import NoticeList from '@/components/notice/NoticeList.vue';
 import NoticeContent from '@/components/notice/NoticeContent.vue';
+import NoticeEdit from '@/components/notice/NoticeEdit.vue';
+
 
 import EmployeeList from '@/components/employee/EmployeeList.vue';
 import EmployeeDetail from '@/components/employee/EmployeeDetail.vue';
 import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
 import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
+import EmployeeApp from '@/components/employee/EmployeeApp.vue';
 
+import axios from 'axios';
+const getUserIdFromLocalStorage = () => {
+    // localStorage에서 userId 가져오기
+    return localStorage.getItem('userId');
+};
+const getEmployeeAccess = async (userId) => {
+    try {
+
+        const response = await axios.get(`http://localhost:7775/access/find_access/${userId}`);
+        console.log('응답 데이터:', response.data); // 서버 응답 데이터 출력
+        const accessId = Response.data.accessId;
+        
+        return accessId;
+    } catch (error) {
+        console.error('사용자 권한 조회 중 오류:', error);
+        throw error;
+    }
+};
+const requirePermission = async (to, from, next) => {
+    try {
+        // localStorage에서 userId 가져오기
+        const userId = getUserIdFromLocalStorage();
+
+        // 사용자의 userId를 이용하여 해당 사용자의 accessId 가져오기
+        const accessId = await getEmployeeAccess(userId);
+
+        // accessId가 1이면 허용
+        if (accessId === 1) {
+            next();
+        } else {
+            // 접근이 거부된 경우
+            alert('접근이 거부되었습니다.');
+            next(false);
+        }
+    } catch (error) {
+        console.error('사용자 권한 확인 중 오류:', error);
+        // 접근이 거부된 경우
+        alert('접근이 거부되었습니다.');
+        next(false);
+    }
+};
 const routes = [
     {
         path: '/',
@@ -174,13 +218,19 @@ const routes = [
         component: NoticeList
     },
     {
-        path: '/notice/:notice_id',
-        component: NoticeContent
+        path: '/notice/:noticeId',
+        component: NoticeContent,
+        beforeEnter: requirePermission
+    },
+    {
+        path: '/notice/modify/:noticeId',
+        component: NoticeEdit
     },
     { path: '/employees', component: EmployeeList },
     { path: '/employees/:employeeId', component: EmployeeDetail },
     { path: '/employees/register', component: RegisterEmployee },
     { path: '/employees/access', component: EmployeeAccess },
+    { path: '/employees/app', component: EmployeeApp },
 ];
 
 const router = createRouter({

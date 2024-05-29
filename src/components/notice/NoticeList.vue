@@ -41,7 +41,7 @@
       <td>{{ index + 1 }}</td>
       <td class="boardname">{{ item.noticeTitle }}</td>
       <td>{{ item.employee.employeeName }}</td>
-      <td>{{ item.team.team_code_id }}</td>
+      <td>{{ item.team.teamCode }}</td>
       <td>{{ item.noticeDate }}</td>
     </tr>
   </tbody>
