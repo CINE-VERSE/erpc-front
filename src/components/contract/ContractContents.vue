@@ -6,6 +6,7 @@
                 <button class="contract-request">결재 요청</button>
                 <button class="contract-edit" @click="goToEditPage">수정</button>
                 <button class="contract-delete" @click="deleteContract">삭제</button>
+                <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="contract-pdf">
                 <div v-if="contractData.contractFile.length > 0">
@@ -204,6 +205,12 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
+const downloadExcel = () => {
+    const contractId = route.params.contractId;
+    const url = `http://localhost:7775/excel/contract/${contractId}`;
+    window.open(url, '_blank');
+};
+
 const deleteContract = () => {
     showPopup.value = true;
 };
@@ -275,7 +282,8 @@ const confirmDelete = async () => {
 }
 
 .contract-edit,
-.contract-delete {
+.contract-delete,
+.contract-excel {
     width: 60px;
     height: 40px;
     cursor: pointer;
@@ -305,7 +313,7 @@ const confirmDelete = async () => {
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 350px;
+    width: 430px;
     height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
@@ -552,5 +560,44 @@ const confirmDelete = async () => {
 
 .contract-contents-test1 {
     width: 300px;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
+}
+
+.file-download.no-file {
+    cursor: default;
 }
 </style>

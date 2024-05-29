@@ -12,7 +12,6 @@
                 <div class="customer-code-text">거래처 코드</div>
                 <button class="customer-code-box">{{ accountData.accountCode }}</button>
             </div>
-
         </div>
         <div class="customer-content2">
             <div class="customer-list-box1">
@@ -86,29 +85,26 @@
             </div>
             <div class="project-employee">
                 <p class="project-employee-text">담당자</p>
-                <button class="project-employee-box" id="project-employee-box">{{ accountData.employee?.employeeName
-                    }}</button>
+                <button class="project-employee-box" id="project-employee-box">{{ accountData.employee?.employeeName }}</button>
             </div>
         </div>
         <div class="customer-process-box">
             <h1 class="customer-process-text">Process</h1>
-            <div class="customer-process-box-detail">
+            <div v-for="note in filteredAccountNotes" :key="note.accountNoteId" class="customer-process-box-detail">
                 <div class="customer-process-info">
-                    <h4 class="customer-process-writer">민중원 과장</h4>
-                    <p class="customer-process-date">2024-04-01</p>
+                    <h4 class="customer-process-writer">{{ note.employee?.employeeName }}</h4>
+                    <p class="customer-process-date">{{ note.accountNoteDate }}</p>
                 </div>
                 <button class="customer-process-detail">
-                    해당 거래처는 납기 일자 꼭 지켜야 됩니다~ 벌써 클레임 전화 10통 받았어요.
+                    {{ note.accountNote }}
                 </button>
                 <div class="customer-process-btn">
-                    <button class="customer-process-edit">수정</button>
-                    <button class="customer-process-delete">삭제</button>
+                    <button class="customer-process-delete" @click="deleteNote(note.accountNoteId)">삭제</button>
                 </div>
-                <div class="customer-process-reply">
-                    <input type="text" id="customer-process-reply-box" class="customer-process-reply-box"
-                        placeholder="내용을 입력해주세요.">
-                    <button class="customer-process-regist">등록하기</button>
-                </div>
+            </div>
+            <div class="customer-process-reply">
+                <input type="text" v-model="newNote" id="customer-process-reply-box" class="customer-process-reply-box" placeholder="내용을 입력해주세요.">
+                <button class="customer-process-regist" @click="addNote">등록하기</button>
             </div>
         </div>
         <div v-if="showPopup" class="popup-overlay">
@@ -123,21 +119,30 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const accountData = ref({});
+const accountNoteData = ref([]);
 const showPopup = ref(false);
 const deleteReason = ref('');
+const newNote = ref('');
+
+const filteredAccountNotes = computed(() => {
+    return accountNoteData.value.filter(note => note.accountDeleteDate === null);
+});
 
 onMounted(async () => {
     const accountId = route.params.accountId;
     try {
-        const response = await axios.get(`http://localhost:7775/account/${accountId}`);
-        accountData.value = response.data;
+        const accountResponse = await axios.get(`http://localhost:7775/account/${accountId}`);
+        accountData.value = accountResponse.data;
+
+        const noteResponse = await axios.get(`http://localhost:7775/account_note/${accountId}`);
+        accountNoteData.value = noteResponse.data;
     } catch (error) {
         console.error('Error fetching account data:', error);
     }
@@ -170,6 +175,39 @@ const confirmDelete = async () => {
         alert('삭제 요청 중 오류가 발생했습니다.');
     } finally {
         closePopup();
+    }
+};
+
+const addNote = async () => {
+    const accountId = route.params.accountId;
+    try {
+        const response = await axios.post('http://localhost:7775/account_note/regist', {
+            accountNote: newNote.value,
+            account: { accountId: accountData.value.accountId },
+            employee: { employeeId: 1 } 
+        });
+        alert('process 등록되었습니다.');
+        console.log('Account note added successfully:', response.data);
+        accountNoteData.value.push(response.data);
+        newNote.value = ''; 
+    } catch (error) {
+        console.error('Error adding account note:', error);
+        alert('노트 추가 중 오류가 발생했습니다.');
+    }
+};
+
+const deleteNote = async (accountNoteId) => {
+    try {
+        const response = await axios.patch(`http://localhost:7775/account_note/delete/${accountNoteId}`);
+        const updatedNote = response.data;
+        const noteIndex = accountNoteData.value.findIndex(note => note.accountNoteId === accountNoteId);
+        alert('process 삭제되었습니다.');
+        if (noteIndex !== -1) {
+            accountNoteData.value[noteIndex] = updatedNote;
+        }
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        alert('노트 삭제 중 오류가 발생했습니다.');
     }
 };
 </script>
