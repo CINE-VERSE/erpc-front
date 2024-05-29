@@ -9,12 +9,16 @@
                 <button class="order-delete">삭제</button>
             </div>
             <div class="order-pdf">
-                <button class="order-pdf1">
-                    견적서 다운로드<img src="@/assets/img/pdf.png" class="pdfimage1">
-                </button>
-                <button class="order-pdf2">
-                    계약서 다운로드<img src="@/assets/img/pdf.png" class="pdfimage2">
-                </button>
+                <div v-if="orderData.orderFile.length > 0">
+                    <div v-for="file in orderData.orderFile" :key="file.fileId" class="file-download">
+                        <button class="order-pdf2" @click="downloadFile(file.accessUrl)">
+                            {{ file.originName }} 다운로드
+                        </button>
+                    </div>
+                </div>
+                <div v-else class="file-download no-file">
+                    첨부파일 없음
+                </div>
             </div>
         </div>
         <div class="order-list-box2">
@@ -51,11 +55,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
+                        <td>{{ orderData.transaction.transactionCode }}</td>
                         <td>{{ orderData.employee.employeeName }}</td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.accountName }}</td>
-                        <td>{{ orderData.orderTotalPrice }}</td>
+                        <td>{{ orderData.orderTotalPrice.toLocaleString() }}</td>
                         <td></td>
                     </tr>
                 </tbody>
@@ -76,8 +80,8 @@
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
                         <td>{{ product.orderProductCount }}</td>
-                        <td>{{ product.product.productPrice }}</td>
-                        <td>{{ product.orderSupplyPrice }}</td>
+                        <td>{{ product.product.productPrice.toLocaleString() }}</td>
+                        <td>{{ product.orderSupplyPrice.toLocaleString() }}</td>
                         <td>{{ product.orderProductionNote }}</td>
                     </tr>
                 </tbody>
@@ -130,9 +134,9 @@
                 <tbody>
                     <tr>
                         <td class="test">{{ orderData.contractCategory.contractCategory }}</td>
-                        <td>{{ orderData.downPayment }}</td>
-                        <td>{{ orderData.progressPayment }}</td>
-                        <td>{{ orderData.balance }}</td>
+                        <td>{{ orderData.downPayment.toLocaleString() }}</td>
+                        <td>{{ orderData.progressPayment.toLocaleString() }}</td>
+                        <td>{{ orderData.balance.toLocaleString() }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -194,28 +198,6 @@
                     </tr>
                 </tbody>
             </table>
-            <!-- <table class="shipment-table2">
-                <thead>
-                    <tr>
-                        <th>수령인</th>
-                        <th>배송 주소</th>
-                        <th>전화번호</th>
-                        <th>배송 정보</th>
-                        <th>추적 번호</th>
-                        <th>배송 업체</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>강철원</td>
-                        <td>경기 용인시 처인구 포곡읍 에버랜드로 199</td>
-                        <td>031-320-8600</td>
-                        <td>택배</td>
-                        <td>172319573105</td>
-                        <td>CJ 대한통운</td>
-                    </tr>
-                </tbody>
-            </table> -->
         </div>
         <div class="order-process-box">
             <h1 class="order-process-text">Process</h1>
@@ -264,6 +246,16 @@ onMounted(async () => {
         console.error('Error fetching order data:', error);
     }
 });
+
+const downloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
 </script>
 
 <style>
