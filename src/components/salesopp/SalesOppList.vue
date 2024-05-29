@@ -21,7 +21,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(approval, index) in filteredapprovals" :key="index" @click="goTosalesOppContents(approval.code)">
+            <tr v-for="(approval, index) in filteredapprovals" :key="index" @click="goTosalesOppContents(approval.salesOppId)">
               <td>{{ index + 1 }}</td>
               <td>{{ approval.oppAccountName }}</td>
               <td>{{ approval.oppDate }}</td>
@@ -55,9 +55,9 @@
     }
   }
   
-  function goTosalesOppContents(approvalCode) {
-    router.push({ path: '/salesopp/contents', query: { code: approvalCode } });
-  }
+  function goTosalesOppContents(salesOppId) {
+    router.push({ path: `/salesopp/${salesOppId}`});
+}
   
   // 컴포넌트가 생성될 때 영업기회 목록을 가져옴
   onMounted(async () => {

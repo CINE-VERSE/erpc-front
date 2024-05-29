@@ -2,11 +2,11 @@
     <div class="order-content">
         <div class="order-search">
             <h1 class="maintext">영업기회 조회 내역</h1>
-            <h3 class="maintext2">기회인지</h3>
+            <h3 class="maintext2">{{ salesOppData.salesOppStatus.salesOppStatus }}</h3>
             <div class="order-btn">
-                <button class="order-request" @click="openPopup">상태변경</button>
+                <button class="order-request" @click="openStatusPopup">상태변경</button>
                 <button class="order-edit" @click="goToEditPage">수정</button>
-                <button class="order-delete" @click="deleteAccount">삭제</button>
+                <button class="order-delete" @click="deletesalesOpp">삭제</button>
             </div>
             <div class="order-list-box2">
                 <table class="order2-table1">
@@ -17,35 +17,15 @@
                             <th>거래처 주소</th>
                             <th>연락처</th>
                             <th>이메일</th>
-                            <th>비고</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ accountData.oppAccountName }}</td>
-                            <td>{{ accountData.oppAccountPic }}</td>
-                            <td>{{ accountData.oppAccountLocation }}</td>
-                            <td>{{ accountData.oppAccountContact }}</td>
-                            <td>{{ accountData.oppAccountEmail }}</td>
-                            <td>{{ accountData.oppAccountNote }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="order2-table2">
-                    <thead>
-                        <tr>
-                            <th>담당자 명</th>
-                            <th>부서</th>
-                            <th>직급</th>
-                            <th>연락처</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ accountData.employee.name }}</td>
-                            <td>{{ accountData.employee.department }}</td>
-                            <td>{{ accountData.employee.position }}</td>
-                            <td>{{ accountData.employee.contact }}</td>
+                            <td>{{ salesOppData.oppAccountName }}</td>
+                            <td>{{ salesOppData.oppAccountPic }}</td>
+                            <td>{{ salesOppData.oppAccountLocation }}</td>
+                            <td>{{ salesOppData.oppAccountContact }}</td>
+                            <td>{{ salesOppData.oppAccountEmail }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -57,7 +37,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ accountData.oppAccountNote }}</td>
+                            <td>{{ salesOppData.oppAccountNote }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -65,8 +45,7 @@
                     <h1 class="order-process-text">Process</h1>
                     <div class="order-process-box-detail">
                         <div class="order-process-info">
-                            <h4 class="order-process-writer">{{ accountData.employee.name }}</h4>
-                            <p class="order-process-date">{{ accountData.oppDate }}</p>
+                            <p class="order-process-date">{{ salesOppData.oppDate }}</p>
                         </div>
                         <button class="order-process-detail">
                             프로젝트 진행 정보 공유합니다~
@@ -85,70 +64,126 @@
         </div>
     </div>
 
-    <!-- 팝업 창 -->
-    <div class="popup" v-if="showPopup">
+    <!-- 삭제 팝업 창 -->
+    <div class="popup" v-if="showDeletePopup">
         <div class="popup-content">
-            <!-- 팝업 창에 표시될 내용 -->
             <p>팝업 창에 표시될 내용</p>
             <input type="text" v-model="deleteReason" placeholder="삭제 이유를 입력해주세요">
             <button @click="confirmDelete">확인</button>
-            <button class="close-btn" @click="closePopup">닫기</button>
+            <button class="close-btn" @click="closeDeletePopup">닫기</button>
+        </div>
+    </div>
+
+    <!-- 상태변경 팝업 창 -->
+    <div class="popup" v-if="showStatusPopup">
+        <div class="popup-content">
+            <h3>상태변경</h3>
+            <select v-model="newStatus">
+                <option value="기회 인지">기회 인지</option>
+                <option value="협상">협상</option>
+                <option value="종료">종료</option>
+            </select>
+            <button @click="confirmStatusChange">확인</button>
+            <button class="close-btn" @click="closeStatusPopup">닫기</button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const accountData = ref({});
-const showPopup = ref(false);
+const salesOppData = ref({});
+const showDeletePopup = ref(false);
+const showStatusPopup = ref(false);
 const deleteReason = ref('');
+const newStatus = ref('');
 
-onMounted(async () => {
-    const accountId = route.params.accountId;
+// 데이터를 가져오는 함수
+const fetchData = async () => {
+    const salesOppId = route.params.salesOppId;
     try {
-        const response = await axios.get(`http://localhost:7775/sales_opportunity/${accountId}`);
-        accountData.value = response.data;
+        const response = await axios.get(`http://localhost:7775/sales_opportunity/${salesOppId}`);
+        salesOppData.value = response.data;
     } catch (error) {
-        console.error('Error fetching account data:', error);
+        console.error('Error fetching salesOpp data:', error);
     }
-});
+};
+
+// 페이지 로드 시 데이터 가져오기
+fetchData();
 
 const goToEditPage = () => {
-    router.push({ path: `/customer/modify/${route.params.accountId}` });
+    router.push({ path: `/salesopp/modify/${route.params.salesOppId}` });
 };
 
-const deleteAccount = () => {
-    showPopup.value = true;
+const deletesalesOpp = () => {
+    showDeletePopup.value = true;
 };
 
-const closePopup = () => {
-    showPopup.value = false;
+const closeDeletePopup = () => {
+    showDeletePopup.value = false;
 };
 
 const confirmDelete = async () => {
-    const accountId = route.params.accountId;
+    const salesOppId = route.params.salesOppId;
     try {
         const response = await axios.post('http://localhost:7775/sales_opportunity/delete', {
-            accountDeleteRequestReason: deleteReason.value,
-            account: accountData.value
+            salesOppDeleteRequestReason: deleteReason.value,
+            salesOpp: salesOppData.value
         });
-        console.log('Account delete request sent successfully:', response.data);
+        console.log('salesOpp delete request sent successfully:', response.data);
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/customer/list'); // 삭제 요청 후 이동
+        router.push('/salesOpp/list'); // 삭제 요청 후 이동
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
     } finally {
-        closePopup();
+        closeDeletePopup();
     }
+};
+
+const openStatusPopup = () => {
+    showStatusPopup.value = true;
+};
+
+const closeStatusPopup = () => {
+    showStatusPopup.value = false;
+};
+
+const confirmStatusChange = async () => {
+    const salesOppId = route.params.salesOppId;
+    try {
+        // 변경할 상태의 ID를 사용하여 요청을 보냅니다
+        const statusId = getStatusIdByName(newStatus.value);
+        const response = await axios.patch(`http://localhost:7775/sales_opportunity/status/${salesOppId}`, {
+            salesOppStatus: { salesOppStatusId: statusId }
+        });
+        salesOppData.value.salesOppStatus.salesOppStatus = newStatus.value; // 상태 업데이트
+        console.log('salesOpp status change request sent successfully:', response.data);
+        alert('상태가 성공적으로 변경되었습니다.');
+    } catch (error) {
+        console.error('Error changing salesOpp status:', error);
+        alert('상태 변경 중 오류가 발생했습니다.');
+    } finally {
+        closeStatusPopup();
+    }
+};
+
+// 상태 이름으로 상태 ID를 조회하는 함수 (예: 서버에서 가져온 상태 목록을 사용)
+const getStatusIdByName = (statusName) => {
+    const statusMapping = {
+        '기회 인지': 1,
+        '협상': 2,
+        '종료': 3
+    };
+    return statusMapping[statusName];
 };
 </script>
 
 <style>
-    @import url('@/assets/css/order/OrderContents.css');
+@import url('@/assets/css/order/OrderContents.css');
 </style>

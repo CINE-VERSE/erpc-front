@@ -34,6 +34,7 @@ import ApprovalList from '@/components/approval/ApprovalList.vue';
 import SalesOppRegist from '@/components/salesopp/SalesOppRegist.vue';
 import SalesOppList from '@/components/salesopp/SalesOppList.vue';
 import SalesOppContent from '@/components/salesopp/SalesOppContent.vue';
+import SalesOppEdit from '@/components/salesopp/SalesOppEdit.vue';
 
 import ItemList from '@/components/logistics/ItemList.vue';
 import StorageList from '@/components/logistics/StorageList.vue';
@@ -149,8 +150,12 @@ const routes = [
         component: SalesOppList
     },
     {
-        path: '/salesopp/contents',
+        path: '/salesopp/:salesOppId',
         component: SalesOppContent
+    },
+    {
+        path: '/salesopp/modify/:salesOppId',
+        component: SalesOppEdit
     },
     {
         path: '/item/list',
