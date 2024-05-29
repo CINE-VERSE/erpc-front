@@ -97,5 +97,5 @@ function editPost() {
   </script>
   
   <style scoped>
-  @import url('@/assets/css/notice/NoticeContent.css'); 
+  /* @import url('@/assets/css/notice/NoticeContent.css');  */
   </style>
