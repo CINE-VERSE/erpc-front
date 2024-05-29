@@ -34,7 +34,8 @@
                         <td>{{ order.orderTotalPrice.toLocaleString() }}</td>
                         <td>{{ order.orderDate }}</td>
                         <td>{{ order.depositDate || 'N/A' }}</td>
-                        <td>{{ order.shipmentStatus.shipmentStatus }}</td>
+                        <td></td>
+                        <!-- <td>{{ order.shipmentStatus.shipmentStatus }}</td> -->
                         <td>{{ order.employee.employeeName }}</td>
                     </tr>
                 </tbody>

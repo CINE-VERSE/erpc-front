@@ -30,11 +30,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>2024.04.30</td>
-                        <td></td>
-                        <td>2024.04.30</td>
-                        <td>2024.04.30</td>
-                        <td></td>
+                        <td>{{ orderData.orderDate }}</td>
+                        <td>{{ orderData.orderDeleteDate }}</td>
+                        <td>{{ orderData.approvalDate }}</td>
+                        <td>{{ orderData.contractDate }}</td>
+                        <td>{{ orderData.depositDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -51,12 +51,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>PJ-20240508001</td>
-                        <td>유관순</td>
-                        <td>AC-20240430001</td>
-                        <td>A-회사</td>
-                        <td>15,000,000</td>
-                        <td>6,000,000</td>
+                        <td>{{ orderData.projectCode }}</td>
+                        <td>{{ orderData.employee.employeeName }}</td>
+                        <td>{{ orderData.account.accountCode }}</td>
+                        <td>{{ orderData.account.accountName }}</td>
+                        <td>{{ orderData.orderTotalPrice }}</td>
+                        <td>{{ orderData.totalBalance }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -72,13 +72,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>COM-001</td>
-                        <td>LG 콤퓨타</td>
-                        <td>5</td>
-                        <td>1,800,000</td>
-                        <td>9,000,000</td>
-                        <td></td>
+                    <tr v-for="product in orderData.orderProduct" :key="product.product.productId">
+                        <td>{{ product.product.productCode }}</td>
+                        <td>{{ product.product.productName }}</td>
+                        <td>{{ product.orderProductCount }}</td>
+                        <td>{{ product.product.productPrice }}</td>
+                        <td>{{ product.orderSupplyPrice }}</td>
+                        <td>{{ product.orderProductionNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -96,13 +96,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>WH-001</td>
-                        <td>강남 창고</td>
-                        <td>창고</td>
-                        <td>서울특별시 강남구 강남대로 11</td>
-                        <td>Y</td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ orderData.warehouse.warehouseCode }}</td>
+                        <td>{{ orderData.warehouse.warehouseName }}</td>
+                        <td>{{ orderData.warehouse.warehouseType }}</td>
+                        <td>{{ orderData.warehouse.warehouseLocation }}</td>
+                        <td>{{ orderData.warehouse.warehouseUsage }}</td>
+                        <td>{{ orderData.warehouse.productionLineName }}</td>
+                        <td>{{ orderData.warehouse.outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -114,7 +114,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
+                        <td>{{ orderData.orderNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -129,10 +129,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="test">분할 납부</td>
-                        <td>1,500,000</td>
-                        <td>7,000,000</td>
-                        <td>6,500,000</td>
+                        <td class="test">{{ orderData.contractCategory.contractCategory }}</td>
+                        <td>{{ orderData.downPayment }}</td>
+                        <td>{{ orderData.progressPayment }}</td>
+                        <td>{{ orderData.balance }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -194,7 +194,7 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="shipment-table2">
+            <!-- <table class="shipment-table2">
                 <thead>
                     <tr>
                         <th>수령인</th>
@@ -215,14 +215,14 @@
                         <td>CJ 대한통운</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> -->
         </div>
         <div class="order-process-box">
             <h1 class="order-process-text">Process</h1>
             <div class="order-process-box-detail">
                 <div class="order-process-info">
-                    <h4 class="order-process-writer">민중원 과장</h4>
-                    <p class="order-process-date">2024-04-01</p>
+                    <h4 class="order-process-writer">{{ orderData.employee.employeeName }} {{ orderData.employee.employeeRank.employeeRank }}</h4>
+                    <p class="order-process-date">{{ orderData.orderDate }}</p>
                 </div>
                 <button class="order-process-detail">
                     프로젝트 진행 정보 공유합니다~
@@ -241,9 +241,367 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
+const orderData = ref(null);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/order/2'); // 필요한 경로로 변경
+        orderData.value = response.data;
+    } catch (error) {
+        console.error('Error fetching order data:', error);
+    }
+});
 </script>
 
 <style>
-    @import url('@/assets/css/order/OrderContents.css');
+.order-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.order-search {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.maintext,
+.maintext2,
+.maintext3,
+.maintext4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maintext2,
+.maintext4 {
+    color: #0C2092;
+}
+
+.order-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.pdfimage {
+    width: 50px;
+    height: auto;
+    cursor: pointer;
+}
+
+.order-edit,
+.order-delete {
+    width: 60px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.order-delete {
+    margin-right: 15px;
+}
+
+.order-request {
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;   
+}
+
+.order-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #BEE7FF;
+    border: 2px solid #BEE7FF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 350px;
+    height: 150px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.order-pdf1,
+.order-pdf2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 270px;
+}
+
+.order-pdf1:hover,
+.order-pdf2:hover {
+    background-color: #d5e6ff;
+}
+
+.pdfimage1,
+.pdfimage2 {
+    width: 30px;
+    height: auto;
+    margin-left: 5px;
+    margin-right: -10px;
+}
+
+.order-list-box2,
+.shipment-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    margin-bottom: 20px;
+    gap: 1px;
+}
+
+.order2-table1,
+.order2-table2,
+.order2-table3,
+.order2-table4,
+.order2-table5,
+.order2-table6,
+.order2-table7,
+.shipment-table1,
+.shipment-table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.order2-table1 th,
+.order2-table1 td,
+.order2-table2 th,
+.order2-table2 td,
+.order2-table3 th,
+.order2-table3 td,
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td,
+.order2-table6 th,
+.order2-table6 td,
+.order2-table7 th,
+.order2-table7 td,
+.shipment-table1 th,
+.shipment-table1 td,
+.shipment-table2 th,
+.shipment-table2 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.order2-table1 th,
+.order2-table2 th,
+.order2-table3 th,
+.order2-table4 th,
+.order2-table5 th,
+.order2-table6 th,
+.order2-table7 th,
+.shipment-table1 th,
+.shipment-table2 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.order2-table1 td,
+.order2-table2 td,
+.order2-table3 td,
+.order2-table4 td,
+.order2-table5 td,
+.order2-table6 td,
+.order2-table7 td,
+.shipment-table1 td,
+.shipment-table2 td {
+    height: 40px;
+}
+
+.test {
+    background-color: #d5e6ff;
+}
+
+.shipment-table1 th,
+.shipment-table1 td {
+    background-color: #D3F9E0;
+}
+
+.shipment-table2 {
+    margin-bottom: 7%;
+}
+
+.order-process-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #CCEAFF;
+    border: 2px solid #CCEAFF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    margin-top: 30px;
+    height: auto;
+    flex-direction: column;
+    margin-bottom: 7%;
+}
+
+.order-process-text {
+    margin-bottom: 20px;
+    color: #0C2092;
+}
+
+.order-process-box-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.order-process-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-process-writer {
+    margin: 0;
+    margin-left: 45px;
+}
+
+.order-process-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 93%;
+    height: auto;
+    margin-left: 40px;
+    margin-top: -10px;
+    font-weight: normal;
+}
+
+.order-process-date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F6E5FF;
+    border: 2px solid #F6E5FF;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: normal;
+    color: black;
+    margin-right: 45px;
+}
+
+.order-process-btn {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.order-process-edit,
+.order-process-delete {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.order-process-delete {
+    margin-right: 46px;
+}
+
+.order-process-reply {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.order-process-reply-box {
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    width: 90.5%;
+    height: auto;
+    font-weight: normal;
+}
+
+.order-process-regist {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    width: 95px;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-left: 992px;
+    cursor: pointer;
+    margin-bottom: 7px;
+}
 </style>

@@ -34,7 +34,8 @@
                         <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contract.contractDate }}</td>
                         <td>{{ contract.contractDueDate }}</td>
-                        <td>{{ contract.contractStatus || 'N/A' }}</td>
+                        <td></td>
+                        <!-- <td>{{ contract.contractStatus || 'N/A' }}</td> -->
                         <td>{{ contract.employee.employeeName }}</td>
                     </tr>
                 </tbody>
