@@ -234,8 +234,8 @@ const registerOrder = async () => {
         balance: contractData.value.balance,
         orderNote: contractData.value.contractNote,
         employee: {
-            employeeId: contractData.value.employee.employeeId,
-            employeeCode: contractData.value.employee.employeeCode
+            employeeId: contractData.value.employee.employeeId
+            // employeeCode: contractData.value.employee.employeeCode
         },
         account: {
             accountId: contractData.value.account.accountId
