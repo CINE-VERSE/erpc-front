@@ -12,6 +12,7 @@
                 <div class="customer-code-text">거래처 코드</div>
                 <button class="customer-code-box">{{ accountData.accountCode }}</button>
             </div>
+
         </div>
         <div class="customer-content2">
             <div class="customer-list-box1">
@@ -85,7 +86,8 @@
             </div>
             <div class="project-employee">
                 <p class="project-employee-text">담당자</p>
-                <button class="project-employee-box" id="project-employee-box">{{ accountData.employee?.employeeName }}</button>
+                <button class="project-employee-box" id="project-employee-box">{{ accountData.employee?.employeeName
+                    }}</button>
             </div>
         </div>
         <div class="customer-process-box">
@@ -173,5 +175,5 @@ const confirmDelete = async () => {
 </script>
 
 <style>
-    @import url('@/assets/css/customer/CustomerContents.css');
+@import url('@/assets/css/customer/CustomerContents.css');
 </style>

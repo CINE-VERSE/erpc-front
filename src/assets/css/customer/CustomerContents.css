@@ -35,6 +35,8 @@
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
+    user-select: text;
+    cursor: pointer;
 }
 
 .customer-box {
