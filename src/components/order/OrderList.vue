@@ -28,14 +28,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="order in filteredOrders" :key="order.id"  @click="goToOrderContents(order.code)">
-                        <td>{{ order.id }}</td>
-                        <td>{{ order.projectCode }}</td>
-                        <td>{{ order.amount }}</td>
-                        <td>{{ order.creationDate }}</td>
-                        <td>{{ order.dueDate }}</td>
-                        <td>{{ order.status }}</td>
-                        <td>{{ order.inCharge }}</td>
+                    <tr v-for="order in filteredOrders" :key="order.orderRegistrationId" @click="goToOrderContents(order.orderRegistrationId)">
+                        <td>{{ order.orderRegistrationId }}</td>
+                        <td>{{ order.transaction.transactionCode }}</td>
+                        <td>{{ order.orderTotalPrice.toLocaleString() }}</td>
+                        <td>{{ order.orderDate }}</td>
+                        <td>{{ order.depositDate || 'N/A' }}</td>
+                        <td></td>
+                        <!-- <td>{{ order.shipmentStatus.shipmentStatus }}</td> -->
+                        <td>{{ order.employee.employeeName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -44,18 +45,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const orders = ref([
-    { id: 1, projectCode: 'PJ-20240508001', amount: '600,000', creationDate: '2024-04-01', dueDate: '2025-04-04', status: '진행중', inCharge: '유관순' },
-    { id: 2, projectCode: 'PJ-20240508002', amount: '500,000', creationDate: '2024-04-01', dueDate: '2025-04-04', status: '진행중', inCharge: '이순신' }
-]);
+const orders = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('프로젝트 코드');
-const filteredOrders = ref(orders.value);
+const filteredOrders = ref([]);
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/order');
+        orders.value = response.data;
+        filteredOrders.value = orders.value;
+    } catch (error) {
+        console.error('Error fetching order data:', error);
+    }
+});
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;
@@ -67,16 +76,16 @@ function applyFilter() {
     } else {
         filteredOrders.value = orders.value.filter(order => {
             if (searchBy.value === '프로젝트 코드') {
-                return order.projectCode.includes(searchQuery.value);
+                return order.transaction.transactionCode.includes(searchQuery.value);
             } else if (searchBy.value === '담당자') {
-                return order.inCharge.includes(searchQuery.value);
+                return order.employee.employeeName.includes(searchQuery.value);
             }
         });
     }
 }
 
-function goToOrderContents(orderCode) {
-    router.push({ path: '/order/contents', query: { code: orderCode } });
+function goToOrderContents(orderRegistrationId) {
+    router.push({ path: `/order/contents`, query: { id: orderRegistrationId } });
 }
 </script>
 

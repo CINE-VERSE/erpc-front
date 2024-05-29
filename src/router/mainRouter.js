@@ -106,7 +106,7 @@ const routes = [
         component: OrderRegist
     },
     {
-        path: '/order/list',
+        path: '/order',
         component: OrderList
     },
     {

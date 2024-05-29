@@ -103,7 +103,7 @@
                         <td>{{ contractData.account.accountName }}</td>
                         <td>{{ contractData.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contractData.contractDueDate }}</td>
-                        <td class="contract-contents-test1"><input type="text" v-model="contractNote" class="contract-test5"></td>
+                        <td>{{ contractData.contractNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -118,24 +118,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="test1">
-                            <div class="contract-dropdown1">
-                                <button class="contract-dropdown-btn1">{{ searchBy }} ▼</button>
-                                <div class="contract-dropdown-content1">
-                                    <a href="#" @click.prevent="setSearchBy('일시납부')">일시납부</a>
-                                    <a href="#" @click.prevent="setSearchBy('분할납부')">분할납부</a>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <input type="text" v-model="downPayment" class="contract-test6">
-                        </td>
-                        <td>
-                            <input type="text" v-model="progressPayment" class="contract-test7" :disabled="searchBy === '일시납부'">
-                        </td>
-                        <td>
-                            <input type="text" v-model="balance" class="contract-test8" :disabled="searchBy === '일시납부'">
-                        </td>
+                        <td class="test">{{ searchBy }}</td>
+                        <td>{{ contractData.downPayment.toLocaleString() }}</td>
+                        <td>{{ contractData.progressPayment.toLocaleString() }}</td>
+                        <td>{{ contractData.balance.toLocaleString() }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -187,10 +173,6 @@ const contractData = ref(null);
 const showPopup = ref(false);
 const deleteReason = ref('');
 
-const contractNote = ref('');
-const downPayment = ref(0);
-const progressPayment = ref(0);
-const balance = ref(0);
 const searchBy = ref('분할납부');
 
 onMounted(async () => {
@@ -205,10 +187,6 @@ onMounted(async () => {
 });
 
 const populateFields = (data) => {
-    contractNote.value = data.contractNote;
-    downPayment.value = data.downPayment;
-    progressPayment.value = data.progressPayment;
-    balance.value = data.balance;
     searchBy.value = data.contractCategory.contractCategoryId === 1 ? '일시납부' : '분할납부';
 };
 
@@ -251,17 +229,328 @@ const confirmDelete = async () => {
         closePopup();
     }
 };
-
-const setSearchBy = (criteria) => {
-    searchBy.value = criteria;
-    if (criteria === '일시납부') {
-        progressPayment.value = 0;
-        balance.value = 0;
-    }
-};
-
 </script>
 
 <style>
-@import url('@/assets/css/contract/ContractContents.css');
+.contract-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.contract-search {
+    text-align: center;
+    margin-top: 3%;
+}
+
+.maintext,
+.maintext2,
+.maintext3,
+.maintext4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.maintext2,
+.maintext4 {
+    color: #0C2092;
+}
+
+.contract-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.pdfimage {
+    width: 50px;
+    height: auto;
+    cursor: pointer;
+}
+
+.contract-edit,
+.contract-delete {
+    width: 60px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.contract-delete {
+    margin-right: 15px;
+}
+
+.contract-request {
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+.contract-pdf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #BEE7FF;
+    border: 2px solid #BEE7FF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 350px;
+    height: 150px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.contract-pdf1,
+.contract-pdf2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 270px;
+}
+
+.contract-pdf1:hover,
+.contract-pdf2:hover {
+    background-color: #d5e6ff;
+}
+
+.pdfimage1,
+.pdfimage2 {
+    width: 30px;
+    height: auto;
+    margin-left: 5px;
+    margin-right: -10px;
+}
+
+.contract-list-box2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    margin-bottom: 20px;
+    gap: 1px;
+}
+
+.contract2-table1,
+.contract2-table2,
+.contract2-table3,
+.contract2-table4,
+.contract2-table5 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.contract2-table1 th,
+.contract2-table1 td,
+.contract2-table2 th,
+.contract2-table2 td,
+.contract2-table3 th,
+.contract2-table3 td,
+.contract2-table4 th,
+.contract2-table4 td,
+.contract2-table5 th,
+.contract2-table5 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.contract2-table1 th,
+.contract2-table2 th,
+.contract2-table3 th,
+.contract2-table4 th,
+.contract2-table5 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.contract2-table1 td,
+.contract2-table2 td,
+.contract2-table3 td,
+.contract2-table4 td,
+.contract2-table5 td {
+    height: 40px;
+}
+
+.test {
+    background-color: #d5e6ff;
+}
+
+.contract-process-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #CCEAFF;
+    border: 2px solid #CCEAFF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: 1200px;
+    margin-bottom: 20px;
+    font-family: GmarketSansMedium;
+    font-size: 17px;
+    margin-top: 30px;
+    height: auto;
+    flex-direction: column;
+    margin-bottom: 7%;
+}
+
+.contract-process-text {
+    margin-bottom: 20px;
+    color: #0C2092;
+}
+
+.contract-process-box-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.contract-process-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.contract-process-writer {
+    margin: 0;
+    margin-left: 45px;
+}
+
+.contract-process-detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 93%;
+    height: auto;
+    margin-left: 40px;
+    margin-top: -10px;
+    font-weight: normal;
+}
+
+.contract-process-date {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F6E5FF;
+    border: 2px solid #F6E5FF;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: normal;
+    color: black;
+    margin-right: 45px;
+}
+
+.contract-process-btn {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.contract-process-edit,
+.contract-process-delete {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.contract-process-delete {
+    margin-right: 46px;
+}
+
+.contract-process-reply {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.contract-process-reply-box {
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 15px;
+    outline: none;
+    color: black;
+    width: 90.5%;
+    height: auto;
+    font-weight: normal;
+}
+
+.contract-process-regist {
+    background-color: #0C2092;
+    border: 2px solid #0C2092;
+    width: 95px;
+    color: white;
+    border-radius: 10px;
+    padding: 5px 7px;
+    margin-left: 992px;
+    cursor: pointer;
+    margin-bottom: 7px;
+}
+
+.contract-contents-test1 {
+    width: 300px;
+}
 </style>

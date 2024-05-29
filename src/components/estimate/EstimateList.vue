@@ -31,10 +31,11 @@
                     <tr v-for="(estimate, index) in filteredEstimates" :key="estimate.quotationId" @click="goToEstimateContents(estimate.quotationId)">
                         <td>{{ index + 1 }}</td>
                         <td>{{ estimate.quotationCode }}</td>
-                        <td>{{ estimate.quotationTotalCost }}</td>
+                        <td>{{ estimate.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ estimate.quotationDate }}</td>
                         <td>{{ estimate.quotationDueDate }}</td>
-                        <td>{{ estimate.status }}</td>
+                        <td></td>
+                        <!-- <td>{{ estimate.status }}</td> -->
                         <td>{{ estimate.employee.employeeName }}</td>
                     </tr>
                 </tbody>

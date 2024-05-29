@@ -65,7 +65,7 @@ const menuItems = ref([
     title: '수주 관리',
     subItems: [
       { title: '수주 등록', path: '/order/regist' },
-      { title: '수주 목록', path: '/order/list' }
+      { title: '수주 목록', path: '/order' }
     ],
     isOpen: false
   },
