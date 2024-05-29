@@ -1,5 +1,5 @@
 <template>
-    <div class="order-content">
+    <div class="order-content" v-if="orderData">
         <div class="order-search">
             <h1 class="maintext">수주 정보 조회 내역</h1>
             <h3 class="maintext2">결재 승인</h3>
@@ -32,9 +32,9 @@
                     <tr>
                         <td>{{ orderData.orderDate }}</td>
                         <td>{{ orderData.orderDeleteDate }}</td>
-                        <td>{{ orderData.approvalDate }}</td>
-                        <td>{{ orderData.contractDate }}</td>
-                        <td>{{ orderData.depositDate }}</td>
+                        <td></td>
+                        <td>{{ orderData.contactDate }}</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -51,12 +51,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.projectCode }}</td>
+                        <td></td>
                         <td>{{ orderData.employee.employeeName }}</td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.accountName }}</td>
                         <td>{{ orderData.orderTotalPrice }}</td>
-                        <td>{{ orderData.totalBalance }}</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -238,18 +238,28 @@
             </div>
         </div>
     </div>
+    <div v-else>
+        Loading...
+    </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
+const orderId = route.params.orderId;
 const orderData = ref(null);
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://localhost:7775/order/2'); // 필요한 경로로 변경
-        orderData.value = response.data;
+        if (orderId) {
+            const response = await axios.get(`http://localhost:7775/order/${orderId}`);
+            orderData.value = response.data;
+        } else {
+            console.error('Order ID is undefined');
+        }
     } catch (error) {
         console.error('Error fetching order data:', error);
     }

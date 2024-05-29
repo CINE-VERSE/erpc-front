@@ -109,7 +109,7 @@ const routes = [
         component: OrderList
     },
     {
-        path: '/order/contents',
+        path: '/order/:orderId',
         component: OrderContents
     },
     {
