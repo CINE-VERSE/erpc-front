@@ -35,7 +35,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="estimate-attachment">
+        <!-- <div class="estimate-attachment">
             <div class="estimate-attachment-header">
                 <h2 class="estimate-file">첨부파일</h2>
                 <img src="@/assets/img/pdf.png" class="estimate-pdfimage">
@@ -46,7 +46,7 @@
                     <span class="file-name">제품 카탈로그.pdf</span>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="estimate-regist-btn-div">
             <button class="estimate-regist-btn" @click="registSalesOpp">영업기회 등록하기</button>
         </div>
@@ -66,7 +66,7 @@ const newOpp = ref({
     oppAccountEmail:'a@naver.com',
     salesOppStatus: { salesOppStatusId: 1 }, // 기본 상태 ID 설정
     employee: {
-            employeeId: 1
+            employeeId: 5
         },
 });
 
