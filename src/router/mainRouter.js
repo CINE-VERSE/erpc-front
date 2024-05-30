@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { requirePermission } from '@/components/auth';
 
 import Main from '@/components/main/Main.vue';
 
@@ -52,47 +53,9 @@ import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
 import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
 import EmployeeApp from '@/components/employee/EmployeeApp.vue';
 
-import axios from 'axios';
-const getUserIdFromLocalStorage = () => {
-    // localStorage에서 userId 가져오기
-    return localStorage.getItem('userId');
-};
-const getEmployeeAccess = async (userId) => {
-    try {
+import DeleteRequest from '@/components/delete/DeleteRequest.vue'; 
 
-        const response = await axios.get(`http://localhost:7775/access/find_access/${userId}`);
-        console.log('응답 데이터:', response.data); // 서버 응답 데이터 출력
-        const accessId = Response.data.accessId;
-        
-        return accessId;
-    } catch (error) {
-        console.error('사용자 권한 조회 중 오류:', error);
-        throw error;
-    }
-};
-const requirePermission = async (to, from, next) => {
-    try {
-        // localStorage에서 userId 가져오기
-        const userId = getUserIdFromLocalStorage();
 
-        // 사용자의 userId를 이용하여 해당 사용자의 accessId 가져오기
-        const accessId = await getEmployeeAccess(userId);
-
-        // accessId가 1이면 허용
-        if (accessId === 1) {
-            next();
-        } else {
-            // 접근이 거부된 경우
-            alert('접근이 거부되었습니다.');
-            next(false);
-        }
-    } catch (error) {
-        console.error('사용자 권한 확인 중 오류:', error);
-        // 접근이 거부된 경우
-        alert('접근이 거부되었습니다.');
-        next(false);
-    }
-};
 const routes = [
     {
         path: '/',
@@ -100,7 +63,8 @@ const routes = [
     },
     {
         path: '/customer/regist',
-        component: CustomerRegist
+        component: CustomerRegist,
+        beforeEnter: requirePermission(7)
     },
     {
         path: '/customer/list',
@@ -108,7 +72,8 @@ const routes = [
     },
     {
         path: '/customer/:accountId',
-        component: CustomerContents
+        component: CustomerContents,
+        beforeEnter: requirePermission(6)
     },
     {
         path: '/customer/modify/:accountId',
@@ -116,7 +81,8 @@ const routes = [
     },
     {
         path: '/estimate/regist',
-        component: EstimateRegist
+        component: EstimateRegist,
+        beforeEnter: requirePermission(10)
     },
     {
         path: '/estimate',
@@ -124,7 +90,8 @@ const routes = [
     },
     {
         path: '/estimate/:quotationId',
-        component: EstimateContents
+        component: EstimateContents,
+        beforeEnter: requirePermission(9)
     },
     {
         path: '/estimate/modify/:quotationId',
@@ -132,15 +99,18 @@ const routes = [
     },
     {
         path: '/contract/regist',
-        component: ContractRegist
+        component: ContractRegist,
+        beforeEnter: requirePermission(13)
     },
     {
         path: '/contract',
         component: ContractList
+        
     },
     {
         path: '/contract/:contractId',
-        component: ContractContents
+        component: ContractContents,
+        beforeEnter: requirePermission(12)
     },
     {
         path: '/contract/modify/:contractId',
@@ -148,7 +118,8 @@ const routes = [
     },
     {
         path: '/order/regist',
-        component: OrderRegist
+        component: OrderRegist,
+        beforeEnter: requirePermission(13)
     },
     {
         path: '/order',
@@ -156,7 +127,8 @@ const routes = [
     },
     {
         path: '/order/:orderId',
-        component: OrderContents
+        component: OrderContents,
+        beforeEnter: requirePermission(14)
     },
     {
         path: '/order/modify/:orderId',
@@ -192,15 +164,18 @@ const routes = [
     },
     {
         path: '/salesopp/regist',
-        component: SalesOppRegist
+        component: SalesOppRegist,
+        beforeEnter: requirePermission(4)
     },
     {
         path: '/salesopp/list',
         component: SalesOppList
+        
     },
     {
         path: '/salesopp/:salesOppId',
-        component: SalesOppContent
+        component: SalesOppContent,
+        beforeEnter: requirePermission(3)
     },
     {
         path: '/salesopp/modify/:salesOppId',
@@ -208,15 +183,18 @@ const routes = [
     },
     {
         path: '/item/list',
-        component: ItemList
+        component: ItemList,
+        beforeEnter: requirePermission(21)
     },
     {
         path: '/storage/list',
-        component: StorageList
+        component: StorageList,
+        beforeEnter: requirePermission(21)
     },
     {
         path: '/notice/regist',
-        component: NoticeRegist
+        component: NoticeRegist,
+        beforeEnter: requirePermission(2)
     },
     {
         path: '/notice/list',
@@ -225,7 +203,7 @@ const routes = [
     {
         path: '/notice/:noticeId',
         component: NoticeContent,
-        beforeEnter: requirePermission
+        beforeEnter: requirePermission(1)
     },
     {
         path: '/notice/modify/:noticeId',
@@ -236,6 +214,7 @@ const routes = [
     { path: '/employees/register', component: RegisterEmployee },
     { path: '/employees/access', component: EmployeeAccess },
     { path: '/employees/app', component: EmployeeApp },
+    { path: '/delete' , component: DeleteRequest },
 ];
 
 const router = createRouter({
