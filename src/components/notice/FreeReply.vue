@@ -193,4 +193,4 @@ onMounted(async () => {
   content: '✖'; /* 버튼 안에 X 기호 추가 */
   font-size: 16px; /* X 기호 크기 */
 }
-</style>
+</style >

@@ -6,7 +6,7 @@
         <h2>영업기회 삭제 요청</h2>
         <ul>
           <li v-for="request in salesOppDeleteRequests" :key="request.id">
-            {{ request.name }} - {{ request.status }}
+            {{ request.salesOppDeleteRequestId }} - {{ request.salesOppDeleteRequestReason }}
             <button @click="processSalesOppDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>
@@ -16,7 +16,7 @@
         <h2>계약서 삭제 요청</h2>
         <ul>
           <li v-for="request in contractDeleteRequests" :key="request.id">
-            {{ request.name }} - {{ request.status }}
+            {{ request.name }}  {{ request }} -
             <button @click="processContractDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>

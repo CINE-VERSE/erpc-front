@@ -18,8 +18,8 @@ class DeleteService {
     return this.api.get(`/sales_opp/${id}`);
   }
 
-  updateSalesOppDeleteRequestStatus(id, data) {
-    return this.api.patch(`/sales_opp/status/${id}`, data);
+  updateSalesOppDeleteRequestStatus(salesOppDeleteRequestId, data) {
+    return this.api.patch(`/sales_opp/permission/${salesOppDeleteRequestId}`, data);
   }
 
   // Contract Delete Requests
