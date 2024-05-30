@@ -1,31 +1,74 @@
 <template>
-    <div>
-      <h1>Employee Detail</h1>
-      <p>ID: {{ employee.employeeId }}</p>
-      <p>Name: {{ employee.employeeName }}</p>
-      <p>Email: {{ employee.email }}</p>
-      <p>Password: {{ employee.password }}</p>
-      <!-- 추가 정보 표시 -->
-    </div>
-  </template>
-  
-  <script>
-   import axios from "axios";
+  <div>
+    <h1>사원 상세 정보</h1>
+    <p>사원 코드: {{ employee.employeeCode }}</p>
+    <p>이름: {{ employee.employeeName }}</p>
+    <p>이메일: {{ employee.employeeEmail }}</p>
+    <p>전화번호: {{ employee.employeeHp }}</p>
+    <p>사원 번호: {{ employee.employeeNumber }}</p>
+    <p>입사일: {{ employee.employmentDate }}</p>
+    <p>직급: {{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</p>
+    <p>팀: {{ mapTeamCode(employee.teamCode.teamCodeId) }}</p>
+  </div>
+</template>
 
-   const axiosInstance = axios.create({
+<script>
+import axios from "axios";
+
+const axiosInstance = axios.create({
   baseURL: 'http://localhost:7775/employees', // Spring Boot 서버의 URL
 });
-  
-  export default {
-    data() {
-      return {
-        employee: {},
-      };
-    },
-    async created() {
+
+export default {
+  data() {
+    return {
+      employee: {},
+    };
+  },
+  async created() {
+    try {
       const employeeId = this.$route.params.employeeId;
-      const response = await axios.get(`/${employeeId}`);
+      const response = await axiosInstance.get(`/${employeeId}`);
       this.employee = response.data;
+    } catch (error) {
+      console.error('Error fetching employee details:', error);
+    }
+  },
+  methods: {
+    mapEmployeeRank(rankId) {
+      switch(parseInt(rankId)) {
+        case 1:
+          return '사원';
+        case 2:
+          return '대리';
+        case 3:
+          return '과장';
+        case 4:
+          return '팀장';
+        case 5:
+          return '관리자';
+        default:
+          return '직급 미정';
+      }
     },
-  };
-  </script>
+    mapTeamCode(teamCodeId) {
+  switch(parseInt(teamCodeId)) {
+        case 1:
+          return '영업 1팀';
+        case 2:
+          return '영업 2팀';
+        case 3:
+          return '영업 3팀';
+        case 4:
+          return '영업 4팀';
+        case 5:
+          return '영업 5팀';
+        case 6:
+          return '관리자';
+        default:
+          return '팀 미정';
+      }
+    }
+  }
+};
+</script>

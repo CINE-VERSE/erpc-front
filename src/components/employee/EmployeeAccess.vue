@@ -1,65 +1,87 @@
 <template>
-    <div>
+  <div class="access-request-container">
+    <!-- 권한 신청 섹션 -->
+    <!-- <div class="section access-form">
       <h2>권한 신청</h2>
       <form @submit.prevent="submitAccessRequest">
-        <div>
+        <div class="form-group">
           <label for="employeeId">사원 ID:</label>
           <input v-model="requestAccess.employee.employeeId" id="employeeId" required>
         </div>
-        <div>
+        <div class="form-group">
           <label for="accessId">권한 ID:</label>
           <input v-model="requestAccess.accessRight.accessId" id="accessId" required>
         </div>
         <button type="submit">신청</button>
       </form>
-  
+    </div> -->
+
+    <!-- 권한 신청 상태 조회 섹션 -->
+    <div class="section access-status">
       <h2>권한 신청 상태 조회</h2>
-      <input v-model="accessRequestId" placeholder="권한 신청 ID">
-      <button @click="getAccessRequestById">조회</button>
-      <div v-if="accessRequest">
+      <div class="form-group">
+        <input v-model="accessRequestId" placeholder="권한 신청 ID">
+        <button @click="getAccessRequestById">조회</button>
+      </div>
+      <div v-if="accessRequest" class="access-details">
         <p>이름: {{ accessRequest.employee.employeeName }}</p>
         <p>권한내용: {{ accessRequest.accessRight.accessRight }}</p>
       </div>
-  
-      <h2>보유 권한 조회</h2>
-      <input v-model="employeeId" placeholder="사원 ID">
-      <button @click="getEmployeesAccess">조회</button>
-      <div v-if="employeeAccess.length">
-        <h3>사원 정보</h3>
-        <p>이름: {{ employeeAccess[0]?.employee?.employeeName }}</p>
-        <h3>권한 목록</h3>
-        <div v-for="right in allAccessRights" :key="right.accessId">
-          <input type="checkbox" :value="right.accessId" v-model="employeeCheckedAccessRights" disabled>
-          {{ right.accessRight }}
-        </div>
-      </div>
-  
+    </div>
+
+    <!-- 모든 권한 신청 조회 섹션 -->
+    <div class="section all-requests">
       <h2>모든 권한 신청 조회</h2>
       <button @click="getAllAccessRequests">조회</button>
-      <ul v-if="allAccessRequests.length">
+      <ul v-if="allAccessRequests.length" class="request-list">
         <li v-for="request in allAccessRequests" :key="request.accessRequestId">
           {{ request.accessRequestId }} - {{ request.employee.employeeName }} - {{ request.accessRight.accessRight }}
         </li>
       </ul>
-  
-      <h2>추가 권한 등록</h2>
-    <form @submit.prevent="submitAddAccess">
-      <div>
-        <label for="employeeId">사원 ID:</label>
-        <input v-model="addAccess.employee.employeeId" id="employeeId" required>
+    </div>
+
+    <!-- 권한 관리 섹션 -->
+    <div class="section access-management">
+      <!-- 추가 권한 등록 섹션 -->
+      <div class="access-panel">
+        <h2>추가 권한 등록</h2>
+        <form @submit.prevent="submitAddAccess">
+          <div class="form-group">
+            <label for="employeeId">사원 ID:</label>
+            <input v-model="addAccess.employee.employeeId" id="employeeId" required>
+          </div>
+          <div class="form-group access-rights">
+            <label for="accessRights">권한 목록:</label>
+            <div v-for="i in 21" :key="i" class="access-checkbox">
+              <input type="checkbox" :value="i" v-model="selectedAccessRights">
+              {{ accessRightsMap[i] }}
+            </div>
+          </div>
+          <button type="submit">등록</button>
+        </form>
       </div>
-      <div>
-  <label for="accessRights">권한 목록:</label>
-  <div v-for="i in 21" :key="i">
-    <input type="checkbox" :value="i" v-model="selectedAccessRights">
-    {{ accessRightsMap[i] }} <!-- accessRightsMap에 매핑된 권한 이름 출력 -->
-  </div>
-</div>
-      <button type="submit">등록</button>
-    </form>
+
+      <!-- 보유 권한 조회 섹션 -->
+      <div class="access-panel">
+        <h2>보유 권한 조회</h2>
+        <div class="form-group">
+          <input v-model="employeeId" placeholder="사원 ID">
+          <button @click="getEmployeesAccess">조회</button>
+        </div>
+        <div v-if="employeeAccess.length">
+          <h3>사원 정보</h3>
+          <p>이름: {{ employeeAccess[0]?.employee?.employeeName }}</p>
+          <h3>권한 목록</h3>
+          <div v-for="right in allAccessRights" :key="right.accessId">
+            <input type="checkbox" :value="right.accessId" v-model="employeeCheckedAccessRights" disabled>
+            {{ right.accessRight }}
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-  
+
   <script setup>
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
@@ -118,7 +140,7 @@ const accessRightsMap = {
   // 나머지 권한들을 추가로 매핑
 };
 
-  // Function to aggregate all access rights from existing API responses
+  
   const aggregateAllAccessRights = (data) => {
     const rightsSet = new Set();
     data.forEach(item => rightsSet.add(JSON.stringify(item.accessRight)));
@@ -190,6 +212,63 @@ const accessRightsMap = {
   
   </script>
   
-  <style scoped>
-  /* 스타일 시트 */
+  <style>
+  .access-request-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-direction;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #e0f0ff; /* 파란색 배경 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  }
+  
+  h2 {
+    color: #007bff; /* 파란색 텍스트 */
+    margin-bottom: 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  button[type="submit"] {
+    background-color: #007bff; /* 파란색 버튼 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #0056b3; /* 진한 파란색 */
+  }
+  
+  .access-management {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .access-panel {
+    margin-bottom: 20px;
+  }
+  
+  .access-checkbox input[type="checkbox"] {
+    margin-right: 5px;
+  }
+  
+  .access-form,
+  .access-status,
+  .all-requests {
+    display: block;
+  }
   </style>

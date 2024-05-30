@@ -50,6 +50,7 @@ import NoticeEdit from '@/components/notice/NoticeEdit.vue';
 import EmployeeList from '@/components/employee/EmployeeList.vue';
 import EmployeeDetail from '@/components/employee/EmployeeDetail.vue';
 import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
+import ModifyEmployee from '@/components/employee/ModifyEmployee.vue';
 import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
 import EmployeeApp from '@/components/employee/EmployeeApp.vue';
 
@@ -211,7 +212,8 @@ const routes = [
     },
     { path: '/employees', component: EmployeeList },
     { path: '/employees/:employeeId', component: EmployeeDetail },
-    { path: '/employees/register', component: RegisterEmployee },
+    { path: '/employees/regist', component: RegisterEmployee },
+    { path: '/employees/modify', component: ModifyEmployee },
     { path: '/employees/access', component: EmployeeAccess },
     { path: '/employees/app', component: EmployeeApp },
     { path: '/delete' , component: DeleteRequest },

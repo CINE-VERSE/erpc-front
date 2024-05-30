@@ -13,7 +13,7 @@
       </div>
       <div class="closebuttondiv">
         <form action="" name="deleteReply" method="post">
-          <button type="button" class="closebutton" @click="removeReply(reply.noticeCommentId)"></button>
+          <button type="button" class="closebutton" @click="removeReply(reply.noticeCommentId)">삭제</button>
         </form>
       </div>
     </div>
@@ -162,14 +162,35 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>.closebutton {
-  background-color: transparent;
-  border: none;
-  color: red; /* 버튼 색상 설정 */
-  font-size: 16px;
-  cursor: pointer;
+<style scoped>
+.closebutton {
+  background-color: #ff6b6b; /* 밝은 핑크 배경색 */
+  color: #fff; /* 흰색 텍스트 */
+  border: none; /* 테두리 없음 */
+  padding: 10px 15px; /* 내부 여백 */
+  border-radius: 50%; /* 완전히 둥근 모서리 */
+  font-size: 16px; /* 글자 크기 */
+  line-height: 1; /* 줄 높이 */
+  display: flex; /* 플렉스 박스 사용 */
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: center; /* 세로 중앙 정렬 */
+  cursor: pointer; /* 커서 모양 변경 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+  transition: background-color 0.3s, transform 0.3s; /* 부드러운 전환 효과 */
 }
 
 .closebutton:hover {
-  color: darkred; /* 마우스 호버 시 버튼 색상 변경 */
-}</style>
+  background-color: #ff4c4c; /* 마우스 호버시 배경색 변경 */
+  transform: translateY(-2px); /* 약간 위로 이동 */
+}
+
+.closebutton:active {
+  background-color: #e04343; /* 클릭시 배경색 변경 */
+  transform: translateY(0); /* 원래 위치로 돌아오기 */
+}
+
+.closebutton::before {
+  content: '✖'; /* 버튼 안에 X 기호 추가 */
+  font-size: 16px; /* X 기호 크기 */
+}
+</style >

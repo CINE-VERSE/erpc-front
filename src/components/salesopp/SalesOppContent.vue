@@ -42,24 +42,23 @@
                     </tbody>
                 </table>
                 <div class="order-process-box">
-            <h1 class="order-process-text">Process</h1>
-            <div class="order-process-box-detail">
-                <div class="order-process-info">
-                    <h4 class="order-process-writer">{{ salesOppData.employee.employeeName }} {{ salesOppData.employee.employeeRank.employeeRank }}</h4>
-                    <p class="order-process-date">{{ salesOppData.orderDate }}</p>
-                </div>
-                <button class="order-process-detail">
-                    프로젝트 진행 정보 공유합니다~
-                </button>
-                <div class="order-process-btn">
-                    <button class="order-process-edit" @click="openEditPopup">수정</button>
-                    <button class="order-process-delete" @click="deleteProcess">삭제</button>
-                </div>
-                <div class="order-process-reply">
-                    <input type="text" v-model="newProcessDetail" class="order-process-reply-box" placeholder="내용을 입력해주세요.">
-                    <button class="order-process-regist" @click="registerProcess">등록하기</button>
-                </div>
-            </div>
+                    <h1 class="order-process-text">Process</h1>
+                    <div class="order-process-box-detail" v-for="(note, index) in salesOppNoteData" :key="index">
+                        <div class="order-process-info">
+                            <h4 class="order-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank.employeeRank }}</h4>
+                            <p class="order-process-date">{{ note.salesOppNoteDate }}</p>
+                        </div>
+                        <div class="order-process-detail">
+                            {{ note.salesOppNote }}
+                        </div>
+                        <div class="order-process-btn">
+                            <button class="order-process-delete" @click="deleteProcess(note.salesOppNoteId)">삭제</button>
+                        </div>
+                    </div>
+                    <div class="order-process-reply">
+                        <input type="text" v-model="newProcessDetail" class="order-process-reply-box" placeholder="내용을 입력해주세요.">
+                        <button class="order-process-regist" @click="registerProcess">등록하기</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -98,6 +97,7 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const salesOppData = ref({});
+const salesOppNoteData = ref([]);
 const showDeletePopup = ref(false);
 const showStatusPopup = ref(false);
 const deleteReason = ref('');
@@ -109,8 +109,16 @@ const editProcessDetail = ref('');
 const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
     try {
+        // 영업기회 데이터를 가져옵니다.
         const response = await axios.get(`http://localhost:7775/sales_opportunity/${salesOppId}`);
         salesOppData.value = response.data;
+
+        // 각 프로세스에 대해 salesOppNote 데이터를 가져옵니다.
+        const noteResponse = await axios.get(`http://localhost:7775/sales_opp_note`);
+        salesOppNoteData.value = noteResponse.data;
+        
+        console.log('SalesOppData:', salesOppData.value);
+        console.log('SalesOppNoteData:', salesOppNoteData.value);
     } catch (error) {
         console.error('Error fetching salesOpp data:', error);
     }
@@ -188,25 +196,31 @@ const getStatusIdByName = (statusName) => {
 
 const registerProcess = async () => {
     const salesOppId = route.params.salesOppId;
+    
+    // salesOpp 객체에 salesOppId를 넣어줍니다.
+    const salesOpp = {
+        salesOppId: salesOppId
+    };
+
+    // 하드코딩된 employee 객체 정의
+    const employee = {
+        employeeId: 5 // 하드코딩된 employeeId
+    };
 
     try {
         // 서버로 보낼 프로세스 데이터를 구성합니다.
         const newProcess = {
-            salesOppId: salesOppId,
-            employee: { 
-                employeeId: 5 // 하드코딩된 employeeId
-            },
+            salesOppNote: newProcessDetail.value,
+            salesOpp: salesOpp, // salesOpp 객체를 추가합니다.
+            employee: employee,
             // 필요한 다른 데이터들
         };
 
         // 서버에 프로세스 등록 요청을 보냅니다.
-        const response = await axios.post(`http://localhost:7775/sales_opp_note/regist`, {
-            salesOppNote: newProcessDetail.value,
-            salesOppId: salesOppId
-        });
+        const response = await axios.post(`http://localhost:7775/sales_opp_note/regist`, newProcess);
 
         // 등록된 프로세스 데이터를 처리합니다.
-        salesOppData.value.processDetails.push(response.data);
+        salesOppNoteData.value.push(response.data);
         newProcessDetail.value = '';
         alert('등록됨.');
     } catch (error) {
@@ -214,9 +228,10 @@ const registerProcess = async () => {
         alert('Process 등록에 실패했습니다.');
     }
 };
+
 // Open edit popup
-const openEditPopup = () => {
-    editProcessDetail.value = salesOppData.value.salesOppNote;
+const openEditPopup = (note) => {
+    editProcessDetail.value = note.salesOppNote;
     showEditPopup.value = true;
 };
 
@@ -224,32 +239,16 @@ const closeEditPopup = () => {
     showEditPopup.value = false;
 };
 
-// Confirm edit
-const confirmEdit = async () => {
-    const salesOppId = route.params.salesOppId;
-    try {
-        const response = await axios.patch(`http://localhost:7775/sales_opp_note/modify/${salesOppId}`, {
-            salesOppNote: editProcessDetail.value
-        });
-        salesOppData.value.salesOppNote = response.data.salesOppNote;
-        alert('수정됨.');
-    } catch (error) {
-        console.error('Error updating process:', error);
-    } finally {
-        closeEditPopup();
-    }
-};
+
 
 // Delete process
-const deleteProcess = async () => {
-    const salesOppId = route.params.salesOppId;
+const deleteProcess = async (salesOppNoteId) => {
     try {
-        const response = await axios.patch(`http://localhost:7775/sales_opp_note/delete/${salesOppId}`);
-        salesOppData.value.salesOppNote = response.data.salesOppNote;
+        const response = await axios.patch(`http://localhost:7775/sales_opp_note/delete/${salesOppNoteId}`);
+        salesOppNoteData.value = salesOppNoteData.value.filter(note => note.salesOppNoteId !== salesOppNoteId);
         alert('삭제됨.');
     } catch (error) {
         console.error('Error deleting process:', error);
-        
     }
 };
 </script>
