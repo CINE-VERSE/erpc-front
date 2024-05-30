@@ -20,6 +20,7 @@ import ContractEdit from '@/components/contract/ContractEdit.vue';
 import OrderRegist from '@/components/order/OrderRegist.vue';
 import OrderList from '@/components/order/OrderList.vue';
 import OrderContents from '@/components/order/OrderContents.vue';
+import OrderEdit from '@/components/order/OrderEdit.vue';
 
 import Deposit from '@/components/bill/Deposit.vue';
 import CBRequest from '@/components/bill/CBRequest.vue';
@@ -156,6 +157,10 @@ const routes = [
     {
         path: '/order/:orderId',
         component: OrderContents
+    },
+    {
+        path: '/order/modify/:orderId',
+        component: OrderEdit
     },
     {
         path: '/bill/deposit',
