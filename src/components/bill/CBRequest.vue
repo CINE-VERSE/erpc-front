@@ -28,10 +28,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.transaction.transactionCode || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountCode || 'N/A' }}</td>
-                        <td>{{ orderData.account.corporationStatus || 'N/A' }}</td>
-                        <td>{{ orderData.orderTotalPrice ? orderData.orderTotalPrice.toLocaleString() : 'N/A' }}</td>
+                        <td>{{ orderData.transaction.transactionCode }}</td>
+                        <td>{{ orderData.account.accountCode }}</td>
+                        <td>{{ orderData.account.corporationStatus }}</td>
+                        <td>{{ orderData.orderTotalPrice ? orderData.orderTotalPrice.toLocaleString() : '' }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -47,11 +47,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.account.corporationNum || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountName || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountRepresentative || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountType || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountNote || 'N/A' }}</td>
+                        <td>{{ orderData.account.corporationNum }}</td>
+                        <td>{{ orderData.account.accountName }}</td>
+                        <td>{{ orderData.account.accountRepresentative }}</td>
+                        <td>{{ orderData.account.accountType }}</td>
+                        <td>{{ orderData.account.accountNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -65,9 +65,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.account.accountLocation || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountContact || 'N/A' }}</td>
-                        <td>{{ orderData.account.accountEmail || 'N/A' }}</td>
+                        <td>{{ orderData.account.accountLocation }}</td>
+                        <td>{{ orderData.account.accountContact }}</td>
+                        <td>{{ orderData.account.accountEmail }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -88,23 +88,29 @@
                                 <button class="deposit-code-btn2" @click="fetchCollectionData">확인</button>
                             </div>
                         </td>
-                        <td>{{ collectionData.depositDate || 'N/A' }}</td>
-                        <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : 'N/A' }}</td>
+                        <td>{{ collectionData.depositDate }}</td>
+                        <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : '' }}</td>
                         <td><input v-model="collectionData.depositCategory.depositCategory" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력 필수"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="order1-pdf">
-            <button class="order1-pdf1">
-                견적서 업로드<img src="@/assets/img/pdf.png" class="pdfimage1">
-            </button>
-            <button class="order1-pdf2">
-                계약서 업로드<img src="@/assets/img/pdf.png" class="pdfimage2">
-            </button>
+        <div class="order-attachment">
+            <div class="order-attachment-header">
+                <h2 class="order-file">첨부파일</h2>
+                <img src="@/assets/img/pdf.png" class="order-pdfimage">
+            </div>
+            <div class="order-attachment-content">
+                <div class="file-list" v-for="(file, index) in files" :key="index">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.name }}</span>
+                    <button @click="removeFile(index)">삭제</button>
+                </div>
+            </div>
+            <input type="file" @change="handleFileUpload" multiple />
         </div>
         <div class="regist-btn-div">
-            <button class="regist-btn2">발행 요청하기</button>
+            <button class="regist-btn2" @click="registerRequest">발행 요청하기</button>
         </div>
     </div>
 </template>
@@ -138,9 +144,11 @@ const collectionData = ref({
     depositCategory: { depositCategory: '' }
 });
 
+const files = ref([]);
+
 const fetchOrderData = async () => {
     try {
-        const response = await axios.get(`http://localhost:7775/order`, {
+        const response = await axios.get('http://localhost:7775/order', {
             params: {
                 transactionCode: projectCode.value
             }
@@ -158,13 +166,18 @@ const fetchOrderData = async () => {
 
 const fetchCollectionData = async () => {
     try {
-        const response = await axios.get(`http://localhost:7775/collection`, {
+        const response = await axios.get('http://localhost:7775/collection', {
             params: {
                 depositCode: depositCode.value
             }
         });
         if (response.data && response.data.length > 0) {
-            collectionData.value = response.data[0];
+            const result = response.data.find(item => item.depositCode === depositCode.value);
+            if (result) {
+                collectionData.value = result;
+            } else {
+                alert('입금 코드를 찾을 수 없습니다.');
+            }
         } else {
             alert('입금 코드를 찾을 수 없습니다.');
         }
@@ -173,7 +186,66 @@ const fetchCollectionData = async () => {
         alert('데이터를 가져오는 중 오류가 발생했습니다.');
     }
 };
+
+const handleFileUpload = (event) => {
+    const uploadedFiles = Array.from(event.target.files);
+    files.value.push(...uploadedFiles);
+};
+
+const removeFile = (index) => {
+    files.value.splice(index, 1);
+};
+
+const downloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+const registerRequest = async () => {
+    if (!orderData.value.transaction.transactionCode) {
+        alert('먼저 프로젝트 정보를 불러오세요.');
+        return;
+    }
+
+    if (files.value.length === 0) {
+        alert('첨부파일을 등록해주세요.');
+        return;
+    }
+
+    const requestData = {
+        projectCode: projectCode.value,
+        transactionId: orderData.value.transaction.transactionId,
+        collectionId: collectionData.value.collectionId,
+        files: files.value
+    };
+
+    const formData = new FormData();
+    formData.append('request', JSON.stringify(requestData));
+    files.value.forEach(file => {
+        formData.append('files', file);
+    });
+
+    try {
+        const response = await axios.post('http://localhost:7775/request/regist', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        alert('발행 요청이 성공적으로 완료되었습니다.');
+        // 여기에 라우터 이동 코드 추가 필요
+    } catch (error) {
+        console.error('발행 요청 중 오류가 발생했습니다.', error);
+        alert('발행 요청 중 오류가 발생했습니다.');
+    }
+};
 </script>
+
+
 <style>
 .cbtext {
     margin-bottom: 50px;

@@ -119,7 +119,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
@@ -195,29 +194,14 @@ const removeFile = (index) => {
     files.value.splice(index, 1);
 };
 
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
 const registerOrder = async () => {
     const orderData = {
         contactDate: contractData.value.contractDate,
         orderTotalPrice: contractData.value.contractTotalPrice,
         orderDueDate: contractData.value.contractDueDate,
-        totalBalance: contractData.value.balance,
-        downPayment: contractData.value.downPayment,
-        progressPayment: contractData.value.progressPayment,
-        balance: contractData.value.balance,
         orderNote: contractData.value.contractNote,
         employee: {
             employeeId: contractData.value.employee.employeeId
-            // employeeCode: contractData.value.employee.employeeCode
         },
         account: {
             accountId: contractData.value.account.accountId
@@ -240,6 +224,12 @@ const registerOrder = async () => {
             }
         }))
     };
+
+    if (contractData.value.contractCategory.contractCategoryId === 2) {
+        orderData.downPayment = contractData.value.downPayment;
+        orderData.progressPayment = contractData.value.progressPayment;
+        orderData.balance = contractData.value.balance;
+    }
 
     const formData = new FormData();
     formData.append('order', JSON.stringify(orderData));
