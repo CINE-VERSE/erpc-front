@@ -5,8 +5,9 @@
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
                 <button class="order-request">결재 요청</button>
-                <button class="order-edit">수정</button>
-                <button class="order-delete">삭제</button>
+                <button class="order-edit" @click="goToOrderPage">수정</button>
+                <button class="order-delete" @click="deleteOrder">삭제</button>
+                <button class="order-excel" @click="downloadExcel">엑셀 다운</button> <!-- 엑셀 다운 버튼 추가 -->
             </div>
             <div class="order-pdf">
                 <div v-if="orderData.orderFile.length > 0">
@@ -179,22 +180,20 @@
             <table class="shipment-table1">
                 <thead>
                     <tr>
-                        <th>주문일</th>
                         <th>출고 예정일</th>
                         <th>실사 출고일</th>
                         <th>수령 예정일</th>
                         <th>수령 확정일</th>
-                        <th>계약금 입금일</th>
+                        <th>수주 완료일</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>2024.04.30</td>
-                        <td>2024.05.03</td>
-                        <td>2024.05.03</td>
-                        <td>2024.05.07</td>
-                        <td>2024.05.07</td>
-                        <td>2024.04.30</td>
+                        <td>{{ orderData.estimatedDeliveryDate }}</td>
+                        <td>{{ orderData.estimatedReleaseDate }}</td>
+                        <td>{{ orderData.estimatedArriveDate }}</td>
+                        <td>{{ orderData.arriveDate }}</td>
+                        <td>{{ orderData.releaseDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -223,16 +222,27 @@
     <div v-else>
         Loading...
     </div>
+    <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>삭제 요청 사유 입력</h2>
+            <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
+            <button @click="confirmDelete">확인</button>
+            <button @click="closePopup">취소</button>
+        </div>
+    </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 const orderId = route.params.orderId;
 const orderData = ref(null);
+const showPopup = ref(false);
+const deleteReason = ref('');
 
 onMounted(async () => {
     try {
@@ -247,6 +257,10 @@ onMounted(async () => {
     }
 });
 
+const goToOrderPage = () => {
+    router.push({ path: `/order/modify/${route.params.orderId}` });
+};
+
 const downloadFile = (url) => {
     const link = document.createElement('a');
     link.href = url;
@@ -255,6 +269,45 @@ const downloadFile = (url) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+};
+
+// 엑셀 다운로드 함수
+const downloadExcel = () => {
+    const orderRegistrationId = route.params.orderId;
+    const url = `http://localhost:7775/excel/order/${orderRegistrationId}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `order_${orderRegistrationId}.xlsx`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
+const deleteOrder = () => {
+    showPopup.value = true;
+};
+
+const closePopup = () => {
+    showPopup.value = false;
+};
+
+const confirmDelete = async () => {
+    const orderId = route.params.orderId;
+    try {
+        const response = await axios.post('http://localhost:7775/order/delete', {
+            orderDeleteRequestReason: deleteReason.value,
+            order: orderData.value
+        });
+        console.log('Order delete request sent successfully:', response.data);
+        alert('삭제 요청이 성공적으로 완료되었습니다.');
+        router.push('/order'); // 삭제 요청 후 이동
+    } catch (error) {
+        console.error('Error sending delete request:', error);
+        alert('삭제 요청 중 오류가 발생했습니다.');
+    } finally {
+        closePopup();
+    }
 };
 </script>
 
@@ -302,22 +355,14 @@ const downloadFile = (url) => {
 }
 
 .order-edit,
-.order-delete {
-    width: 60px;
-    height: 40px;
-    cursor: pointer;
-    margin-left: 15px;
-}
-
-.order-delete {
-    margin-right: 15px;
-}
-
-.order-request {
+.order-delete,
+.order-request,
+.order-excel {
     width: 80px;
     height: 40px;
     cursor: pointer;
-    margin-left: 15px;   
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .order-pdf {
@@ -332,7 +377,7 @@ const downloadFile = (url) => {
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 350px;
+    width: 500px;
     height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
@@ -411,199 +456,233 @@ const downloadFile = (url) => {
 .order2-table2 td,
 .order2-table3 th,
 .order2-table3 td,
-.order2-table4 th,
-.order2-table4 td,
-.order2-table5 th,
-.order2-table5 td,
-.order2-table6 th,
-.order2-table6 td,
-.order2-table7 th,
-.order2-table7 td,
-.shipment-table1 th,
-.shipment-table1 td,
-.shipment-table2 th,
-.shipment-table2 td {
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 8px;
-    font-family: GmarketSansMedium;
-}
+	order2-table4 th,
+	order2-table4 td,
+	order2-table5 th,
+	order2-table5 td,
+	order2-table6 th,
+	order2-table6 td,
+	order2-table7 th,
+	order2-table7 td,
+	.shipment-table1 th,
+	.shipment-table1 td,
+	.shipment-table2 th,
+	.shipment-table2 td {
+		text-align: center;
+		border: 1px solid #ccc;
+		padding: 8px;
+		font-family: GmarketSansMedium;
+	}
 
 .order2-table1 th,
 .order2-table2 th,
 .order2-table3 th,
 .order2-table4 th,
-.order2-table5 th,
-.order2-table6 th,
-.order2-table7 th,
-.shipment-table1 th,
-.shipment-table2 th {
-    background-color: whitesmoke;
-    color: black;
-    font-size: 18px;
-    padding: 10px;
-    height: 60px;
-}
+	order2-table5 th,
+	order2-table6 th,
+	order2-table7 th,
+	.shipment-table1 th,
+	.shipment-table2 th {
+		background-color: whitesmoke;
+		color: black;
+		font-size: 18px;
+		padding: 10px;
+		height: 60px;
+	}
 
 .order2-table1 td,
 .order2-table2 td,
-.order2-table3 td,
-.order2-table4 td,
-.order2-table5 td,
-.order2-table6 td,
-.order2-table7 td,
-.shipment-table1 td,
-.shipment-table2 td {
-    height: 40px;
-}
+	order2-table3 td,
+	order2-table4 td,
+	order2-table5 td,
+	order2-table6 td,
+	order2-table7 td,
+	.shipment-table1 td,
+	.shipment-table2 td {
+		height: 40px;
+	}
 
 .test {
-    background-color: #d5e6ff;
-}
+		background-color: #d5e6ff;
+	}
 
 .shipment-table1 th,
 .shipment-table1 td {
-    background-color: #D3F9E0;
-}
+		background-color: #D3F9E0;
+	}
 
 .shipment-table2 {
-    margin-bottom: 7%;
-}
+		margin-bottom: 7%;
+	}
 
 .order-process-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #CCEAFF;
-    border: 2px solid #CCEAFF;
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 1200px;
-    margin-bottom: 20px;
-    font-family: GmarketSansMedium;
-    font-size: 17px;
-    margin-top: 30px;
-    height: auto;
-    flex-direction: column;
-    margin-bottom: 7%;
-}
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 17px;
+		flex-grow: 1;
+		padding: 10px;
+		background-color: #CCEAFF;
+		border: 2px solid #CCEAFF;
+		border-radius: 10px;
+		box-sizing: border-box;
+		width: 1200px;
+		margin-bottom: 20px;
+		font-family: GmarketSansMedium;
+		font-size: 17px;
+		margin-top: 30px;
+		height: auto;
+		flex-direction: column;
+		margin-bottom: 7%;
+	}
 
 .order-process-text {
-    margin-bottom: 20px;
-    color: #0C2092;
-}
+		margin-bottom: 20px;
+		color: #0C2092;
+	}
 
 .order-process-box-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    width: 100%;
-}
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: flex-start;
+		width: 100%;
+	}
 
 .order-process-info {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 10px;
+	}
 
 .order-process-writer {
-    margin: 0;
-    margin-left: 45px;
-}
+		margin: 0;
+		margin-left: 45px;
+	}
 
 .order-process-detail {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
-    outline: none;
-    color: black;
-    font-weight: bold;
-    width: 93%;
-    height: auto;
-    margin-left: 40px;
-    margin-top: -10px;
-    font-weight: normal;
-}
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		background-color: white;
+		border: 2px solid #0C2092;
+		border-radius: 10px;
+		padding: 10px;
+		font-size: 15px;
+		outline: none;
+		color: black;
+		font-weight: bold;
+		width: 93%;
+		height: auto;
+		margin-left: 40px;
+		margin-top: -10px;
+		font-weight: normal;
+	}
 
 .order-process-date {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #F6E5FF;
-    border: 2px solid #F6E5FF;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-size: 12px;
-    font-weight: normal;
-    color: black;
-    margin-right: 45px;
-}
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: #F6E5FF;
+		border: 2px solid #F6E5FF;
+		border-radius: 10px;
+		padding: 5px 10px;
+		font-size: 12px;
+		font-weight: normal;
+		color: black;
+		margin-right: 45px;
+	}
 
 .order-process-btn {
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
-    gap: 7px;
-}
+		display: flex;
+		width: 100%;
+		justify-content: flex-end;
+		align-items: flex-end;
+		gap: 7px;
+	}
 
 .order-process-edit,
 .order-process-delete {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-top: 4px;
-    cursor: pointer;
-}
+		background-color: #0C2092;
+		border: 2px solid #0C2092;
+		color: white;
+		border-radius: 10px;
+		padding: 5px 7px;
+		margin-top: 4px;
+		cursor: pointer;
+	}
 
 .order-process-delete {
-    margin-right: 46px;
-}
+		margin-right: 46px;
+	}
 
 .order-process-reply {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-}
+		display: flex;
+		width: 100%;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		margin-top: 10px;
+	}
 
 .order-process-reply-box {
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
-    outline: none;
-    color: black;
-    width: 90.5%;
-    height: auto;
-    font-weight: normal;
-}
+		background-color: white;
+		border: 2px solid #0C2092;
+		border-radius: 10px;
+		padding: 10px;
+		font-size: 15px;
+		outline: none;
+		color: black;
+		width: 90.5%;
+		height: auto;
+		font-weight: normal;
+	}
 
 .order-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    width: 95px;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-left: 992px;
-    cursor: pointer;
-    margin-bottom: 7px;
+		background-color: #0C2092;
+		border: 2px solid #0C2092;
+		width: 95px;
+		color: white;
+		border-radius: 10px;
+		padding: 5px 7px;
+		margin-left: 992px;
+		cursor: pointer;
+		margin-bottom: 7px;
+	}
+    .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
 }
 </style>

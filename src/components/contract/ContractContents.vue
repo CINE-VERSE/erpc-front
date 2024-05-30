@@ -283,14 +283,12 @@ const confirmDelete = async () => {
 
 .contract-edit,
 .contract-delete,
+.contract-request,
 .contract-excel {
-    width: 60px;
+    width: 80px;
     height: 40px;
     cursor: pointer;
     margin-left: 15px;
-}
-
-.contract-delete {
     margin-right: 15px;
 }
 

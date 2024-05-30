@@ -1,17 +1,7 @@
 <template>
-    <div class="regist-content">
+    <div class="regist-content" v-if="orderData">
         <div class="order-regist">
-            <h1>수주 등록</h1>
-        </div>
-        <div class="order-search-box">
-            <h3>계약서 불러오기</h3>
-            <div class="contract-number">
-                <p class="contract-number-text">계약서 코드</p>
-                <input type="text" v-model="contractCode" class="contract-number-box" placeholder="계약서 코드를 입력해주세요.">
-            </div>
-            <div class="order-search-btn-div1">
-                <button @click="fetchContractData" class="order-search-btn1">조회하기</button>
-            </div>
+            <h1>수주 수정</h1>
         </div>
         <div class="order-list-box1">
             <table class="order-table1">
@@ -26,11 +16,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ contractData.contractCode }}</td>
-                        <td>{{ contractData.employee.employeeName }}</td>
-                        <td>{{ contractData.account.accountCode }}</td>
-                        <td>{{ contractData.account.accountName }}</td>
-                        <td>{{ contractData.contractTotalPrice }}</td>
+                        <td>{{ orderData.transaction.transactionCode }}</td>
+                        <td>{{ orderData.employee.employeeName }}</td>
+                        <td>{{ orderData.account.accountCode }}</td>
+                        <td>{{ orderData.account.accountName }}</td>
+                        <td>{{ orderData.orderTotalPrice }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -46,13 +36,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="product in contractData.contractProduct" :key="product.product.productCode">
+                    <tr v-for="product in orderData.orderProduct" :key="product.product.productId">
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
-                        <td>{{ product.contractProductCount }}</td>
+                        <td>{{ product.orderProductCount }}</td>
                         <td>{{ product.product.productPrice }}</td>
-                        <td>{{ product.contractSupplyPrice }}</td>
-                        <td>{{ product.contractProductionNote }}</td>
+                        <td>{{ product.orderSupplyPrice }}</td>
+                        <td>{{ product.orderProductionNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -70,13 +60,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ contractData.warehouse.warehouseCode }}</td>
-                        <td>{{ contractData.warehouse.warehouseName }}</td>
-                        <td>{{ contractData.warehouse.warehouseType }}</td>
-                        <td>{{ contractData.warehouse.warehouseLocation }}</td>
-                        <td>{{ contractData.warehouse.warehouseUsage }}</td>
-                        <td>{{ contractData.warehouse.productionLineName }}</td>
-                        <td>{{ contractData.warehouse.outsourceName }}</td>
+                        <td>{{ orderData.warehouse.warehouseCode }}</td>
+                        <td>{{ orderData.warehouse.warehouseName }}</td>
+                        <td>{{ orderData.warehouse.warehouseType }}</td>
+                        <td>{{ orderData.warehouse.warehouseLocation }}</td>
+                        <td>{{ orderData.warehouse.warehouseUsage }}</td>
+                        <td>{{ orderData.warehouse.productionLineName }}</td>
+                        <td>{{ orderData.warehouse.outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -91,103 +81,77 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="test">{{ contractData.contractCategory.contractCategory }}</td>
-                        <td>{{ contractData.downPayment }}</td>
-                        <td>{{ contractData.progressPayment }}</td>
-                        <td>{{ contractData.balance }}</td>
+                        <td>{{ orderData.contractCategory.contractCategory }}</td>
+                        <td>{{ orderData.downPayment }}</td>
+                        <td>{{ orderData.progressPayment }}</td>
+                        <td>{{ orderData.balance }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="order-attachment">
-            <div class="order-attachment-header">
+        <div class="order-attachment9">
+            <div class="order-attachment-header9">
                 <h2 class="order-file">첨부파일</h2>
                 <img src="@/assets/img/pdf.png" class="order-pdfimage">
             </div>
-            <div class="order-attachment-content">
-                <div class="file-list" v-for="(file, index) in files" :key="index">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.name }}</span>
-                    <button @click="removeFile(index)">삭제</button>
+            <div class="order-attachment-content9">
+                <div v-if="files.length > 0">
+                    <div v-for="(file, index) in files" :key="index" class="file-list">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">{{ file.name }}</span>
+                        <button @click="removeFile(index)">삭제</button>
+                    </div>
+                </div>
+                <div v-else>
+                    <div v-for="(file, index) in orderData.orderFile" :key="file.fileId" class="file-list">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">{{ file.originName }}</span>
+                        <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                    </div>
                 </div>
             </div>
             <input type="file" @change="handleFileUpload" multiple />
         </div>
         <div class="order-regist-btn-div1">
-            <button class="order-regist-btn1" @click="registerOrder">수주 등록하기</button>
+            <button class="order-regist-btn1" @click="registerOrder">수주 수정하기</button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import router from '@/router/mainRouter';
+import { useRoute, useRouter } from 'vue-router';
 
-const contractCode = ref('');
-const contractData = ref({
-    contractCode: '',
-    employee: {
-        employeeName: ''
-    },
-    account: {
-        accountCode: '',
-        accountName: ''
-    },
-    contractTotalPrice: '',
-    contractProduct: [
-        {
-            product: {
-                productCode: '',
-                productName: '',
-                productPrice: ''
-            },
-            contractProductCount: '',
-            contractSupplyPrice: '',
-            contractProductionNote: ''
-        }
-    ],
-    warehouse: {
-        warehouseId: '',
-        warehouseCode: '',
-        warehouseName: '',
-        warehouseType: '',
-        warehouseLocation: '',
-        warehouseUsage: '',
-        productionLineName: '',
-        outsourceName: ''
-    },
-    contractCategory: {
-        contractCategoryId:'',
-        contractCategory: ''
-    },
-    downPayment: '',
-    progressPayment: '',
-    balance: '',
-    contractDate: '',
-    contractDueDate: '',
-    contractNote: '',
-    contractFile: []
-});
-
+const route = useRoute();
+const router = useRouter();
+const orderId = route.params.orderId;
+const orderData = ref(null);
 const files = ref([]);
 
-const fetchContractData = async () => {
+const fetchOrderData = async () => {
     try {
-        const response = await axios.get('http://localhost:7775/contract/code', {
-            params: {
-                contractCode: contractCode.value
-            }
-        });
-        contractData.value = response.data;
+        const response = await axios.get(`http://localhost:7775/order/${orderId}`);
+        orderData.value = response.data;
     } catch (error) {
-        console.error('Error fetching contract data:', error);
+        console.error('Error fetching order data:', error);
     }
 };
 
 const handleFileUpload = (event) => {
     const uploadedFiles = Array.from(event.target.files);
     files.value.push(...uploadedFiles);
+    orderData.value.orderFile = []; // 파일 선택 시 기존 파일 목록 초기화
+};
+
+const downloadFile = (url) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = url.split('/').pop();
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
 const removeFile = (index) => {
@@ -195,63 +159,50 @@ const removeFile = (index) => {
 };
 
 const registerOrder = async () => {
-    const orderData = {
-        contactDate: contractData.value.contractDate,
-        orderTotalPrice: contractData.value.contractTotalPrice,
-        orderDueDate: contractData.value.contractDueDate,
-        orderNote: contractData.value.contractNote,
-        employee: {
-            employeeId: contractData.value.employee.employeeId
-        },
-        account: {
-            accountId: contractData.value.account.accountId
-        },
-        warehouse: {
-            warehouseId: contractData.value.warehouse.warehouseId
-        },
-        contractCategory: {
-            contractCategoryId: contractData.value.contractCategory.contractCategoryId
-        },
-        transaction: {
-            transactionId: contractData.value.transaction.transactionId
-        },
-        orderProduct: contractData.value.contractProduct.map(product => ({
-            orderProductCount: product.contractProductCount,
-            orderSupplyPrice: product.contractSupplyPrice,
-            orderProductionNote: product.contractProductionNote,
-            product: {
-                productId: product.product.productId
-            }
+    const orderUpdateData = {
+        contactDate: orderData.value.contactDate,
+        orderTotalPrice: orderData.value.orderTotalPrice,
+        orderDueDate: orderData.value.orderDueDate,
+        totalBalance: orderData.value.balance,
+        downPayment: orderData.value.downPayment,
+        progressPayment: orderData.value.progressPayment,
+        balance: orderData.value.balance,
+        orderNote: orderData.value.orderNote,
+        employee: { employeeId: orderData.value.employee.employeeId },
+        account: { accountId: orderData.value.account.accountId },
+        warehouse: { warehouseId: orderData.value.warehouse.warehouseId },
+        contractCategory: { contractCategoryId: orderData.value.contractCategory.contractCategoryId },
+        transaction: { transactionId: orderData.value.transaction.transactionId },
+        orderProduct: orderData.value.orderProduct.map(product => ({
+            orderProductCount: product.orderProductCount,
+            orderSupplyPrice: product.orderSupplyPrice,
+            orderProductionNote: product.orderProductionNote,
+            product: { productId: product.product.productId }
         }))
     };
 
-    if (contractData.value.contractCategory.contractCategoryId === 2) {
-        orderData.downPayment = contractData.value.downPayment;
-        orderData.progressPayment = contractData.value.progressPayment;
-        orderData.balance = contractData.value.balance;
-    }
-
     const formData = new FormData();
-    formData.append('order', JSON.stringify(orderData));
+    formData.append('order', JSON.stringify(orderUpdateData));
     files.value.forEach(file => {
         formData.append('files', file);
     });
 
     try {
-        const response = await axios.post('http://localhost:7775/order/regist', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+        const response = await axios.patch(`http://localhost:7775/order/modify/${orderId}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
         });
-        alert('수주 등록이 성공적으로 완료되었습니다.');
+        alert('수주 수정이 성공적으로 완료되었습니다.');
         router.push({ path: `/order` });
     } catch (error) {
-        console.error('수주 등록 중 오류가 발생했습니다.', error);
-        alert('수주 등록 중 오류가 발생했습니다.');
+        console.error('수주 수정 중 오류가 발생했습니다.', error);
+        alert('수주 수정 중 오류가 발생했습니다.');
     }
 };
-</script>
 
+onMounted(() => {
+    fetchOrderData();
+});
+</script>
 
 <style>
 .regist-content {
@@ -400,7 +351,6 @@ const registerOrder = async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* 수직 방향 중앙 정렬 */
 }
 
 .contract-number-text {
@@ -456,20 +406,20 @@ const registerOrder = async () => {
     margin-bottom: 100px;
 }
 
-.order-attachment {
+.order-attachment9 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 300px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
 }
 
-.order-attachment-header {
+.order-attachment-header9 {
     display: flex;
     align-items: center;
     padding: 5px;
@@ -482,7 +432,7 @@ const registerOrder = async () => {
     padding-left: 5px;
 }
 
-.order-attachment-content {
+.order-attachment-content9 {
     display: flex;
     justify-content: center;
     align-items: center;

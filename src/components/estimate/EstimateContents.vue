@@ -107,22 +107,21 @@
         </div>
         <div class="estimate-process-box">
             <h1 class="estimate-process-text">Process</h1>
-            <div class="estimate-process-box-detail">
+            <div v-for="note in filteredQuotationNotes" :key="note.quotationNoteId" class="estimate-process-box-detail">
                 <div class="estimate-process-info">
-                    <h4 class="estimate-process-writer">{{ quotationData.employee.employeeName }}</h4>
-                    <p class="estimate-process-date">{{ quotationData.quotationDate }}</p>
+                    <h4 class="estimate-process-writer">{{ employeeName }}</h4>
+                    <p class="estimate-process-date">{{ note.quotationNoteDate }}</p>
                 </div>
                 <button class="estimate-process-detail">
-                    견적서 양식이 일부 수정되었습니다~
+                    {{ note.quotationNote }}
                 </button>
                 <div class="estimate-process-btn">
-                    <button class="estimate-process-edit">수정</button>
-                    <button class="estimate-process-delete">삭제</button>
+                    <button class="estimate-process-delete" @click="deleteNote(note.quotationNoteId)">삭제</button>
                 </div>
-                <div class="estimate-process-reply">
-                    <input type="text" id="estimate-process-reply-box" class="estimate-process-reply-box" placeholder="내용을 입력해주세요.">
-                    <button class="estimate-process-regist">등록하기</button>
-                </div>
+            </div>
+            <div class="estimate-process-reply">
+                <input type="text" v-model="newNote" id="estimate-process-reply-box" class="estimate-process-reply-box" placeholder="내용을 입력해주세요.">
+                <button class="estimate-process-regist" @click="addNote">등록하기</button>
             </div>
         </div>
     </div>
@@ -140,30 +139,53 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const quotationData = ref(null);
+const quotationNoteData = ref([]); // 견적서 노트 데이터를 저장하는 배열
 const showPopup = ref(false);
 const deleteReason = ref('');
+const newNote = ref('');
+const employeeName = ref(''); // 직원 이름을 저장하기 위한 ref
 
+// filteredQuotationNotes는 quotationDeleteDate가 null인 노트만 반환합니다.
+const filteredQuotationNotes = computed(() => {
+    return quotationNoteData.value.filter(note => note.quotationDeleteDate === null);
+});
+
+// 컴포넌트가 마운트될 때 실행되는 코드
 onMounted(async () => {
     const quotationId = route.params.quotationId;
+    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
+
     try {
-        const response = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
-        quotationData.value = response.data;
+        // 견적서 데이터를 가져오는 API 호출
+        const quotationResponse = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
+        quotationData.value = quotationResponse.data;
+
+        // 견적서 노트 데이터를 가져오는 API 호출
+        const noteResponse = await axios.get(`http://localhost:7775/quotation_note/${quotationId}`);
+        quotationNoteData.value = noteResponse.data;
+
+        // userId로 직원 이름을 가져오는 API 호출
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
+        employeeName.value = employeeResponse.data.employeeName;
+
     } catch (error) {
         console.error('Error fetching quotation data:', error);
     }
 });
 
+// 견적서 수정 페이지로 이동하는 함수
 const goToQuotationPage = () => {
     router.push({ path: `/estimate/modify/${route.params.quotationId}` });
 };
 
+// 파일 다운로드 함수
 const downloadFile = (url) => {
     const link = document.createElement('a');
     link.href = url;
@@ -174,6 +196,7 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
+// 엑셀 다운로드 함수
 const downloadExcel = () => {
     const quotationId = route.params.quotationId;
     const url = `http://localhost:7775/excel/quotation/${quotationId}`;
@@ -186,14 +209,17 @@ const downloadExcel = () => {
     document.body.removeChild(link);
 };
 
+// 견적서 삭제 요청 함수
 const deleteQuotation = () => {
     showPopup.value = true;
 };
 
+// 팝업 닫기 함수
 const closePopup = () => {
     showPopup.value = false;
 };
 
+// 견적서 삭제 확인 함수
 const confirmDelete = async () => {
     const quotationId = route.params.quotationId;
     try {
@@ -209,6 +235,43 @@ const confirmDelete = async () => {
         alert('삭제 요청 중 오류가 발생했습니다.');
     } finally {
         closePopup();
+    }
+};
+
+// 노트 추가 함수
+const addNote = async () => {
+    const quotationId = route.params.quotationId;
+    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
+    try {
+        const response = await axios.post('http://localhost:7775/quotation_note/regist', {
+            quotationNote: newNote.value,
+            quotation: { quotationId: quotationData.value.quotationId },
+            employee: { employeeId: userId } // employeeId를 userId로 설정
+        });
+        alert('process 등록되었습니다.');
+        console.log('Quotation note added successfully:', response.data);
+        quotationNoteData.value.push(response.data);
+        newNote.value = ''; 
+        location.reload(); // 페이지 새로고침 추가
+    } catch (error) {
+        console.error('Error adding quotation note:', error);
+        alert('노트 추가 중 오류가 발생했습니다.');
+    }
+};
+
+// 노트 삭제 함수
+const deleteNote = async (quotationNoteId) => {
+    try {
+        const response = await axios.patch(`http://localhost:7775/quotation_note/delete/${quotationNoteId}`);
+        const updatedNote = response.data;
+        const noteIndex = quotationNoteData.value.findIndex(note => note.quotationNoteId === quotationNoteId);
+        alert('process 삭제되었습니다.');
+        if (noteIndex !== -1) {
+            quotationNoteData.value[noteIndex] = updatedNote;
+        }
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        alert('노트 삭제 중 오류가 발생했습니다.');
     }
 };
 </script>
@@ -383,18 +446,18 @@ const confirmDelete = async () => {
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 1200px;
+    width: 100%;
+    max-width: 800px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
-    margin-top: 30px;
+    margin-top: 60px;
     height: auto;
     flex-direction: column;
     margin-bottom: 7%;
 }
 
 .estimate-process-text {
-    margin-bottom: 20px;
     color: #0C2092;
 }
 
@@ -416,7 +479,7 @@ const confirmDelete = async () => {
 
 .estimate-process-writer {
     margin: 0;
-    margin-left: 45px;
+    margin-left: 25px;
 }
 
 .estimate-process-detail {
@@ -431,9 +494,9 @@ const confirmDelete = async () => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 93%;
+    width: 95%;
     height: auto;
-    margin-left: 40px;
+    margin-left: 21px;
     margin-top: -10px;
     font-weight: normal;
 }
@@ -449,7 +512,7 @@ const confirmDelete = async () => {
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 45px;
+    margin-right: 20px;
 }
 
 .estimate-process-btn {
@@ -467,12 +530,13 @@ const confirmDelete = async () => {
     color: white;
     border-radius: 10px;
     padding: 5px 7px;
-    margin-top: 4px;
+    margin-top: 10px;
     cursor: pointer;
+    margin-top: 4px;
 }
 
 .estimate-process-delete {
-    margin-right: 46px;
+    margin-right: 20px;
 }
 
 .estimate-process-reply {
@@ -481,6 +545,8 @@ const confirmDelete = async () => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 5px;
+    padding: 10px;
     margin-top: 10px;
 }
 
@@ -492,21 +558,21 @@ const confirmDelete = async () => {
     font-size: 15px;
     outline: none;
     color: black;
-    width: 90.5%;
+    width: 91.5%;
     height: auto;
     font-weight: normal;
+    margin-left: -20px;
 }
 
 .estimate-process-regist {
     background-color: #0C2092;
     border: 2px solid #0C2092;
-    width: 95px;
     color: white;
     border-radius: 10px;
     padding: 5px 7px;
-    margin-left: 992px;
+    margin-top: 10px;
     cursor: pointer;
-    margin-bottom: 7px;
+    margin-top: 4px;
 }
 
 .estimate-contents-test1 {

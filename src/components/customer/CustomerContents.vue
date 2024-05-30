@@ -77,7 +77,7 @@
                 </table>
             </div>
         </div>
-        <div class="customer-box3">
+        <!-- <div class="customer-box3">
             <h3>조회된 수주 정보</h3>
             <div class="project-number">
                 <p class="project-number-text">프로젝트 번호</p>
@@ -87,7 +87,7 @@
                 <p class="project-employee-text">담당자</p>
                 <button class="project-employee-box" id="project-employee-box">{{ accountData.employee?.employeeName }}</button>
             </div>
-        </div>
+        </div> -->
         <div class="customer-process-box">
             <h1 class="customer-process-text">Process</h1>
             <div v-for="note in filteredAccountNotes" :key="note.accountNoteId" class="customer-process-box-detail">
