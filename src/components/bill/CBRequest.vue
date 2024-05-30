@@ -23,7 +23,7 @@
                         <th>프로젝트 코드</th>
                         <th>거래처 코드</th>
                         <th>법인 여부</th>
-                        <th>Billing 잔액</th>
+                        <th>수주 금액</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,7 +90,7 @@
                         </td>
                         <td>{{ collectionData.depositDate }}</td>
                         <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : '' }}</td>
-                        <td><input v-model="collectionData.depositCategory.depositCategory" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력 필수"></td>
+                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력 필수"></td>
                     </tr>
                 </tbody>
             </table>
@@ -121,6 +121,7 @@ import axios from 'axios';
 
 const projectCode = ref('');
 const depositCode = ref('');
+const taxInvoiceNote = ref('');
 const orderData = ref({
     transaction: { transactionCode: '' },
     account: {
@@ -196,16 +197,6 @@ const removeFile = (index) => {
     files.value.splice(index, 1);
 };
 
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
 const registerRequest = async () => {
     if (!orderData.value.transaction.transactionCode) {
         alert('먼저 프로젝트 정보를 불러오세요.');
@@ -217,21 +208,30 @@ const registerRequest = async () => {
         return;
     }
 
-    const requestData = {
-        projectCode: projectCode.value,
-        transactionId: orderData.value.transaction.transactionId,
-        collectionId: collectionData.value.collectionId,
-        files: files.value
+    const taxInvoiceRequest = {
+        taxInvoiceNote: taxInvoiceNote.value,
+        order: {
+            orderRegistrationId: orderData.value.orderRegistrationId
+        },
+        account: {
+            accountId: orderData.value.account.accountId
+        },
+        employee: {
+            employeeId: orderData.value.employee.employeeId
+        },
+        collection: {
+            collectionId: collectionData.value.collectionId
+        }
     };
 
     const formData = new FormData();
-    formData.append('request', JSON.stringify(requestData));
+    formData.append('taxInvoiceRequest', JSON.stringify(taxInvoiceRequest));
     files.value.forEach(file => {
         formData.append('files', file);
     });
 
     try {
-        const response = await axios.post('http://localhost:7775/request/regist', formData, {
+        const response = await axios.post('http://localhost:7775/tax_invoice/regist', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
