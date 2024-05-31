@@ -1,18 +1,6 @@
 <template>
-    <div class="search-content">
-        <div class="customer-search">
-            <h1>사업자 신용 정보 조회</h1>
-        </div>
-        <div class="search-box">
-            <div class="business-number">
-                <p class="business-number-text">사업자 번호</p>
-                <input type="text" v-model="brNo" class="business-number-box" placeholder="사업자 번호를 입력해주세요.">
-            </div>
-            <div class="search-btn-div1">
-                <button @click="fetchBusinessData" class="search-btn1">조회하기</button>
-            </div>
-        </div>
-        <div class="regist-content">
+    <div class="search-content11">
+        <div class="regist-content11">
             <div class="customer-regist">
                 <h1>거래처 등록</h1>
             </div>
@@ -27,7 +15,12 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ businessNumber }}</td>
+                            <td>
+                                <div class="business-number-div">
+                                    <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" placeholder="사업자 번호를 입력해주세요." class="business-number-box"/>
+                                    <button @click="fetchBusinessData" class="business-number-btn">확인</button>
+                                </div>
+                            </td>
                             <td><input type="text" v-model="accountName" class="customer-test1"></td>
                             <td><input type="text" v-model="accountRepresentative" class="customer-test2"></td>
                         </tr>
@@ -79,8 +72,8 @@
                 </table>
             </div>
         </div>
-        <div class="customer-regist-btn-div">
-            <button @click="registerAccount" class="customer-regist-btn">거래처 등록하기</button>
+        <div class="customer-regist-btn-div3">
+            <button @click="registerAccount" class="customer-regist-btn3">거래처 등록하기</button>
         </div>
     </div>
 </template>
@@ -104,6 +97,11 @@ const accountNote = ref('');
 const accountType = ref('');
 
 const fetchBusinessData = async () => {
+    if (!brNo.value) {
+        alert("사업자 번호를 입력해주세요.");
+        return;
+    }
+
     try {
         console.log('사업자 번호:', brNo.value);
         const response = await axios.post('https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=IU5nhZBdwX%2FQMWdk0H0JTyf%2BUeqSzFG7Q6JNh%2Fvwuj%2BIt4%2F1wIy2ikm65nd5EisKla2Z3w1InmzW8MMEhu%2BRNA%3D%3D', {
@@ -113,22 +111,36 @@ const fetchBusinessData = async () => {
         if (response.data.data && response.data.data.length > 0) {
             const result = response.data.data[0];
             businessNumber.value = result.b_no;
-            businessStatus.value = result.b_stt;
             taxType.value = result.tax_type;
-            console.log('사업자 번호:', businessNumber.value, '사업자 상태:', businessStatus.value, '세금 유형:', taxType.value);
+            console.log('사업자 번호:', businessNumber.value, '사업자 상태:', result.b_stt, '세금 유형:', taxType.value);
             if (taxType.value === "국세청에 등록되지 않은 사업자등록번호입니다.") {
                 alert(taxType.value);
+                return;
             }
-            if (businessStatus.value === "계속사업자") {
+            if (result.b_stt === "계속사업자") {
                 businessStatus.value = "영업중";
+            } else if (result.b_stt === "휴업자") {
+                alert("해당 사업자 번호는 휴업 상태입니다. 다시 확인해주세요.");
+                businessStatus.value = "";
+                return;
+            } else if (result.b_stt === "폐업자") {
+                alert("해당 사업자 번호는 폐업 상태입니다. 다시 확인해주세요.");
+                businessStatus.value = "";
+                return;
+            } else {
+                alert("국세청에 등록되지 않은 사업자등록번호입니다.");
+                businessStatus.value = "";
+                return;
             }
         } else {
             alert('조회된 결과가 없습니다.');
             console.warn('조회된 결과가 없습니다.');
+            businessStatus.value = "";
         }
     } catch (error) {
         console.error('Error fetching business data:', error);
         alert('사업자 정보를 조회하는 중 오류가 발생했습니다.');
+        businessStatus.value = "";
     }
 }
 
@@ -165,5 +177,158 @@ const registerAccount = async () => {
 </script>
 
 <style>
-@import url('@/assets/css/customer/CustomerRegist.css');
+.search-content11 {
+    /* margin-top: 4%; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px); /* main1의 너비를 뺀 나머지 공간 */
+}
+
+.regist-content11 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.customer-regist {
+    text-align: center;
+}
+
+.customer-list-box1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    gap: 1px;
+}
+
+.customer-table1,
+.customer-table2,
+.customer-table3,
+.customer-table4 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.customer-table1 th,
+.customer-table1 td,
+.customer-table2 th,
+.customer-table2 td,
+.customer-table3 th,
+.customer-table3 td,
+.customer-table4 th,
+.customer-table4 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.customer-table1 th,
+.customer-table2 th,
+.customer-table3 th,
+.customer-table4 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.customer-table1 td,
+.customer-table2 td,
+.customer-table3 td,
+.customer-table4 td {
+    height: 40px;
+    width: 25%; /* 테이블 셀 너비를 균일하게 설정 */
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.customer-test1,
+.customer-test2,
+.customer-test3,
+.customer-test4,
+.customer-test5,
+.customer-test6,
+.customer-test7,
+.customer-test8,
+.customer-test9 {
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.customer-test4 {
+    width: 100%; /* 테이블 셀 너비와 맞춤 */
+}
+
+.customer-test9 {
+    width: 100%; /* 테이블 셀 너비와 맞춤 */
+}
+
+.customer-regist-btn-div3 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.customer-regist-btn3 {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.business-number-div {
+    display: flex;
+    align-items: center;
+}
+
+.business-number-box {
+    width: calc(100% - 50px); /* 버튼 크기를 뺀 나머지 너비 */
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    box-sizing: border-box;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
+}
+
+.business-number-btn {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: -1px; /* 테두리 겹침 방지 */
+    padding: 0 10px;
+}
 </style>

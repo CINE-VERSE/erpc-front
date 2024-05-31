@@ -528,7 +528,7 @@ const deleteNote = async (quotationNoteId) => {
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 30px;
+    margin-right: 34px;
 }
 
 .estimate-process-btn,
