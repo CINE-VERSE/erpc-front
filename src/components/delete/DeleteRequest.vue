@@ -16,7 +16,7 @@
         <h2>계약서 삭제 요청</h2>
         <ul>
           <li v-for="request in contractDeleteRequests" :key="request.id">
-            {{ request.name }}  {{ request }} -
+            {{ request. contractDeleteRequestsId }}  {{ request. contractDeleteRequestsReason }} -
             <button @click="processContractDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>
@@ -27,7 +27,7 @@
         <h2>견적서 삭제 요청</h2>
         <ul>
           <li v-for="request in quotationDeleteRequests" :key="request.id">
-            {{ request.name }} - {{ request.status }}
+            {{ request.quotationDeleteRequestsId }} - {{ request.quotationDeleteRequestsReason }}
             <button @click="processQuotationDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>
@@ -37,7 +37,7 @@
         <h2>거래처 삭제 요청</h2>
         <ul>
           <li v-for="request in accountDeleteRequests" :key="request.id">
-            {{ request.name }} - {{ request.status }}
+            {{ request.accountDeleteRequestsId }} - {{ request.accountDeleteRequestsReason }}
             <button @click="processAccountDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>
@@ -47,7 +47,7 @@
         <h2>수주 삭제 요청</h2>
         <ul>
           <li v-for="request in orderDeleteRequests" :key="request.id">
-            {{ request.name }} - {{ request.status }}
+            {{ request.orderDeleteRequestsId }} - {{ request.orderDeleteRequestsReason }}
             <button @click="processOrderDeleteRequest(request.id)">삭제 처리</button>
           </li>
         </ul>
