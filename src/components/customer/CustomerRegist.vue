@@ -168,7 +168,7 @@ const registerAccount = async () => {
         const response = await axios.post('http://localhost:7775/account/regist', postData);
         console.log('등록 응답:', response.data);
         alert('거래처 등록이 완료되었습니다.');
-        router.push({ path: `/customer/list` });
+        router.push({ path: `/customer` });
     } catch (error) {
         console.error('등록 중 오류 발생:', error);
         alert('거래처 등록 중 오류가 발생했습니다.');

@@ -17,7 +17,7 @@ const menuItems = ref([
   {
     title: '결재 관리',
     subItems: [
-      { title: '승인 요청 목록', path: '/approval/list' }
+      { title: '승인 요청 목록', path: '/approval' }
     ],
     isOpen: false
   },
@@ -41,7 +41,7 @@ const menuItems = ref([
     title: '거래처 관리',
     subItems: [
       { title: '거래처 등록', path: '/customer/regist' },
-      { title: '거래처 목록', path: '/customer/list' }
+      { title: '거래처 목록', path: '/customer' }
     ],
     isOpen: false
   },
@@ -74,7 +74,6 @@ const menuItems = ref([
     subItems: [
       { title: '수금 조회', path: '/bill/deposit' },
       { title: 'CB 요청', path: '/bill/request' }
-      // { title: 'CB 요청 내역', path: '/bill/list' }
     ],
     isOpen: false
   },

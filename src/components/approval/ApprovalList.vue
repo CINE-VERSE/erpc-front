@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(approval, index) in filteredApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotation.quotationCode)">
+                    <tr v-for="(approval, index) in filteredApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotation.quotationId)">
                         <td>{{ index + 1 }}</td>
                         <td>{{ approval.quotation.quotationCode }}</td>
                         <td>{{ approval.quotation.account.accountName }}</td>
@@ -78,8 +78,8 @@ const applyFilter = () => {
     }
 };
 
-const goToApprovalContents = (quotationCode) => {
-    router.push({ path: '/order/contents', query: { code: quotationCode } });
+const goToApprovalContents = (quotationId) => {
+    router.push({ path: `/approval/quotation/${quotationId}` });
 };
 </script>
 
