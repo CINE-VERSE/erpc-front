@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content" v-if="quotationData">
+    <div class="regist-content7" v-if="quotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
@@ -35,7 +35,7 @@
                 <tbody>
                     <tr>
                         <td>{{ quotationData.quotationCode }}</td>
-                        <td>{{ quotationData.quotationTotalCost }}</td>
+                        <td>{{ quotationData.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ quotationData.quotationDate }}</td>
                         <td>{{ quotationData.quotationDeleteDate }}</td>
                         <td>{{ quotationData.quotationDueDate }}</td>
@@ -58,8 +58,8 @@
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
                         <td>{{ product.quotationProductCount }}</td>
-                        <td>{{ product.product.productPrice }}</td>
-                        <td>{{ product.quotationSupplyPrice }}</td>
+                        <td>{{ product.product.productPrice.toLocaleString() }}</td>
+                        <td>{{ product.quotationSupplyPrice.toLocaleString() }}</td>
                         <td>{{ product.quotationProductionNote }}</td>
                     </tr>
                 </tbody>
@@ -116,13 +116,17 @@
                     {{ note.quotationNote }}
                 </button>
                 <div class="estimate-process-btn">
-                    <button class="estimate-process-delete" @click="deleteNote(note.quotationNoteId)">삭제</button>
+                    <button class="estimate-process-delete" @click="deleteNote(note.quotationNoteId)">삭제하기</button>
                 </div>
             </div>
             <div class="estimate-process-reply">
-                <input type="text" v-model="newNote" id="estimate-process-reply-box" class="estimate-process-reply-box" placeholder="내용을 입력해주세요.">
+                <input type="text" v-model="newNote" id="estimate-process-reply-box" class="estimate-process-reply-box"
+                    placeholder="내용을 입력해주세요.">
+                    <div class="estimate-process-btn2">
                 <button class="estimate-process-regist" @click="addNote">등록하기</button>
+                </div>
             </div>
+
         </div>
     </div>
     <div v-else>
@@ -138,6 +142,8 @@
     </div>
 </template>
 
+
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -150,7 +156,7 @@ const quotationNoteData = ref([]); // 견적서 노트 데이터를 저장하는
 const showPopup = ref(false);
 const deleteReason = ref('');
 const newNote = ref('');
-const employeeName = ref(''); // 직원 이름을 저장하기 위한 ref
+const employeeName = ref('');
 
 // filteredQuotationNotes는 quotationDeleteDate가 null인 노트만 반환합니다.
 const filteredQuotationNotes = computed(() => {
@@ -251,7 +257,7 @@ const addNote = async () => {
         alert('process 등록되었습니다.');
         console.log('Quotation note added successfully:', response.data);
         quotationNoteData.value.push(response.data);
-        newNote.value = ''; 
+        newNote.value = '';
         location.reload(); // 페이지 새로고침 추가
     } catch (error) {
         console.error('Error adding quotation note:', error);
@@ -262,7 +268,11 @@ const addNote = async () => {
 // 노트 삭제 함수
 const deleteNote = async (quotationNoteId) => {
     try {
-        const response = await axios.patch(`http://localhost:7775/quotation_note/delete/${quotationNoteId}`);
+        const response = await axios.patch('http://localhost:7775/quotation_note/delete', null, {
+            params: {
+                quotationNoteId
+            }
+        });
         const updatedNote = response.data;
         const noteIndex = quotationNoteData.value.findIndex(note => note.quotationNoteId === quotationNoteId);
         alert('process 삭제되었습니다.');
@@ -276,9 +286,11 @@ const deleteNote = async (quotationNoteId) => {
 };
 </script>
 
+
+
 <style>
-.regist-content {
-    margin-top: 4%;
+.regist-content7 {
+    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -411,6 +423,7 @@ const deleteNote = async (quotationNoteId) => {
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
+    width: 160px;
 }
 
 .estimate2-table1 th,
@@ -447,7 +460,8 @@ const deleteNote = async (quotationNoteId) => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
+    min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -464,9 +478,10 @@ const deleteNote = async (quotationNoteId) => {
 .estimate-process-box-detail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-left: 8px;
 }
 
 .estimate-process-info {
@@ -479,7 +494,8 @@ const deleteNote = async (quotationNoteId) => {
 
 .estimate-process-writer {
     margin: 0;
-    margin-left: 25px;
+    margin-left: 30px;
+    margin-bottom: -13px;
 }
 
 .estimate-process-detail {
@@ -494,9 +510,9 @@ const deleteNote = async (quotationNoteId) => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 95%;
+    width: 94%;
     height: auto;
-    margin-left: 21px;
+    margin-right: 5px;
     margin-top: -10px;
     font-weight: normal;
 }
@@ -512,18 +528,19 @@ const deleteNote = async (quotationNoteId) => {
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 20px;
+    margin-right: 30px;
 }
 
-.estimate-process-btn {
+.estimate-process-btn,
+.estimate-process-btn2 {
     display: flex;
     width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     gap: 7px;
 }
 
-.estimate-process-edit,
+.estimate-process-regist,
 .estimate-process-delete {
     background-color: #0C2092;
     border: 2px solid #0C2092;
@@ -532,11 +549,11 @@ const deleteNote = async (quotationNoteId) => {
     padding: 5px 7px;
     margin-top: 10px;
     cursor: pointer;
-    margin-top: 4px;
 }
 
-.estimate-process-delete {
-    margin-right: 20px;
+.estimate-process-regist {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .estimate-process-reply {
@@ -558,22 +575,11 @@ const deleteNote = async (quotationNoteId) => {
     font-size: 15px;
     outline: none;
     color: black;
-    width: 91.5%;
+    width: 91%;
     height: auto;
     font-weight: normal;
-    margin-left: -20px;
 }
 
-.estimate-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-top: 10px;
-    cursor: pointer;
-    margin-top: 4px;
-}
 
 .estimate-contents-test1 {
     width: 500px;

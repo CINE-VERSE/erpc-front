@@ -18,10 +18,10 @@
                         <td>
                             <div class="item-code-div2">
                                 <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
-                                <div class="button-group">
+                                <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
@@ -51,10 +51,11 @@
                 <tbody>
                     <tr>
                         <td>
-                            <div class="storage-code-div2">
-                                <input type="text" v-model="warehouseCode" placeholder="창고 코드를 입력해주세요." class="storage-code-box2"/>
-                                <button @click="fetchWarehouseData" class="storage-code-btn2">확인</button>
-                            </div>
+                            <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
+                                    {{ warehouse.warehouseCode }}
+                                </option>
+                            </select>
                         </td>
                         <td>{{ warehouseName }}</td>
                         <td>{{ warehouseType }}</td>
@@ -80,7 +81,7 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
@@ -99,17 +100,15 @@
                 <div v-for="(file, index) in files" :key="index" class="file-list">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.name }}</span>
-                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
                 </div>
             </div>
             <div v-else>
                 <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.originName }}</span>
-                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
                 </div>
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
         </div>
 
         <button @click="updateQuotation" class="estimate-regist-btn">견적 수정하기</button>
@@ -118,6 +117,7 @@
         <p>Loading...</p>
     </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
@@ -131,8 +131,9 @@ const files = ref([]);
 
 const products = ref([createNewProduct()]);
 
-const warehouseCode = ref('');
-const warehouseId = ref(null);
+const warehouses = ref([]); // 모든 창고 정보를 저장
+const selectedWarehouseCode = ref(''); // 선택된 창고 코드
+const warehouseId = ref(null); // Warehouse ID를 저장하기 위한 ref
 const warehouseName = ref('');
 const warehouseType = ref('');
 const warehouseLocation = ref('');
@@ -171,6 +172,7 @@ onMounted(async () => {
         console.error('Error fetching quotation data:', error);
     }
     fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
+    fetchWarehouses(); // 컴포넌트가 마운트될 때 창고 정보를 가져옴
 });
 
 const populateFields = (data) => {
@@ -184,7 +186,7 @@ const populateFields = (data) => {
         otherInfo: product.quotationProductionNote
     }));
 
-    warehouseCode.value = data.warehouse.warehouseCode;
+    selectedWarehouseCode.value = data.warehouse.warehouseCode;
     warehouseId.value = data.warehouse.warehouseId;
     warehouseName.value = data.warehouse.warehouseName;
     warehouseType.value = data.warehouse.warehouseType;
@@ -223,26 +225,27 @@ const fetchProductData = async (index) => {
     }
 };
 
-const fetchWarehouseData = async () => {
+const fetchWarehouses = async () => {
     try {
         const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
-        const warehouses = response.data;
-        const warehouse = warehouses.find(w => w.warehouseCode === warehouseCode.value);
-        if (warehouse) {
-            warehouseId.value = warehouse.warehouseId; // Warehouse ID 저장
-            warehouseName.value = warehouse.warehouseName;
-            warehouseType.value = warehouse.warehouseType;
-            warehouseLocation.value = warehouse.warehouseLocation;
-            warehouseUsage.value = warehouse.warehouseUsage;
-            productionLineName.value = warehouse.productionLineName;
-            outsourceName.value = warehouse.outsourceName;
-        } else {
-            alert('해당 창고 코드를 찾을 수 없습니다.');
-            clearWarehouseData();
-        }
+        warehouses.value = response.data;
     } catch (error) {
         console.error('창고 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('창고 정보를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const updateWarehouseData = () => {
+    const warehouse = warehouses.value.find(w => w.warehouseCode === selectedWarehouseCode.value);
+    if (warehouse) {
+        warehouseId.value = warehouse.warehouseId; // Warehouse ID 저장
+        warehouseName.value = warehouse.warehouseName;
+        warehouseType.value = warehouse.warehouseType;
+        warehouseLocation.value = warehouse.warehouseLocation;
+        warehouseUsage.value = warehouse.warehouseUsage;
+        productionLineName.value = warehouse.productionLineName;
+        outsourceName.value = warehouse.outsourceName;
+    } else {
         clearWarehouseData();
     }
 };
@@ -305,8 +308,22 @@ const removeProductRow = (index) => {
 
 const updateQuotation = async () => {
     const quotationId = route.params.quotationId; // quotationId 값을 가져옵니다.
-    if (!products.value.every(product => product.productId) || !warehouseId.value || !accountId.value) {
+    const areProductsValid = products.value.every(product => 
+        product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
+    );
+    const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
+    const isCustomerValid = customerCode.value && customerName.value;
+    const isEmployeeValid = employeeId.value && employeeName.value;
+    const isDueDateValid = dueDate.value;
+    const areFilesUploaded = files.value.length > 0 || quotationData.value.quotationFile.length > 0;
+
+    if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
         alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
+        return;
+    }
+
+    if (!areFilesUploaded) {
+        alert('첨부파일을 등록해주세요.');
         return;
     }
 
@@ -383,6 +400,8 @@ watch(products, (newProducts) => {
     });
 }, { deep: true });
 </script>
+
+
 
 <style>
 .regist-content {
@@ -471,17 +490,17 @@ watch(products, (newProducts) => {
 .estimate-test7,
 .estimate-test8 {
     width: 100%;
-    height: 35px;
+    height: 40px;
     box-sizing: border-box;
     padding: 8px;
 }
 
 .item-code-box2,
-.storage-code-box2,
+.warehousedrop,
 .customer-code-box2,
 .due-date-box {
     width: 100%;
-    height: 35px; 
+    height: 35px;
     font-size: 15px;
     box-sizing: border-box;
     padding: 8px;
@@ -499,14 +518,15 @@ watch(products, (newProducts) => {
     width: auto;
     background-color: #0C2092;
     color: white;
-    font-size: 14px;
+    font-size: 11px;
     cursor: pointer;
     margin-left: 5px; /* Add spacing between buttons */
 }
 
 .button-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 5px;
 }
 
@@ -565,6 +585,12 @@ watch(products, (newProducts) => {
     font-size: 18px;
 }
 
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+
 .estimate-regist-btn-div {
     display: flex;
     justify-content: center;
@@ -588,5 +614,4 @@ watch(products, (newProducts) => {
     margin-top: 20px;
     margin-bottom: 100px;
 }
-
 </style>

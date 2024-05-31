@@ -18,10 +18,10 @@
                         <td>
                             <div class="item-code-div2">
                                 <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
-                                <div class="button-group">
+                                <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
@@ -81,7 +81,7 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
@@ -106,6 +106,8 @@
         <button @click="registerQuotation" class="estimate-regist-btn">견적 등록하기</button>
     </div>
 </template>
+
+
 
 
 <script setup>
@@ -148,7 +150,7 @@ function createNewProduct() {
         productPrice: 0,
         quantity: 0,
         supplyValue: 0,
-        otherInfo: ''
+        otherInfo: '' // 기타
     };
 }
 
@@ -252,12 +254,29 @@ const addProductRow = () => {
 };
 
 const removeProductRow = (index) => {
-    products.value.splice(index, 1);
+    if (products.value.length > 1) {
+        products.value.splice(index, 1);
+    }
 };
 
 const registerQuotation = async () => {
-    if (!products.value.every(product => product.productId)) {
+    // 모든 필수 필드가 채워졌는지 확인
+    const areProductsValid = products.value.every(product => 
+        product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
+    );
+    const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
+    const isCustomerValid = customerCode.value && customerName.value;
+    const isEmployeeValid = employeeId.value && employeeName.value;
+    const isDueDateValid = dueDate.value;
+    const areFilesUploaded = files.value.length > 0;
+
+    if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
         alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
+        return;
+    }
+
+    if (!areFilesUploaded) {
+        alert('첨부파일을 등록해주세요.');
         return;
     }
 
@@ -266,16 +285,16 @@ const registerQuotation = async () => {
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
         employee: { 
-            employeeId: employeeId.value, // 수정: employeeId 값 설정
-            employeeName: employeeName.value // 수정: employeeName 값 설정
+            employeeId: employeeId.value, 
+            employeeName: employeeName.value 
         },
-        account: { accountId: accountId.value },  // Account ID 설정
-        warehouse: { warehouseId: warehouseId.value },  // Warehouse ID 설정
+        account: { accountId: accountId.value },  
+        warehouse: { warehouseId: warehouseId.value },  
         quotationProduct: products.value.map(product => ({
             quotationProductCount: product.quantity,
             quotationSupplyPrice: product.supplyValue,
             quotationProductionNote: product.otherInfo,
-            product: { productId: product.productId }  // Product ID 설정
+            product: { productId: product.productId }  
         }))
     };
 
@@ -288,7 +307,7 @@ const registerQuotation = async () => {
     try {
         const response = await axios.post('http://localhost:7775/quotation/regist', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true // 쿠키를 포함하도록 설정
+            withCredentials: true 
         });
         alert('견적서가 성공적으로 등록되었습니다.');
         router.push({ path: `/estimate` });
@@ -320,7 +339,7 @@ const clearWarehouseData = () => {
 const clearCustomerData = () => {
     accountId.value = null;
     customerName.value = '';
-    employeeName.value = ''; // 추가: employeeName 값 초기화
+    employeeName.value = '';
 };
 
 // 수량이 변경될 때 공급가액을 자동으로 업데이트
@@ -335,9 +354,13 @@ watch(products, (newProducts) => {
 </script>
 
 
+
+
+
+
 <style>
 .regist-content9 {
-    margin-top: 8%;
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -348,7 +371,7 @@ watch(products, (newProducts) => {
 
 .estimate-regist {
     text-align: center;
-    margin-top: 3%;
+    /* margin-top: 3%; */
 }
 
 .estimate-list-box {
@@ -450,7 +473,7 @@ watch(products, (newProducts) => {
     width: auto;
     background-color: #0C2092;
     color: white;
-    font-size: 14px;
+    font-size: 11px;
     cursor: pointer;
     margin-left: 5px; /* Add spacing between buttons */
 }
@@ -524,7 +547,7 @@ watch(products, (newProducts) => {
     margin-bottom: 10px;
 }
 
-.estimate-regist-btn {
+.estimate-regist-btn1 {
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -534,10 +557,10 @@ watch(products, (newProducts) => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 30px;
     width: 320px;
     font-size: 18px;
     margin-top: 20px;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; */
 }
 </style>
