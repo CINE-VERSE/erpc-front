@@ -2,13 +2,13 @@
     <div class="regist-content7" v-if="quotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
-            <div class="estimate-btn">
-                <button class="estimate-request">결재 요청</button>
-                <button class="estimate-edit" @click="goToQuotationPage">수정</button>
-                <button class="estimate-delete" @click="deleteQuotation">삭제</button>
-                <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
-            </div>
-            <div class="estimate-pdf">
+        <div class="estimate-btn">
+            <button class="estimate-request" @click="showApprovalPopup = true">결재 요청</button>
+            <button class="estimate-edit" @click="goToQuotationPage">수정</button>
+            <button class="estimate-delete" @click="deleteQuotation">삭제</button>
+            <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
+        </div>
+        <div class="estimate-pdf">
                 <div v-if="quotationData.quotationFile.length > 0">
                     <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
                         <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
@@ -132,6 +132,17 @@
     <div v-else>
         <p>Loading...</p>
     </div>
+
+    <!-- 결재 요청 팝업 -->
+    <div v-if="showApprovalPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>결재 비고란 입력</h2>
+            <textarea v-model="approvalContent" placeholder="결재 비고란를 입력하세요"></textarea>
+            <button @click="confirmApproval">확인</button>
+            <button @click="closeApprovalPopup">취소</button>
+        </div>
+    </div>
+    <!-- 삭제 요청 팝업 -->
     <div v-if="showPopup" class="popup-overlay">
         <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
@@ -141,8 +152,6 @@
         </div>
     </div>
 </template>
-
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -154,7 +163,9 @@ const router = useRouter();
 const quotationData = ref(null);
 const quotationNoteData = ref([]); // 견적서 노트 데이터를 저장하는 배열
 const showPopup = ref(false);
+const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
 const deleteReason = ref('');
+const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
 const newNote = ref('');
 const employeeName = ref('');
 
@@ -185,6 +196,29 @@ onMounted(async () => {
         console.error('Error fetching quotation data:', error);
     }
 });
+
+// 결재 요청 팝업 닫기 함수
+const closeApprovalPopup = () => {
+    showApprovalPopup.value = false;
+    approvalContent.value = '';
+};
+
+// 결재 요청 확인 함수
+const confirmApproval = async () => {
+    const quotationId = route.params.quotationId;
+    try {
+        const response = await axios.post('http://localhost:7775/approval/quotation/regist', {
+            approvalContent: approvalContent.value,
+            quotation: { quotationId: quotationId }
+        });
+        alert('결재 요청이 성공적으로 완료되었습니다.');
+        console.log('Approval request sent successfully:', response.data);
+        closeApprovalPopup();
+    } catch (error) {
+        console.error('Error sending approval request:', error);
+        alert('결재 요청 중 오류가 발생했습니다.');
+    }
+};
 
 // 견적서 수정 페이지로 이동하는 함수
 const goToQuotationPage = () => {
@@ -285,8 +319,6 @@ const deleteNote = async (quotationNoteId) => {
     }
 };
 </script>
-
-
 
 <style>
 .regist-content7 {
@@ -579,7 +611,6 @@ const deleteNote = async (quotationNoteId) => {
     height: auto;
     font-weight: normal;
 }
-
 
 .estimate-contents-test1 {
     width: 500px;
