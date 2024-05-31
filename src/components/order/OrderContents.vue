@@ -240,7 +240,9 @@ const route = useRoute();
 const router = useRouter();
 const orderId = route.params.orderId;
 const orderData = ref(null);
+const showPopup = ref(false);
 const taxInvoiceRequestData = ref(null);
+const deleteReason = ref('');
 
 onMounted(async () => {
     try {
