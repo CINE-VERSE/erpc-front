@@ -29,8 +29,8 @@
                         <td class="narrow-column">
                             <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
                         </td>
-                        <td>{{ product.productPrice }}</td>
-                        <td>{{ product.supplyValue }}</td>
+                        <td>{{ product.productPrice.toLocaleString() }}</td>
+                        <td>{{ product.supplyValue.toLocaleString() }}</td>
                         <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
                     </tr>
                 </tbody>
@@ -51,10 +51,11 @@
                 <tbody>
                     <tr>
                         <td>
-                            <div class="storage-code-div2">
-                                <input type="text" v-model="warehouseCode" placeholder="창고 코드를 입력해주세요." class="storage-code-box2"/>
-                                <button @click="fetchWarehouseData" class="storage-code-btn2">확인</button>
-                            </div>
+                            <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
+                                    {{ warehouse.warehouseCode }}
+                                </option>
+                            </select>
                         </td>
                         <td>{{ warehouseName }}</td>
                         <td>{{ warehouseType }}</td>
@@ -116,7 +117,8 @@ import router from '@/router/mainRouter';
 const products = ref([createNewProduct()]);
 
 // 창고 정보
-const warehouseCode = ref('');
+const warehouses = ref([]); // 모든 창고 정보를 저장
+const selectedWarehouseCode = ref(''); // 선택된 창고 코드
 const warehouseId = ref(null); // Warehouse ID를 저장하기 위한 ref
 const warehouseName = ref('');
 const warehouseType = ref('');
@@ -172,26 +174,27 @@ const fetchProductData = async (index) => {
     }
 };
 
-const fetchWarehouseData = async () => {
+const fetchWarehouses = async () => {
     try {
         const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
-        const warehouses = response.data;
-        const warehouse = warehouses.find(w => w.warehouseCode === warehouseCode.value);
-        if (warehouse) {
-            warehouseId.value = warehouse.warehouseId; // Warehouse ID 저장
-            warehouseName.value = warehouse.warehouseName;
-            warehouseType.value = warehouse.warehouseType;
-            warehouseLocation.value = warehouse.warehouseLocation;
-            warehouseUsage.value = warehouse.warehouseUsage;
-            productionLineName.value = warehouse.productionLineName;
-            outsourceName.value = warehouse.outsourceName;
-        } else {
-            alert('해당 창고 코드를 찾을 수 없습니다.');
-            clearWarehouseData();
-        }
+        warehouses.value = response.data;
     } catch (error) {
         console.error('창고 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('창고 정보를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const updateWarehouseData = () => {
+    const warehouse = warehouses.value.find(w => w.warehouseCode === selectedWarehouseCode.value);
+    if (warehouse) {
+        warehouseId.value = warehouse.warehouseId; // Warehouse ID 저장
+        warehouseName.value = warehouse.warehouseName;
+        warehouseType.value = warehouse.warehouseType;
+        warehouseLocation.value = warehouse.warehouseLocation;
+        warehouseUsage.value = warehouse.warehouseUsage;
+        productionLineName.value = warehouse.productionLineName;
+        outsourceName.value = warehouse.outsourceName;
+    } else {
         clearWarehouseData();
     }
 };
@@ -232,6 +235,7 @@ const fetchEmployeeData = async () => {
 
 onMounted(() => {
     fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
+    fetchWarehouses(); // 컴포넌트가 마운트될 때 창고 정보를 가져옴
 });
 
 const updateSupplyValue = (index) => {
@@ -424,7 +428,7 @@ watch(products, (newProducts) => {
 }
 
 .item-code-box2,
-.storage-code-box2,
+.warehousedrop,
 .customer-code-box2,
 .due-date-box {
     width: 100%;
