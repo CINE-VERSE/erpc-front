@@ -34,8 +34,7 @@
                         <td>{{ estimate.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ estimate.quotationDate }}</td>
                         <td>{{ estimate.quotationDueDate }}</td>
-                        <td></td>
-                        <!-- <td>{{ estimate.status }}</td> -->
+                        <td>{{ estimate.approvalStatus || '' }}</td>
                         <td>{{ estimate.employee.employeeName }}</td>
                     </tr>
                 </tbody>
@@ -57,6 +56,12 @@ const searchQuery = ref('');
 const searchBy = ref('견적서 코드');
 
 onMounted(async () => {
+    await fetchEstimates();
+    await fetchApprovalStatuses();
+    applyFilter();
+});
+
+const fetchEstimates = async () => {
     try {
         const response = await axios.get('http://localhost:7775/quotation');
         estimates.value = response.data.map(estimate => ({
@@ -65,7 +70,6 @@ onMounted(async () => {
             quotationTotalCost: estimate.quotationTotalCost,
             quotationDate: estimate.quotationDate,
             quotationDueDate: estimate.quotationDueDate,
-            status: estimate.accountStatus?.statusName || 'N/A', // Assuming you have a status field
             employee: {
                 employeeName: estimate.employee.employeeName
             }
@@ -74,7 +78,22 @@ onMounted(async () => {
     } catch (error) {
         console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
     }
-});
+};
+
+const fetchApprovalStatuses = async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/approval/quotation');
+        const approvals = response.data;
+        approvals.forEach(approval => {
+            const estimate = estimates.value.find(est => est.quotationId === approval.quotation.quotationId);
+            if (estimate) {
+                estimate.approvalStatus = approval.approvalStatus.approvalStatus;
+            }
+        });
+    } catch (error) {
+        console.error('결재 상태를 조회하는 중 오류가 발생했습니다.', error);
+    }
+};
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;

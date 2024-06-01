@@ -1,14 +1,21 @@
 <template>
-    <div class="regist-content7" v-if="quotationData">
+    <div class="regist-content7" v-if="approveQuotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 결재 요청 내역</h1>
-            <div class="estimate-btn">
-                <button class="estimate-approve" @click="showApprovalPopup = true">결재 승인</button>
-                <button class="estimate-reject" @click="showRejectPopup = true">결재 반려</button>
+
+            <div class="estimate-btn" v-if="approveQuotationData.approvalStatus.approvalStatusId === 1">
+                <button class="estimate-approve" @click="openApprovalPopup">결재 승인</button>
+                <button class="estimate-reject" @click="openRejectPopup">결재 반려</button>
             </div>
+
+            <div class="approval-note">
+                <h3 class="approval-note1">결재 비고란</h3>
+                <div class="approval-note2">{{ approveQuotationData.approvalContent }}</div>
+            </div>
+
             <div class="estimate-pdf">
-                <div v-if="quotationData.quotationFile.length > 0">
-                    <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
+                <div v-if="approveQuotationData.quotation.quotationFile.length > 0">
+                    <div v-for="file in approveQuotationData.quotation.quotationFile" :key="file.fileId" class="file-download">
                         <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
                             {{ file.originName }} 다운로드
                         </button>
@@ -32,11 +39,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ quotationData.quotationCode }}</td>
-                        <td>{{ quotationData.quotationTotalCost.toLocaleString() }}</td>
-                        <td>{{ quotationData.quotationDate }}</td>
-                        <td>{{ quotationData.quotationDeleteDate }}</td>
-                        <td>{{ quotationData.quotationDueDate }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationCode }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationTotalCost.toLocaleString() }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationDate }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationDeleteDate }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationDueDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -52,7 +59,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="product in quotationData.quotationProduct" :key="product.quotationProductId">
+                    <tr v-for="product in approveQuotationData.quotation.quotationProduct" :key="product.quotationProductId">
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
                         <td>{{ product.quotationProductCount }}</td>
@@ -76,13 +83,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ quotationData.warehouse.warehouseCode }}</td>
-                        <td>{{ quotationData.warehouse.warehouseName }}</td>
-                        <td>{{ quotationData.warehouse.warehouseType }}</td>
-                        <td>{{ quotationData.warehouse.warehouseLocation }}</td>
-                        <td>{{ quotationData.warehouse.warehouseUsage }}</td>
-                        <td>{{ quotationData.warehouse.productionLineName }}</td>
-                        <td>{{ quotationData.warehouse.outsourceName }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.warehouseCode }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.warehouseName }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.warehouseType }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.warehouseLocation }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.warehouseUsage }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.productionLineName }}</td>
+                        <td>{{ approveQuotationData.quotation.warehouse.outsourceName }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -96,252 +103,125 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ quotationData.employee.employeeName }}</td>
-                        <td>{{ quotationData.account.accountName }}</td>
-                        <td>{{ quotationData.quotationNote }}</td>
+                        <td>{{ approveQuotationData.quotation.employee.employeeName }}</td>
+                        <td>{{ approveQuotationData.quotation.account.accountName }}</td>
+                        <td>{{ approveQuotationData.quotation.quotationNote }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="estimate-process-box">
-            <h1 class="estimate-process-text">Process</h1>
-            <div v-for="note in filteredQuotationNotes" :key="note.quotationNoteId" class="estimate-process-box-detail">
-                <div class="estimate-process-info">
-                    <h4 class="estimate-process-writer">{{ employeeName }}</h4>
-                    <p class="estimate-process-date">{{ note.quotationNoteDate }}</p>
-                </div>
-                <button class="estimate-process-detail">
-                    {{ note.quotationNote }}
-                </button>
-                <div class="estimate-process-btn">
-                    <button class="estimate-process-delete" @click="deleteNote(note.quotationNoteId)">삭제하기</button>
-                </div>
+
+        <!-- Approval Popup -->
+        <div v-if="showApprovalPopup" class="popup-overlay">
+            <div class="popup-content">
+                <h2>결재 승인</h2>
+                <textarea v-model="approvalContent" placeholder="승인 내용을 입력하세요"></textarea>
+                <button class="confirm-btn" @click="submitApproval">확인</button>
+                <button class="cancel-btn" @click="closeApprovalPopup">취소</button>
             </div>
-            <div class="estimate-process-reply">
-                <input type="text" v-model="newNote" id="estimate-process-reply-box" class="estimate-process-reply-box"
-                    placeholder="내용을 입력해주세요.">
-                <div class="estimate-process-btn2">
-                    <button class="estimate-process-regist" @click="addNote">등록하기</button>
-                </div>
+        </div>
+
+        <!-- Reject Popup -->
+        <div v-if="showRejectPopup" class="popup-overlay">
+            <div class="popup-content">
+                <h2>결재 반려</h2>
+                <textarea v-model="rejectContent" placeholder="반려 사유를 입력하세요"></textarea>
+                <button class="confirm-btn" @click="submitRejection">확인</button>
+                <button class="cancel-btn" @click="closeRejectPopup">취소</button>
             </div>
         </div>
     </div>
     <div v-else>
         <p>Loading...</p>
     </div>
-    <!-- 결재 승인 팝업 -->
-    <div v-if="showApprovalPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>결재 승인 사유 입력</h2>
-            <textarea v-model="approvalContent" placeholder="결재 승인 사유를 입력하세요"></textarea>
-            <button @click="confirmApproval(2)">확인</button>
-            <button @click="closeApprovalPopup">취소</button>
-        </div>
-    </div>
-    <!-- 결재 반려 팝업 -->
-    <div v-if="showRejectPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>결재 반려 사유 입력</h2>
-            <textarea v-model="approvalContent" placeholder="결재 반려 사유를 입력하세요"></textarea>
-            <button @click="confirmApproval(3)">확인</button>
-            <button @click="closeRejectPopup">취소</button>
-        </div>
-    </div>
-    <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>삭제 요청 사유 입력</h2>
-            <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
-        </div>
-    </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
-const router = useRouter();
-const quotationData = ref(null);
-const quotationNoteData = ref([]); // 견적서 노트 데이터를 저장하는 배열
-const showPopup = ref(false);
-const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
-const showRejectPopup = ref(false); // 결재 반려 사유 입력 팝업을 위한 상태 변수
-const deleteReason = ref('');
-const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
-const newNote = ref('');
-const employeeName = ref('');
+const approveQuotationData = ref(null);
+const showApprovalPopup = ref(false);
+const showRejectPopup = ref(false);
+const approvalContent = ref('');
+const rejectContent = ref('');
+const actionCompleted = ref(false);
 
-// filteredQuotationNotes는 quotationDeleteDate가 null인 노트만 반환합니다.
-const filteredQuotationNotes = computed(() => {
-    return quotationNoteData.value.filter(note => note.quotationDeleteDate === null);
-});
-
-// 컴포넌트가 마운트될 때 실행되는 코드
-onMounted(async () => {
+const fetchApproveQuotationData = async () => {
     const quotationId = route.params.quotationId;
-    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
-
     try {
-        // 견적서 데이터를 가져오는 API 호출
-        const quotationResponse = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
-        quotationData.value = quotationResponse.data;
-
-        // 견적서 노트 데이터를 가져오는 API 호출
-        const noteResponse = await axios.get(`http://localhost:7775/quotation_note/${quotationId}`);
-        quotationNoteData.value = noteResponse.data;
-
-        // userId로 직원 이름을 가져오는 API 호출
-        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
-        employeeName.value = employeeResponse.data.employeeName;
-
+        const response = await axios.get(`http://localhost:7775/approval/quotation/${quotationId}`);
+        approveQuotationData.value = response.data;
     } catch (error) {
-        console.error('Error fetching quotation data:', error);
+        console.error("Error fetching approval quotation data:", error);
     }
-});
+};
 
-// 결재 요청 팝업 닫기 함수
+onMounted(fetchApproveQuotationData);
+
+const downloadFile = (url) => {
+    window.open(url, '_blank');
+};
+
+const openApprovalPopup = () => {
+    approvalContent.value = '견적 승인';
+    showApprovalPopup.value = true;
+};
+
 const closeApprovalPopup = () => {
     showApprovalPopup.value = false;
-    approvalContent.value = '';
 };
 
-// 결재 반려 팝업 닫기 함수
+const submitApproval = async () => {
+    const payload = {
+        quotationApprovalId: approveQuotationData.value.quotationApprovalId,
+        approvalContent: approvalContent.value,
+        approvalStatus: {
+            approvalStatusId: 2
+        }
+    };
+    try {
+        await axios.patch(`http://localhost:7775/approval/quotation/process`, payload);
+        actionCompleted.value = true;
+        showApprovalPopup.value = false;
+        fetchApproveQuotationData();
+    } catch (error) {
+        console.error("Error submitting approval:", error);
+    }
+};
+
+const openRejectPopup = () => {
+    rejectContent.value = '견적 반려';
+    showRejectPopup.value = true;
+};
+
 const closeRejectPopup = () => {
     showRejectPopup.value = false;
-    approvalContent.value = '';
 };
 
-// 결재 요청 확인 함수
-const confirmApproval = async (statusId) => {
-    const quotationId = route.params.quotationId;
-    try {
-        const response = await axios.patch('http://localhost:7775/approval/quotation/process', {
-            quotationApprovalId: quotationData.value.quotationApprovalId,
-            approvalContent: approvalContent.value,
-            approvalStatus: {
-                approvalStatusId: statusId
-            }
-        });
-        alert(statusId === 2 ? '결재 승인되었습니다.' : '결재 반려되었습니다.');
-        console.log('Approval request sent successfully:', response.data);
-        if (statusId === 2) {
-            closeApprovalPopup();
-        } else {
-            closeRejectPopup();
+const submitRejection = async () => {
+    const payload = {
+        quotationApprovalId: approveQuotationData.value.quotationApprovalId,
+        approvalContent: rejectContent.value,
+        approvalStatus: {
+            approvalStatusId: 3
         }
-    } catch (error) {
-        console.error('Error sending approval request:', error);
-        alert('결재 요청 중 오류가 발생했습니다.');
-    }
-};
-
-// 견적서 수정 페이지로 이동하는 함수
-const goToQuotationPage = () => {
-    router.push({ path: `/estimate/modify/${route.params.quotationId}` });
-};
-
-// 파일 다운로드 함수
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
-// 엑셀 다운로드 함수
-const downloadExcel = () => {
-    const quotationId = route.params.quotationId;
-    const url = `http://localhost:7775/excel/quotation/${quotationId}`;
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `quotation_${quotationId}.xlsx`;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
-// 견적서 삭제 요청 함수
-const deleteQuotation = () => {
-    showPopup.value = true;
-};
-
-// 팝업 닫기 함수
-const closePopup = () => {
-    showPopup.value = false;
-};
-
-// 견적서 삭제 확인 함수
-const confirmDelete = async () => {
-    const quotationId = route.params.quotationId;
+    };
     try {
-        const response = await axios.post('http://localhost:7775/quotation/delete', {
-            quotationDeleteRequestReason: deleteReason.value,
-            quotation: quotationData.value
-        });
-        console.log('Quotation delete request sent successfully:', response.data);
-        alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/estimate'); // 삭제 요청 후 이동
+        await axios.patch(`http://localhost:7775/approval/quotation/process`, payload);
+        actionCompleted.value = true;
+        showRejectPopup.value = false;
+        fetchApproveQuotationData();
     } catch (error) {
-        console.error('Error sending delete request:', error);
-        alert('삭제 요청 중 오류가 발생했습니다.');
-    } finally {
-        closePopup();
-    }
-};
-
-// 노트 추가 함수
-const addNote = async () => {
-    const quotationId = route.params.quotationId;
-    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
-    try {
-        const response = await axios.post('http://localhost:7775/quotation_note/regist', {
-            quotationNote: newNote.value,
-            quotation: { quotationId: quotationData.value.quotationId },
-            employee: { employeeId: userId } // employeeId를 userId로 설정
-        });
-        alert('process 등록되었습니다.');
-        console.log('Quotation note added successfully:', response.data);
-        quotationNoteData.value.push(response.data);
-        newNote.value = '';
-        location.reload(); // 페이지 새로고침 추가
-    } catch (error) {
-        console.error('Error adding quotation note:', error);
-        alert('노트 추가 중 오류가 발생했습니다.');
-    }
-};
-
-// 노트 삭제 함수
-const deleteNote = async (quotationNoteId) => {
-    try {
-        const response = await axios.patch('http://localhost:7775/quotation_note/delete', null, {
-            params: {
-                quotationNoteId
-            }
-        });
-        const updatedNote = response.data;
-        const noteIndex = quotationNoteData.value.findIndex(note => note.quotationNoteId === quotationNoteId);
-        alert('process 삭제되었습니다.');
-        if (noteIndex !== -1) {
-            quotationNoteData.value[noteIndex] = updatedNote;
-        }
-    } catch (error) {
-        console.error('Error deleting note:', error);
-        alert('노트 삭제 중 오류가 발생했습니다.');
+        console.error("Error submitting rejection:", error);
     }
 };
 </script>
 
 <style>
 .regist-content7 {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -367,29 +247,10 @@ const deleteNote = async (quotationNoteId) => {
     color: #0C2092;
 }
 
-.estimate-btn {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-top: 40px;
-    margin-bottom: 20px;
-}
-
 .pdfimage {
     width: 50px;
     height: auto;
     cursor: pointer;
-}
-
-.estimate-approve,
-.estimate-reject,
-.estimate-excel {
-    width: 80px;
-    height: 40px;
-    cursor: pointer;
-    margin-left: 15px;
-    margin-right: 15px;
 }
 
 .estimate-pdf {
@@ -498,138 +359,6 @@ const deleteNote = async (quotationNoteId) => {
     background-color: #d5e6ff;
 }
 
-.estimate-process-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #CCEAFF;
-    border: 2px solid #CCEAFF;
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 1000px;
-    min-width: 100px;
-    margin-bottom: 20px;
-    font-family: GmarketSansMedium;
-    font-size: 17px;
-    margin-top: 60px;
-    height: auto;
-    flex-direction: column;
-    margin-bottom: 7%;
-}
-
-.estimate-process-text {
-    color: #0C2092;
-}
-
-.estimate-process-box-detail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    margin-left: 8px;
-}
-
-.estimate-process-info {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.estimate-process-writer {
-    margin: 0;
-    margin-left: 30px;
-    margin-bottom: -13px;
-}
-
-.estimate-process-detail {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
-    outline: none;
-    color: black;
-    font-weight: bold;
-    width: 94%;
-    height: auto;
-    margin-right: 5px;
-    margin-top: -10px;
-    font-weight: normal;
-}
-
-.estimate-process-date {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #F6E5FF;
-    border: 2px solid #F6E5FF;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-size: 12px;
-    font-weight: normal;
-    color: black;
-    margin-right: 34px;
-}
-
-.estimate-process-btn,
-.estimate-process-btn2 {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    gap: 7px;
-}
-
-.estimate-process-regist,
-.estimate-process-delete {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-top: 10px;
-    cursor: pointer;
-}
-
-.estimate-process-regist {
-    margin-top: 5px;
-    margin-left: 5px;
-}
-
-.estimate-process-reply {
-    display: flex;
-    width: 100%;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-.estimate-process-reply-box {
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 15px;
-    outline: none;
-    color: black;
-    width: 91%;
-    height: auto;
-    font-weight: normal;
-}
-
 .estimate-contents-test1 {
     width: 500px;
 }
@@ -667,9 +396,61 @@ const deleteNote = async (quotationNoteId) => {
 
 .popup-content button {
     margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
 }
 
-.file-download.no-file {
-    cursor: default;
+.confirm-btn {
+    background-color: #007BFF; /* Blue */
+}
+
+.cancel-btn {
+    background-color: #DC3545; /* Red */
+}
+
+.estimate-btn .estimate-approve {
+    background-color: #007BFF; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.estimate-btn .estimate-reject {
+    background-color: #DC3545; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.estimate-btn .estimate-approve:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.estimate-btn .estimate-reject:hover {
+    background-color: #c82333; /* Darker Red */
+}
+
+.approval-note {
+    width: 100%;
+    height: 100px;
+    color: black;
+    background-color: #F6E5FF;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 </style>

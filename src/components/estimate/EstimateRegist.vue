@@ -94,7 +94,7 @@
             </table>
         </div>
 
-        <div class="estimate-attachment">
+        <div class="estimate-attachment3">
             <h2 class="estimate-file">첨부파일</h2>
             <div v-for="(file, index) in files" :key="index" class="file-list">
                 <span class="file-icon">📄</span>
@@ -485,7 +485,7 @@ watch(products, (newProducts) => {
     gap: 5px;
 }
 
-.estimate-attachment {
+.estimate-attachment3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -499,7 +499,7 @@ watch(products, (newProducts) => {
     margin-bottom: 50px;
 }
 
-.estimate-attachment-header {
+.estimate-attachment3-header {
     display: flex;
     align-items: center;
     padding: 5px;

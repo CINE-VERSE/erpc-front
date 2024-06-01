@@ -1,5 +1,5 @@
 <template>
-    <div class="approval-content">
+    <div class="approval-content1">
         <div class="approval-search">
             <h1 class="approval-search-text">결재 승인 요청 목록</h1>
         </div>
@@ -84,7 +84,7 @@ const goToApprovalContents = (quotationId) => {
 </script>
 
 <style>
-.approval-content {
+.approval-content1 {
     margin-top: 4%;
     display: flex;
     flex-direction: column;

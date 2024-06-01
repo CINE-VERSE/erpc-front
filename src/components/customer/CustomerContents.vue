@@ -99,7 +99,7 @@
                     {{ note.accountNote }}
                 </button>
                 <div class="customer-process-btn">
-                    <button class="customer-process-delete" @click="deleteNote(note.accountNoteId)">삭제</button>
+                    <button class="customer-process-delete" @click="deleteNote(note.accountNoteId)">삭제하기</button>
                 </div>
             </div>
             <div class="customer-process-reply">
@@ -430,7 +430,8 @@ const deleteNote = async (accountNoteId) => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 100%;
-    max-width: 800px;
+    max-width: 1000px;
+    min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -447,9 +448,10 @@ const deleteNote = async (accountNoteId) => {
 .customer-process-box-detail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-left: 8px;
 }
 
 .customer-process-info {
@@ -462,7 +464,8 @@ const deleteNote = async (accountNoteId) => {
 
 .customer-process-writer {
     margin: 0;
-    margin-left: 25px;
+    margin-left: 30px;
+    margin-bottom: -13px;
 }
 
 .customer-process-detail {
@@ -477,9 +480,9 @@ const deleteNote = async (accountNoteId) => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 95%;
+    width: 94%;
     height: auto;
-    margin-left: 21px;
+    margin-right: 5px;
     margin-top: -10px;
     font-weight: normal;
 }
@@ -495,18 +498,19 @@ const deleteNote = async (accountNoteId) => {
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 20px;
+    margin-right: 34px;
 }
 
-.customer-process-btn {
+.customer-process-btn,
+.customer-process-btn2 {
     display: flex;
     width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     gap: 7px;
 }
 
-.customer-process-edit,
+.customer-process-regist,
 .customer-process-delete {
     background-color: #0C2092;
     border: 2px solid #0C2092;
@@ -515,11 +519,11 @@ const deleteNote = async (accountNoteId) => {
     padding: 5px 7px;
     margin-top: 10px;
     cursor: pointer;
-    margin-top: 4px;
 }
 
-.customer-process-delete {
-    margin-right: 20px;
+.customer-process-regist {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .customer-process-reply {
@@ -541,21 +545,9 @@ const deleteNote = async (accountNoteId) => {
     font-size: 15px;
     outline: none;
     color: black;
-    width: 91.5%;
+    width: 91%;
     height: auto;
     font-weight: normal;
-    margin-left: -20px;
-}
-
-.customer-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-top: 10px;
-    cursor: pointer;
-    margin-top: 4px;
 }
 
 .customer-box3 {

@@ -145,6 +145,19 @@ const fetchBusinessData = async () => {
 }
 
 const registerAccount = async () => {
+    // 필수 필드가 모두 채워졌는지 확인
+    if (!brNo.value || !accountName.value || !accountRepresentative.value || !corporationStatus.value || !accountLocation.value || !accountContact.value || !accountEmail.value || !accountType.value) {
+        alert('모든 필수 입력란을 채워주세요.');
+        return;
+    }
+
+    // LocalStorage에서 employeeId를 가져옴
+    const employeeId = localStorage.getItem('userId');
+    if (!employeeId) {
+        alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+        return;
+    }
+
     const postData = {
         accountName: accountName.value,
         corporationNum: businessNumber.value,
@@ -157,7 +170,7 @@ const registerAccount = async () => {
         accountNote: accountNote.value,
         accountType: accountType.value,
         employee: {
-            employeeId: 1
+            employeeId: employeeId  // LocalStorage에서 가져온 employeeId 사용
         },
         accountStatus: {
             accountStatusId: businessStatus.value === "영업중" ? 1 : 4 // Assume 1 is the ID for "영업중"
@@ -175,6 +188,7 @@ const registerAccount = async () => {
     }
 }
 </script>
+
 
 <style>
 .search-content11 {
@@ -330,5 +344,9 @@ const registerAccount = async () => {
     cursor: pointer;
     margin-left: -1px; /* 테두리 겹침 방지 */
     padding: 0 10px;
+}
+
+.customer-regist-btn3:hover {
+    background-color: #007bff;
 }
 </style>
