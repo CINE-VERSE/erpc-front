@@ -28,8 +28,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(customer, index) in filteredCustomers" :key="index" @click="goToCustomerContents(customer.accountId)">
-                        <td>{{ index + 1 }}</td>
+                    <tr v-for="(customer, index) in filteredCustomers" :key="customer.accountId" @click="goToCustomerContents(customer.accountId)">
+                        <td>{{ filteredCustomers.length - index }}</td> <!-- Reverse numbering -->
                         <td>{{ customer.accountCode }}</td>
                         <td>{{ customer.accountName }}</td>
                         <td>{{ customer.corporationNum }}</td>
@@ -43,6 +43,8 @@
     </div>
 </template>
 
+
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -52,12 +54,12 @@ const router = useRouter();
 const customers = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('거래처명');
-const filteredCustomers = ref(customers.value);
+const filteredCustomers = ref([]);
 
 onMounted(async () => {
     try {
         const response = await axios.get('http://localhost:7775/account/list');
-        customers.value = response.data;
+        customers.value = response.data.sort((a, b) => b.accountId - a.accountId); // Sort by accountId
         filteredCustomers.value = customers.value;
     } catch (error) {
         console.error('Error fetching customers:', error);
@@ -87,6 +89,8 @@ function goToCustomerContents(accountId) {
     router.push({ path: `/customer/${accountId}` });
 }
 </script>
+
+
 
 <style>
 @import url('@/assets/css/customer/CustomerList.css');

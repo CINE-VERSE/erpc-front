@@ -25,13 +25,12 @@ import OrderEdit from '@/components/order/OrderEdit.vue';
 
 import Deposit from '@/components/bill/Deposit.vue';
 import CBRequest from '@/components/bill/CBRequest.vue';
-import CBList from '@/components/bill/CBList.vue';
-import CBContents from '@/components/bill/CBContents.vue';
 
 import YearPerformance from '@/components/performance/YearPerformance.vue';
 import TeamPerformance from '@/components/performance/TeamPerformance.vue';
 
 import ApprovalList from '@/components/approval/ApprovalList.vue';
+import ApprovalEstimateContents from '@/components/approval/ApprovalEstimateContents.vue';
 
 import SalesOppRegist from '@/components/salesopp/SalesOppRegist.vue';
 import SalesOppList from '@/components/salesopp/SalesOppList.vue';
@@ -68,7 +67,7 @@ const routes = [
         beforeEnter: requirePermission(7)
     },
     {
-        path: '/customer/list',
+        path: '/customer',
         component: CustomerList
     },
     {
@@ -144,14 +143,6 @@ const routes = [
         component: CBRequest
     },
     {
-        path: '/bill/list',
-        component: CBList
-    },
-    {
-        path: '/bill/contents',
-        component: CBContents
-    },
-    {
         path: '/performance/year',
         component: YearPerformance
     },
@@ -160,8 +151,12 @@ const routes = [
         component: TeamPerformance
     },
     {
-        path: '/approval/list',
+        path: '/approval',
         component: ApprovalList
+    },
+    {
+        path: '/approval/quotation/:quotationId',
+        component: ApprovalEstimateContents
     },
     {
         path: '/salesopp/regist',
