@@ -29,7 +29,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="(estimate, index) in filteredEstimates" :key="estimate.quotationId" @click="goToEstimateContents(estimate.quotationId)">
-                        <td>{{ index + 1 }}</td>
+                        <td>{{ filteredEstimates.length - index }}</td> <!-- Reverse numbering -->
                         <td>{{ estimate.quotationCode }}</td>
                         <td>{{ estimate.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ estimate.quotationDate }}</td>
@@ -73,7 +73,7 @@ const fetchEstimates = async () => {
             employee: {
                 employeeName: estimate.employee.employeeName
             }
-        }));
+        })).sort((a, b) => b.quotationId - a.quotationId); // Sort by quotationId in descending order
         filteredEstimates.value = estimates.value;
     } catch (error) {
         console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);

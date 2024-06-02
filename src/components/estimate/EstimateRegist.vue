@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content9">
+    <div class="estimate-regist-content11">
         <h1>견적서 등록</h1>
         <div class="estimate-list-box">
             <table class="estimate-table1">
@@ -17,21 +17,24 @@
                     <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
+                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요."
+                                    class="item-code-box2" />
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1"
+                                        class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
                         <td>{{ product.productName }}</td>
                         <td class="narrow-column">
-                            <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
+                            <input type="number" v-model.number="product.quantity" class="estimate-test2"
+                                @input="updateSupplyValue(index)" />
                         </td>
                         <td>{{ product.productPrice.toLocaleString() }}</td>
                         <td>{{ product.supplyValue.toLocaleString() }}</td>
-                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
+                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -52,7 +55,8 @@
                     <tr>
                         <td>
                             <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
-                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId"
+                                    :value="warehouse.warehouseCode">
                                     {{ warehouse.warehouseCode }}
                                 </option>
                             </select>
@@ -81,14 +85,16 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
+                                <input type="text" v-model="customerCode"
+                                    @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요."
+                                    class="customer-code-box2" />
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td>{{ employeeName }}</td> 
-                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
-                        <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
+                        <td>{{ employeeName }}</td>
+                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box" /></td>
+                        <td><input type="text" v-model="accountNote" class="customer-test9" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -102,8 +108,9 @@
             </div>
             <input type="file" @change="handleFileUpload" multiple />
         </div>
-
-        <button @click="registerQuotation" class="estimate-regist-btn">견적 등록하기</button>
+        <div class="estimate-regist-btn-div33">
+            <button @click="registerQuotation" class="estimate-regist-btn33">견적 등록하기</button>
+        </div>
     </div>
 </template>
 
@@ -261,7 +268,7 @@ const removeProductRow = (index) => {
 
 const registerQuotation = async () => {
     // 모든 필수 필드가 채워졌는지 확인
-    const areProductsValid = products.value.every(product => 
+    const areProductsValid = products.value.every(product =>
         product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
     );
     const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
@@ -271,7 +278,7 @@ const registerQuotation = async () => {
     const areFilesUploaded = files.value.length > 0;
 
     if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
-        alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
+        alert('모든 필수 입력란을 채워주세요.');
         return;
     }
 
@@ -284,17 +291,17 @@ const registerQuotation = async () => {
         quotationNote: accountNote.value,
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
-        employee: { 
-            employeeId: employeeId.value, 
-            employeeName: employeeName.value 
+        employee: {
+            employeeId: employeeId.value,
+            employeeName: employeeName.value
         },
-        account: { accountId: accountId.value },  
-        warehouse: { warehouseId: warehouseId.value },  
+        account: { accountId: accountId.value },
+        warehouse: { warehouseId: warehouseId.value },
         quotationProduct: products.value.map(product => ({
             quotationProductCount: product.quantity,
             quotationSupplyPrice: product.supplyValue,
             quotationProductionNote: product.otherInfo,
-            product: { productId: product.productId }  
+            product: { productId: product.productId }
         }))
     };
 
@@ -307,7 +314,7 @@ const registerQuotation = async () => {
     try {
         const response = await axios.post('http://localhost:7775/quotation/regist', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
-            withCredentials: true 
+            withCredentials: true
         });
         alert('견적서가 성공적으로 등록되었습니다.');
         router.push({ path: `/estimate` });
@@ -359,14 +366,15 @@ watch(products, (newProducts) => {
 
 
 <style>
-.regist-content9 {
+.estimate-regist-content11 {
     /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px); /* main1의 너비를 뺀 나머지 공간 */
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .estimate-regist {
@@ -375,8 +383,10 @@ watch(products, (newProducts) => {
 }
 
 .estimate-list-box {
-    width: 90%; /* 너비를 90%로 설정 */
-    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    width: 90%;
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -425,13 +435,15 @@ watch(products, (newProducts) => {
 .estimate-table2 td,
 .estimate-table3 td {
     height: 40px;
-    width: 14.28%; /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
+    width: 14.28%;
+    /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
     box-sizing: border-box;
     padding: 8px;
 }
 
 .estimate-test2 {
-    width: 80px; /* 수량 필드의 너비를 좁게 설정 */
+    width: 80px;
+    /* 수량 필드의 너비를 좁게 설정 */
     height: 35px;
     box-sizing: border-box;
     padding: 8px;
@@ -455,7 +467,7 @@ watch(products, (newProducts) => {
 .customer-code-box2,
 .due-date-box {
     width: 100%;
-    height: 35px; 
+    height: 35px;
     font-size: 15px;
     box-sizing: border-box;
     padding: 8px;
@@ -475,7 +487,8 @@ watch(products, (newProducts) => {
     color: white;
     font-size: 11px;
     cursor: pointer;
-    margin-left: 5px; /* Add spacing between buttons */
+    margin-left: 5px;
+    /* Add spacing between buttons */
 }
 
 .button-group {
@@ -491,8 +504,10 @@ watch(products, (newProducts) => {
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 100%; /* 너비를 90%로 설정 */
-    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    width: 100%;
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
     height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
@@ -540,14 +555,15 @@ watch(products, (newProducts) => {
     font-size: 18px;
 }
 
-.estimate-regist-btn-div {
+.estimate-regist-btn-div33 {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.estimate-regist-btn1 {
+.estimate-regist-btn33 {
+    width: 320px;
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -556,11 +572,12 @@ watch(products, (newProducts) => {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 30px;
-    width: 320px;
     font-size: 18px;
-    margin-top: 20px;
-    /* margin-bottom: 100px; */
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.estimate-regist-btn33:hover {
+    background-color: #007bff;
 }
 </style>

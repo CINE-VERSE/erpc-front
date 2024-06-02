@@ -1,19 +1,34 @@
 <template>
-    <div class="regist-content">
+    <div class="regist-content9">
         <div class="contract-regist">
             <h1>계약서 등록</h1>
         </div>
-        <div class="contract-search-box">
-            <h3>견적서 불러오기</h3>
-            <div class="contract-number">
-                <p class="contract-number-text">견적서 코드</p>
-                <input type="text" v-model="quotationCode" class="contract-number-box" placeholder="견적서 코드를 입력해주세요.">
-            </div>
-            <div class="contract-search-btn-div1">
-                <button @click="fetchQuotationData" class="contract-search-btn1">조회하기</button>
-            </div>
-        </div>
         <div class="contract-list-box1">
+            <table class="contract-table3">
+                <thead>
+                    <tr>
+                        <th>견적서 코드</th>
+                        <th>담당자</th>
+                        <th>거래처명</th>
+                        <th>수주 금액</th>
+                        <th>납기 일자</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="quotation-number-div33">
+                                <input type="text" v-model="quotationCode" class="quotation-number-box33" placeholder="견적서 코드를 입력해주세요.">
+                                <button @click="fetchQuotationData" class="quotation-number-btn33">확인</button>
+                            </div>
+                        </td>
+                        <td>{{ employee.employeeName }}</td>
+                        <td>{{ account.accountName }}</td>
+                        <td>{{ quotation.quotationTotalCost }}</td>
+                        <td>{{ quotation.quotationDueDate }}</td>
+                    </tr>
+                </tbody>
+            </table>
             <table class="contract-table1">
                 <thead>
                     <tr>
@@ -68,28 +83,6 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="contract-table3">
-                <thead>
-                    <tr>
-                        <th>견적서 코드</th>
-                        <th>담당자</th>
-                        <th>거래처명</th>
-                        <th>수주 금액</th>
-                        <th>납기 일자</th>
-                        <th>비고</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ quotation.quotationCode }}</td>
-                        <td>{{ employee.employeeName }}</td>
-                        <td>{{ account.accountName }}</td>
-                        <td>{{ quotation.quotationTotalCost }}</td>
-                        <td>{{ quotation.quotationDueDate }}</td>
-                        <td><input type="text" v-model="quotationNote" class="contract-test5"></td>
-                    </tr>
-                </tbody>
-            </table>
             <table class="contract-table4">
                 <thead>
                     <tr>
@@ -114,11 +107,25 @@
                             <input type="text" v-model="deposit" class="contract-test6">
                         </td>
                         <td>
-                            <input type="text" v-model="intermediatePayment" class="contract-test7" :disabled="searchBy === '일시납부'">
+                            <input type="text" v-model="intermediatePayment" class="contract-test7"
+                                :disabled="searchBy === '일시납부'">
                         </td>
                         <td>
-                            <input type="text" v-model="finalPayment" class="contract-test8" :disabled="searchBy === '일시납부'">
+                            <input type="text" v-model="finalPayment" class="contract-test8"
+                                :disabled="searchBy === '일시납부'">
                         </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="contract-table5">
+                <thead>
+                    <tr>
+                        <th>비고</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" v-model="quotationNote" class="contract-test5"></td>
                     </tr>
                 </tbody>
             </table>
@@ -132,9 +139,8 @@
             </div>
             <input type="file" @change="handleFileUpload" multiple />
         </div>
-        
-        <div class="contract-regist-btn-div1">
-            <button @click="registerContract" class="contract-regist-btn1">계약 등록하기</button>
+        <div class="contract-regist-btn-div33">
+            <button @click="registerContract" class="contract-regist-btn33">계약 등록하기</button>
         </div>
     </div>
 </template>
@@ -272,5 +278,193 @@ const registerContract = async () => {
 </script>
 
 <style>
-    @import url('@/assets/css/contract/ContractRegist.css');
+
+.regist-content9 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.customer-regist {
+    text-align: center;
+}
+
+.quotation-number-div33 {
+    display: flex;
+    align-items: center;
+}
+
+.quotation-number-box33 {
+    width: calc(100% - 50px); /* 버튼 크기를 뺀 나머지 너비 */
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    box-sizing: border-box;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
+}
+
+.quotation-number-btn33 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: -1px; /* 테두리 겹침 방지 */
+    padding: 0 10px;
+}
+
+.search-btn-div1,
+.regist-btn-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.search-btn1,
+.customer-regist-btn {
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.search-btn1 {
+    max-width: 320px;
+}
+
+.customer-regist-btn {
+    width: 320px;
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 100px;
+}
+
+.customer-list-box1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    gap: 1px;
+}
+
+.customer-table1,
+.customer-table2,
+.customer-table3,
+.customer-table4 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.customer-table1 th,
+.customer-table1 td,
+.customer-table2 th,
+.customer-table2 td,
+.customer-table3 th,
+.customer-table3 td,
+.customer-table4 th,
+.customer-table4 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.customer-table1 th,
+.customer-table2 th,
+.customer-table3 th,
+.customer-table4 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.customer-table1 td,
+.customer-table2 td,
+.customer-table3 td,
+.customer-table4 td {
+    height: 40px;
+    width: 25%;
+    /* 테이블 셀 너비를 균일하게 설정 */
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.customer-test1,
+.customer-test2,
+.customer-test3,
+.customer-test4,
+.customer-test5,
+.customer-test6,
+.customer-test7,
+.customer-test8,
+.customer-test9 {
+    width: 100%;
+    height: 35px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.customer-test4 {
+    width: 100%;
+    /* 테이블 셀 너비와 맞춤 */
+}
+
+.customer-test9 {
+    width: 100%;
+    /* 테이블 셀 너비와 맞춤 */
+}
+
+.contract-test5 {
+    width: 95%; /* 테이블 셀 너비와 맞춤 */
+}
+
+.contract-regist-btn-div33 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.contract-regist-btn33 {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.contract-regist-btn33:hover {
+    background-color: #007bff;
+}
 </style>

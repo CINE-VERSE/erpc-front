@@ -1,10 +1,9 @@
 <template>
-    <div class="search-content11">
-        <div class="regist-content11">
+        <div class="customer-edit-content11">
             <div class="customer-regist">
                 <h1>거래처 정보 수정</h1>
             </div>
-            <div class="customer-list-box1">
+            <div class="customer-list-box33">
                 <table class="customer-table1">
                     <thead>
                         <tr>
@@ -66,9 +65,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="customer-regist-btn-div3">
-            <button @click="updateAccount" class="customer-regist-btn3">거래처 수정하기</button>
+
+        <div class="customer-edit-btn-div33">
+            <button @click="updateAccount" class="customer-edit-btn33">거래처 수정하기</button>
         </div>
     </div>
 </template>
@@ -104,12 +103,6 @@ const updateAccount = async () => {
         !accountData.value.accountEmail
     ) {
         alert('모든 필수 입력란을 채워주세요.');
-        return;
-    }
-
-    const employeeId = localStorage.getItem('userId');
-    if (!employeeId) {
-        alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
         return;
     }
 

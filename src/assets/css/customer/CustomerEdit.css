@@ -1,8 +1,12 @@
-.regist-content11 {
+.customer-edit-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .customer-box {
@@ -35,11 +39,18 @@
     font-size: 17px;
 }
 
-.customer-list-box1 {
+.customer-list-box33 {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    gap: 1px;
 }
 
 .customer-table1,
@@ -85,22 +96,28 @@
     border-radius: 5px;
 }
 
-.customer-regist-btn-div {
+.customer-edit-btn-div33 {
     display: flex;
     justify-content: center;
-    /* margin-top: 20px; */
+    width: 100%;
+    margin-bottom: 10px;
 }
 
-.customer-regist-btn {
+.customer-edit-btn33 {
+    width: 320px;
     padding: 10px 20px;
-    font-size: 16px;
-    background-color: #0C2092;
-    color: white;
+    text-align: center;
     border: none;
     border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
 }
 
-.customer-regist-btn:hover {
+.customer-edit-btn33:hover {
     background-color: #007bff;
 }

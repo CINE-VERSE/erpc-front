@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content" v-if="quotationData">
+    <div class="estimate-edit-content11" v-if="quotationData">
         <h1>견적서 수정</h1>
         <div class="estimate-list-box">
             <table class="estimate-table1">
@@ -94,7 +94,7 @@
             </table>
         </div>
 
-        <div class="estimate-attachment">
+        <div class="estimate-attachment3">
             <h2 class="estimate-file">첨부파일</h2>
             <div v-if="files.length > 0">
                 <div v-for="(file, index) in files" :key="index" class="file-list">
@@ -110,8 +110,9 @@
             </div>
             <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
         </div>
-
-        <button @click="updateQuotation" class="estimate-regist-btn">견적 수정하기</button>
+        <div class="estimate-edit-btn-div33">
+            <button @click="updateQuotation" class="estimate-edit-btn33">견적 수정하기</button>
+        </div>
     </div>
     <div v-else>
         <p>Loading...</p>
@@ -318,7 +319,7 @@ const updateQuotation = async () => {
     const areFilesUploaded = files.value.length > 0 || quotationData.value.quotationFile.length > 0;
 
     if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
-        alert('모든 데이터를 입력하고 확인 버튼을 눌러주세요.');
+        alert('모든 필수 입력란을 채워주세요.');
         return;
     }
 
@@ -404,14 +405,15 @@ watch(products, (newProducts) => {
 
 
 <style>
-.regist-content {
-    margin-top: 8%;
+.estimate-edit-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px); /* main1의 너비를 뺀 나머지 공간 */
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .estimate-regist {
@@ -530,21 +532,23 @@ watch(products, (newProducts) => {
     gap: 5px;
 }
 
-.estimate-attachment {
+.estimate-attachment3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 90%; /* 너비를 90%로 설정 */
-    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    width: 100%;
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
     height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
 }
 
-.estimate-attachment-header {
+.estimate-attachment3-header {
     display: flex;
     align-items: center;
     padding: 5px;
@@ -591,14 +595,15 @@ watch(products, (newProducts) => {
     right: 20px;
 }
 
-.estimate-regist-btn-div {
+.estimate-edit-btn-div33 {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.estimate-regist-btn {
+.estimate-edit-btn33 {
+    width: 320px;
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -607,11 +612,12 @@ watch(products, (newProducts) => {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    width: 320px;
     font-size: 18px;
-    margin-top: 20px;
-    margin-bottom: 100px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.estimate-edit-btn33:hover {
+    background-color: #007bff;
 }
 </style>

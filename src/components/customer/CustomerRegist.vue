@@ -1,10 +1,9 @@
 <template>
-    <div class="search-content11">
-        <div class="regist-content11">
+        <div class="customer-regist-content11">
             <div class="customer-regist">
                 <h1>거래처 등록</h1>
             </div>
-            <div class="customer-list-box1">
+            <div class="customer-list-box33">
                 <table class="customer-table1">
                     <thead>
                         <tr>
@@ -16,9 +15,9 @@
                     <tbody>
                         <tr>
                             <td>
-                                <div class="business-number-div">
-                                    <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" placeholder="사업자 번호를 입력해주세요." class="business-number-box"/>
-                                    <button @click="fetchBusinessData" class="business-number-btn">확인</button>
+                                <div class="business-number-div33">
+                                    <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33" placeholder="사업자 번호를 입력해주세요."/>
+                                    <button @click="fetchBusinessData" class="business-number-btn33">확인</button>
                                 </div>
                             </td>
                             <td><input type="text" v-model="accountName" class="customer-test1"></td>
@@ -71,9 +70,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        <div class="customer-regist-btn-div3">
-            <button @click="registerAccount" class="customer-regist-btn3">거래처 등록하기</button>
+
+        <div class="customer-regist-btn-div33">
+            <button @click="registerAccount" class="customer-regist-btn33">거래처 등록하기</button>
         </div>
     </div>
 </template>
@@ -191,36 +190,29 @@ const registerAccount = async () => {
 
 
 <style>
-.search-content11 {
-    /* margin-top: 4%; */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    width: 100%;
-    max-width: calc(100% - 220px); /* main1의 너비를 뺀 나머지 공간 */
-}
 
-.regist-content11 {
+.customer-regist-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: 1200px;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .customer-regist {
     text-align: center;
 }
 
-.customer-list-box1 {
+.customer-list-box33 {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 15px;
-    margin-bottom: 100px;
+    margin-bottom: 15px;
     border-radius: 10px;
     box-sizing: border-box;
     background-color: white;
@@ -296,14 +288,14 @@ const registerAccount = async () => {
     width: 100%; /* 테이블 셀 너비와 맞춤 */
 }
 
-.customer-regist-btn-div3 {
+.customer-regist-btn-div33 {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.customer-regist-btn3 {
+.customer-regist-btn33 {
     width: 320px;
     padding: 10px 20px;
     text-align: center;
@@ -318,12 +310,12 @@ const registerAccount = async () => {
     margin-bottom: 50px;
 }
 
-.business-number-div {
+.business-number-div33 {
     display: flex;
     align-items: center;
 }
 
-.business-number-box {
+.business-number-box33 {
     width: calc(100% - 50px); /* 버튼 크기를 뺀 나머지 너비 */
     height: 35px;
     padding: 8px;
@@ -334,7 +326,7 @@ const registerAccount = async () => {
     font-size: 15px;
 }
 
-.business-number-btn {
+.business-number-btn33 {
     border-radius: 0 5px 5px 0;
     border: 2px solid #0C2092;
     height: 35px;
@@ -346,7 +338,7 @@ const registerAccount = async () => {
     padding: 0 10px;
 }
 
-.customer-regist-btn3:hover {
+.customer-regist-btn33:hover {
     background-color: #007bff;
 }
 </style>

@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="customer-content2">
-            <div class="customer-list-box1">
+            <div class="customer-list-box33">
                 <table class="customer-table1">
                     <thead>
                         <tr>
@@ -429,7 +429,7 @@ const deleteNote = async (accountNoteId) => {
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 100%;
+    width: 75%;
     max-width: 1000px;
     min-width: 100px;
     margin-bottom: 20px;

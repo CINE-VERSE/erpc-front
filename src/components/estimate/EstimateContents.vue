@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content7" v-if="quotationData">
+    <div class="estimate-content11" v-if="quotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
         <div class="estimate-btn">
@@ -168,6 +168,7 @@ const deleteReason = ref('');
 const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
 const newNote = ref('');
 const employeeName = ref('');
+const approvalStatus = ref('Pending'); // Default value as Pending
 
 // filteredQuotationNotes는 quotationDeleteDate가 null인 노트만 반환합니다.
 const filteredQuotationNotes = computed(() => {
@@ -191,6 +192,10 @@ onMounted(async () => {
         // userId로 직원 이름을 가져오는 API 호출
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
+
+        // approvalStatus를 가져오는 API 호출
+        const approvalResponse = await axios.get(`http://localhost:7775/approval/quotation/${quotationId}`);
+        approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
 
     } catch (error) {
         console.error('Error fetching quotation data:', error);
@@ -320,15 +325,18 @@ const deleteNote = async (quotationNoteId) => {
 };
 </script>
 
+
 <style>
-.regist-content7 {
-    /* margin-top: 4%; */
+.estimate-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
-
 .order-search {
     text-align: center;
     margin-top: 3%;
