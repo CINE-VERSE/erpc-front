@@ -1,38 +1,38 @@
 <template>
-  <div>
+  <div class="employee-registration">
     <h1>사원 등록</h1>
     <form @submit.prevent="registerEmployee">
       <div class="form-group">
         <label for="employeeCode">사원 번호:</label>
-        <input type="text" v-model="employee.employeeCode" required>
+        <input type="text" v-model="employee.employeeCode" id="employeeCode" required>
       </div>
       <div class="form-group">
         <label for="employeeName">이름:</label>
-        <input type="text" v-model="employee.employeeName" required>
+        <input type="text" v-model="employee.employeeName" id="employeeName" required>
       </div>
       <div class="form-group">
         <label for="employeePassword">비밀번호:</label>
-        <input type="password" v-model="employee.employeePassword" required>
+        <input type="password" v-model="employee.employeePassword" id="employeePassword" required>
       </div>
       <div class="form-group">
         <label for="employeeEmail">이메일:</label>
-        <input type="email" v-model="employee.employeeEmail" required>
+        <input type="email" v-model="employee.employeeEmail" id="employeeEmail" required>
       </div>
       <div class="form-group">
         <label for="employeeHp">전화번호:</label>
-        <input type="text" v-model="employee.employeeHp" required>
+        <input type="text" v-model="employee.employeeHp" id="employeeHp" required>
       </div>
       <div class="form-group">
         <label for="employeeNumber">내선번호:</label>
-        <input type="text" v-model="employee.employeeNumber" required>
+        <input type="text" v-model="employee.employeeNumber" id="employeeNumber" required>
       </div>
       <div class="form-group">
         <label for="employmentDate">입사일:</label>
-        <input type="date" v-model="employee.employmentDate" required>
+        <input type="date" v-model="employee.employmentDate" id="employmentDate" required>
       </div>
       <div class="form-group">
         <label for="employeeRank">직급:</label>
-        <select v-model="employee.employeeRank.employeeRankId" required>
+        <select v-model="employee.employeeRank.employeeRankId" id="employeeRank" required>
           <option value="1">사원</option>
           <option value="2">대리</option>
           <option value="3">과장</option>
@@ -42,7 +42,7 @@
       </div>
       <div class="form-group">
         <label for="teamCode">부서:</label>
-        <select v-model="employee.teamCode.teamCodeId" required>
+        <select v-model="employee.teamCode.teamCodeId" id="teamCode" required>
           <option value="1">영업 1팀</option>
           <option value="2">영업 2팀</option>
           <option value="3">영업 3팀</option>
@@ -78,7 +78,7 @@ export default {
   methods: {
     async registerEmployee() {
       try {
-        const response = await axios.post('http://localhost:7775/employees/regist', this.employee);
+        await axios.post('http://localhost:7775/employees/regist', this.employee);
         this.$router.push('/employees');
       } catch (error) {
         console.error('Error registering employee:', error);
@@ -87,8 +87,9 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-div {
+.employee-registration {
   font-family: Arial, sans-serif;
   padding: 20px;
   background-color: #f9f9f9;
@@ -153,6 +154,7 @@ button[type="submit"] {
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 10px;
+  width: 100%;
 }
 
 button[type="submit"]:hover {

@@ -35,7 +35,9 @@
                 </tbody>
             </table>
         </div>
-        <button @click="updatesalesOpp" class="salesOpp-regist-btn">영업기회 수정하기</button>
+        <div class="salesOpp-regist-btn-div">
+            <button @click="updatesalesOpp" class="salesOpp-regist-btn">영업기회 수정하기</button>
+        </div>
     </div>
     <div v-else>
         <p>Loading...</p>
@@ -98,3 +100,99 @@ const updatesalesOpp = async () => {
     }
 };
 </script>
+
+<style>
+.regist-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.salesOpp-list-box1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 1px;
+}
+
+.salesOpp2-table1,
+.salesOpp2-table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.salesOpp2-table1 th,
+.salesOpp2-table1 td,
+.salesOpp2-table2 th,
+.salesOpp2-table2 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.salesOpp2-table1 th,
+.salesOpp2-table2 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.salesOpp2-table1 td,
+.salesOpp2-table2 td {
+    height: 40px;
+}
+
+.salesOpp-test1,
+.salesOpp-test2,
+.salesOpp-test3,
+.salesOpp-test4,
+.salesOpp-test5,
+.salesOpp-test6 {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.salesOpp-regist-btn-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.salesOpp-regist-btn {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+.salesOpp-regist-btn:hover {
+    background-color: #007bff;
+}
+</style>
