@@ -35,18 +35,6 @@
                 </tbody>
             </table>
         </div>
-        <!-- <div class="estimate-attachment">
-            <div class="estimate-attachment-header">
-                <h2 class="estimate-file">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="estimate-pdfimage">
-            </div>
-            <div class="estimate-attachment-content">
-                <div class="file-list">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">제품 카탈로그.pdf</span>
-                </div>
-            </div>
-        </div> -->
         <div class="estimate-regist-btn-div">
             <button class="estimate-regist-btn" @click="registSalesOpp">영업기회 등록하기</button>
         </div>
@@ -55,8 +43,10 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+const router = useRouter();
 const newOpp = ref({
     oppAccountName: '',
     oppAccountPic: '',
@@ -74,6 +64,7 @@ const registSalesOpp = async () => {
     try {
         const response = await axios.post('http://localhost:7775/sales_opportunity/regist', newOpp.value);
         alert('영업기회가 성공적으로 등록되었습니다.');
+        router.push('/salesOpp/list');
         console.log('등록된 영업기회:', response.data);
     } catch (error) {
         console.error('영업기회 등록 중 오류가 발생했습니다:', error);

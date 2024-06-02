@@ -9,11 +9,22 @@
     <p>입사일: {{ employee.employmentDate }}</p>
     <p>직급: {{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</p>
     <p>팀: {{ mapTeamCode(employee.teamCode.teamCodeId) }}</p>
+
+    
+  <div class="button-container">
+    <router-link :to="{ path: '/employees/modify', query: { employeeId: employee.employeeId }}" class="edit-button">수정</router-link>
+      <router-link :to="{ path: '/employees/regist' }" class="register-button">등록</router-link>
+    </div>
   </div>
+
 </template>
 
 <script>
-import axios from "axios";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const router = useRouter();
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:7775/employees', // Spring Boot 서버의 URL

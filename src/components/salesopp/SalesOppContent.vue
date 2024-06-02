@@ -105,6 +105,12 @@ const newStatus = ref('');
 const newProcessDetail = ref('');
 const editProcessDetail = ref('');
 
+// localStorage에서 userId 가져오기
+const userId = localStorage.getItem('userId');
+if (!userId) {
+    console.error('User ID not found in localStorage.');
+}
+
 // 데이터를 가져오는 함수
 const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
@@ -202,9 +208,9 @@ const registerProcess = async () => {
         salesOppId: salesOppId
     };
 
-    // 하드코딩된 employee 객체 정의
+    // employee 객체에 localStorage에서 가져온 userId를 employeeId로 설정합니다.
     const employee = {
-        employeeId: 5 // 하드코딩된 employeeId
+        employeeId: userId
     };
 
     try {
@@ -223,6 +229,7 @@ const registerProcess = async () => {
         salesOppNoteData.value.push(response.data);
         newProcessDetail.value = '';
         alert('등록됨.');
+        
     } catch (error) {
         console.error('Process 등록 중 오류 발생:', error);
         alert('Process 등록에 실패했습니다.');

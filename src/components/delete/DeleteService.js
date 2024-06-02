@@ -14,8 +14,8 @@ class DeleteService {
     return this.api.get('/sales_opp');
   }
 
-  getSalesOppDeleteRequestById(id) {
-    return this.api.get(`/sales_opp/${id}`);
+  getSalesOppDeleteRequestById(salesOppDeleteRequestId) {
+    return this.api.get(`/sales_opp/${salesOppDeleteRequestId}`);
   }
 
   updateSalesOppDeleteRequestStatus(salesOppDeleteRequestId, data) {
@@ -27,12 +27,12 @@ class DeleteService {
     return this.api.get('/contract');
   }
 
-  getContractDeleteRequestById(id) {
-    return this.api.get(`/contract/${id}`);
+  getContractDeleteRequestById(contractDeleteRequestsId) {
+    return this.api.get(`/contract/${contractDeleteRequestsId}`);
   }
 
-  updateContractDeleteRequestStatus(id, data) {
-    return this.api.patch(`/contract/status/${id}`, data);
+  updateContractDeleteRequestStatus(contractDeleteRequestsId, data) {
+    return this.api.patch(`/contract/status/${contractDeleteRequestsId}`, data);
   }
 
   // Quotation Delete Requests
@@ -40,12 +40,12 @@ class DeleteService {
     return this.api.get('/quotation');
   }
 
-  getQuotationDeleteRequestById(id) {
-    return this.api.get(`/quotation/${id}`);
+  getQuotationDeleteRequestById(quotationDeleteRequestsId) {
+    return this.api.get(`/quotation/${quotationDeleteRequestsId}`);
   }
 
-  processQuotationDeleteRequest(id, data) {
-    return this.api.patch(`/quotation/process/${id}`, data);
+  processQuotationDeleteRequest(quotationDeleteRequestsId, data) {
+    return this.api.patch(`/quotation/process/${quotationDeleteRequestsId}`, data);
   }
 
   // Account Delete Requests
@@ -53,12 +53,12 @@ class DeleteService {
     return this.api.get('/account');
   }
 
-  getAccountDeleteRequestById(id) {
-    return this.api.get(`/account/${id}`);
+  getAccountDeleteRequestById(accountDeleteRequestsId) {
+    return this.api.get(`/account/${accountDeleteRequestsId}`);
   }
 
-  processAccountDeleteRequest(id, data) {
-    return this.api.patch(`/account/process/${id}`, data);
+  processAccountDeleteRequest(accountDeleteRequestsId, data) {
+    return this.api.patch(`/account/process/${accountDeleteRequestsId}`, data);
   }
 
   // Order Delete Requests
@@ -66,12 +66,12 @@ class DeleteService {
     return this.api.get('/order');
   }
 
-  getOrderDeleteRequestById(id) {
-    return this.api.get(`/order/${id}`);
+  getOrderDeleteRequestById(orderDeleteRequestsId) {
+    return this.api.get(`/order/${orderDeleteRequestsId}`);
   }
 
-  processOrderDeleteRequest(id, data) {
-    return this.api.patch(`/order/process/${id}`, data);
+  processOrderDeleteRequest(orderDeleteRequestsId, data) {
+    return this.api.patch(`/order/process/${orderDeleteRequestsId}`, data);
   }
 }
 

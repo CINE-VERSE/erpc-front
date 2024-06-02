@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Register Employee</h1>
+    <h1>사원 등록</h1>
     <form @submit.prevent="registerEmployee">
       <div>
         <label for="employeeCode">사원 번호:</label>
