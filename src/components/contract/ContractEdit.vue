@@ -125,7 +125,7 @@
                 </tbody>
             </table>
         </div>
-            <div class="contract-attachment3">
+        <div class="contract-attachment3">
                 <h2 class="contract-file">첨부파일</h2>
                 <div v-if="files.length > 0">
                     <div v-for="(file, index) in files" :key="index" class="file-list">
@@ -139,7 +139,8 @@
                         <span class="file-name">{{ file.originName }}</span>
                     </div>
                 </div>
-                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
+                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
+                <label for="file-upload" class="file-upload-label">파일 선택</label>
             </div>
             <div class="contract-edit-btn-div33">
                 <button @click="updateContract" class="contract-edit-btn33">계약 수정하기</button>
@@ -297,7 +298,6 @@ const updateContract = async () => {
 
 .contract-regist {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .contract-list-box1 {
@@ -417,7 +417,7 @@ const updateContract = async () => {
     position: relative;
     width: 100%;
     max-width: 1400px;
-    height: 200px;
+    height: 220px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -428,12 +428,6 @@ const updateContract = async () => {
     align-items: center;
     padding: 5px;
     margin-bottom: -20px;
-}
-
-.contract-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
 }
 
 .contract-attachment-content {
@@ -465,7 +459,21 @@ const updateContract = async () => {
 }
 
 .file-upload-btn {
-    margin-top: 10px;
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .contract-edit-btn-div33 {

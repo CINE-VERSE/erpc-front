@@ -93,7 +93,6 @@
                 </tbody>
             </table>
         </div>
-
         <div class="estimate-attachment3">
             <h2 class="estimate-file">첨부파일</h2>
             <div v-if="files.length > 0">
@@ -108,7 +107,8 @@
                     <span class="file-name">{{ file.originName }}</span>
                 </div>
             </div>
-            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
+            <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
         <div class="estimate-edit-btn-div33">
             <button @click="updateQuotation" class="estimate-edit-btn33">견적 수정하기</button>
@@ -406,14 +406,12 @@ watch(products, (newProducts) => {
 
 <style>
 .estimate-edit-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .estimate-regist {
@@ -422,8 +420,8 @@ watch(products, (newProducts) => {
 }
 
 .estimate-list-box {
-    width: 90%; /* 너비를 90%로 설정 */
-    max-width: 1400px; /* 최대 너비를 1400px로 설정 */
+    width: 90%;
+    max-width: 1400px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -472,13 +470,13 @@ watch(products, (newProducts) => {
 .estimate-table2 td,
 .estimate-table3 td {
     height: 40px;
-    width: 14.28%; /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
+    width: 14.28%;
     box-sizing: border-box;
     padding: 8px;
 }
 
 .estimate-test2 {
-    width: 80px; /* 수량 필드의 너비를 좁게 설정 */
+    width: 80px;
     height: 35px;
     box-sizing: border-box;
     padding: 8px;
@@ -522,7 +520,7 @@ watch(products, (newProducts) => {
     color: white;
     font-size: 11px;
     cursor: pointer;
-    margin-left: 5px; /* Add spacing between buttons */
+    margin-left: 5px;
 }
 
 .button-group {
@@ -539,10 +537,8 @@ watch(products, (newProducts) => {
     align-items: center;
     position: relative;
     width: 100%;
-    /* 너비를 90%로 설정 */
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
-    height: 200px;
+    height: 220px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -593,6 +589,18 @@ watch(products, (newProducts) => {
     position: absolute;
     bottom: 10px;
     right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .estimate-edit-btn-div33 {
@@ -613,7 +621,6 @@ watch(products, (newProducts) => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 

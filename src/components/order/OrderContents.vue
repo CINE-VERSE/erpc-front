@@ -1,13 +1,13 @@
 <template>
-    <div class="order-content" v-if="orderData">
+    <div class="order-content11" v-if="orderData">
         <div class="order-search">
             <h1 class="maintext">수주 정보 조회 내역</h1>
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
-                <button class="order-request">결재 요청</button>
+                <button class="order-request" @click="showApprovalPopup = true">결재 요청</button>
                 <button class="order-edit" @click="goToOrderPage">수정</button>
                 <button class="order-delete" @click="deleteOrder">삭제</button>
-                <button class="order-excel" @click="downloadExcel">엑셀 다운</button> <!-- 엑셀 다운 버튼 추가 -->
+                <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="order-pdf">
                 <div v-if="orderData.orderFile.length > 0">
@@ -111,19 +111,21 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="order2-table5">
+            <table v-if="orderData.contractCategory.contractCategoryId === 1" class="order2-table5">
                 <thead>
                     <tr>
-                        <th>비고</th>
+                        <th>납부 형태</th>
+                        <th>수주 금액</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.orderNote }}</td>
+                        <td>일시납부</td>
+                        <td>{{ orderData.orderTotalPrice.toLocaleString() }}</td>
                     </tr>
                 </tbody>
             </table>
-            <table class="order2-table6">
+            <table v-else class="order2-table6">
                 <thead>
                     <tr>
                         <th>납부 형태</th>
@@ -134,7 +136,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="test">{{ orderData.contractCategory.contractCategory }}</td>
+                        <td>분할납부</td>
                         <td>{{ orderData.downPayment.toLocaleString() }}</td>
                         <td>{{ orderData.progressPayment.toLocaleString() }}</td>
                         <td>{{ orderData.balance.toLocaleString() }}</td>
@@ -221,6 +223,17 @@
     <div v-else>
         Loading...
     </div>
+
+    <!-- 결재 요청 팝업 -->
+    <div v-if="showApprovalPopup" class="popup-overlay">
+        <div class="popup-content">
+            <h2>결재 비고란 입력</h2>
+            <textarea v-model="approvalContent" placeholder="결재 비고란를 입력하세요"></textarea>
+            <button @click="confirmApproval">확인</button>
+            <button @click="closeApprovalPopup">취소</button>
+        </div>
+    </div>
+    <!-- 삭제 요청 팝업 -->
     <div v-if="showPopup" class="popup-overlay">
         <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
@@ -243,6 +256,8 @@ const orderData = ref(null);
 const showPopup = ref(false);
 const taxInvoiceRequestData = ref(null);
 const deleteReason = ref('');
+const showApprovalPopup = ref(false); // 결재 요청 팝업 상태
+const approvalContent = ref(''); // 결재 요청 비고
 
 onMounted(async () => {
     try {
@@ -314,17 +329,42 @@ const confirmDelete = async () => {
         closePopup();
     }
 };
+
+// 결재 요청 팝업 닫기 함수
+const closeApprovalPopup = () => {
+    showApprovalPopup.value = false;
+    approvalContent.value = '';
+};
+
+// 결재 요청 확인 함수
+const confirmApproval = async () => {
+    try {
+        const response = await axios.post('http://localhost:7775/approval/shipment/regist', {
+            approvalContent: approvalContent.value,
+            order: { orderRegistrationId: orderData.value.orderRegistrationId }
+        });
+        alert('결재 요청이 성공적으로 완료되었습니다.');
+        console.log('Approval request sent successfully:', response.data);
+        closeApprovalPopup();
+    } catch (error) {
+        console.error('Error sending approval request:', error);
+        alert('결재 요청 중 오류가 발생했습니다.');
+    }
+};
 </script>
 
+
 <style>
-.order-content {
-    margin-top: 4%;
+.order-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
-
 .order-search {
     text-align: center;
     margin-top: 3%;
@@ -461,14 +501,14 @@ const confirmDelete = async () => {
 .order2-table2 td,
 .order2-table3 th,
 .order2-table3 td,
-order2-table4 th,
-order2-table4 td,
-order2-table5 th,
-order2-table5 td,
-order2-table6 th,
-order2-table6 td,
-order2-table7 th,
-order2-table7 td,
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td,
+.order2-table6 th,
+.order2-table6 td,
+.order2-table7 th,
+.order2-table7 td,
 .shipment-table1 th,
 .shipment-table1 td,
 .shipment-table2 th,
@@ -483,9 +523,9 @@ order2-table7 td,
 .order2-table2 th,
 .order2-table3 th,
 .order2-table4 th,
-order2-table5 th,
-order2-table6 th,
-order2-table7 th,
+.order2-table5 th,
+.order2-table6 th,
+.order2-table7 th,
 .shipment-table1 th,
 .shipment-table2 th {
     background-color: whitesmoke;
@@ -497,11 +537,11 @@ order2-table7 th,
 
 .order2-table1 td,
 .order2-table2 td,
-order2-table3 td,
-order2-table4 td,
-order2-table5 td,
-order2-table6 td,
-order2-table7 td,
+.order2-table3 td,
+.order2-table4 td,
+.order2-table5 td,
+.order2-table6 td,
+.order2-table7 td,
 .shipment-table1 td,
 .shipment-table2 td {
     height: 40px;

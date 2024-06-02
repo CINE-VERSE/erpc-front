@@ -500,7 +500,7 @@ const deleteNote = async (quotationNoteId) => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
     min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;

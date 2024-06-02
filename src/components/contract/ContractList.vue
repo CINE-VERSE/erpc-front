@@ -1,5 +1,5 @@
 <template>
-    <div class=".contract-list-content">
+    <div class="contract-list-content">
         <div class="contract-list">
             <h1>계약서 목록</h1>
         </div>
@@ -34,8 +34,7 @@
                         <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contract.contractDate }}</td>
                         <td>{{ contract.contractDueDate }}</td>
-                        <td></td>
-                        <!-- <td>{{ contract.contractStatus || 'N/A' }}</td> -->
+                        <td>{{ contract.approvalStatus || '' }}</td> <!-- 결재상태 표시 -->
                         <td>{{ contract.employee.employeeName }}</td>
                     </tr>
                 </tbody>
@@ -44,27 +43,57 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const router = useRouter();
+
 const contracts = ref([]);
+const filteredContracts = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('계약서 코드');
-const filteredContracts = ref([]);
 
 onMounted(async () => {
+    await fetchContracts();
+    await fetchApprovalStatuses();
+    applyFilter();
+});
+
+const fetchContracts = async () => {
     try {
         const response = await axios.get('http://localhost:7775/contract');
-        contracts.value = response.data.sort((a, b) => b.contractId - a.contractId); // Sort by contractId in descending order
-        filteredContracts.value = contracts.value; // 기본적으로 모든 계약서를 표시
+        contracts.value = response.data.map(contract => ({
+            contractId: contract.contractId,
+            contractCode: contract.contractCode,
+            contractTotalPrice: contract.contractTotalPrice,
+            contractDate: contract.contractDate,
+            contractDueDate: contract.contractDueDate,
+            employee: {
+                employeeName: contract.employee.employeeName
+            }
+        })).sort((a, b) => b.contractId - a.contractId); // Sort by contractId in descending order
+        filteredContracts.value = contracts.value;
     } catch (error) {
-        console.error('계약서 정보를 불러오는 중 오류가 발생했습니다.', error);
+        console.error('계약서 정보를 조회하는 중 오류가 발생했습니다.', error);
     }
-});
+};
+
+const fetchApprovalStatuses = async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/approval/contract');
+        const approvals = response.data;
+        approvals.forEach(approval => {
+            const contract = contracts.value.find(con => con.contractId === approval.contract.contractId);
+            if (contract) {
+                contract.approvalStatus = approval.approvalStatus.approvalStatus;
+            }
+        });
+    } catch (error) {
+        console.error('결재 상태를 조회하는 중 오류가 발생했습니다.', error);
+    }
+};
 
 function setSearchBy(criteria) {
     searchBy.value = criteria;

@@ -16,7 +16,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
+                        <td class="estimate-test333">
                             <div class="quotation-number-div33">
                                 <input type="text" v-model="quotationCode" class="quotation-number-box33" placeholder="견적서 코드를 입력해주세요.">
                                 <button @click="fetchQuotationData" class="quotation-number-btn33">확인</button>
@@ -139,7 +139,8 @@
                 <span class="file-icon">📄</span>
                 <span class="file-name">{{ file.name }}</span>
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
+            <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
         <div class="contract-regist-btn-div33">
             <button @click="registerContract" class="contract-regist-btn33">계약 등록하기</button>
@@ -402,7 +403,8 @@ const formatNumber = (value) => {
 
 .contract-table1,
 .contract-table2,
-.contract-table3 {
+.contract-table3,
+.contract-table4 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -414,7 +416,9 @@ const formatNumber = (value) => {
 .contract-table2 th,
 .contract-table2 td,
 .contract-table3 th,
-.contract-table3 td {
+.contract-table3 td,
+.contract-table4 th,
+.contract-table4 td  {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
@@ -423,7 +427,8 @@ const formatNumber = (value) => {
 
 .contract-table1 th,
 .contract-table2 th,
-.contract-table3 th {
+.contract-table3 th,
+.contract-table4 th {
     background-color: whitesmoke;
     color: black;
     font-size: 18px;
@@ -433,7 +438,8 @@ const formatNumber = (value) => {
 
 .contract-table1 td,
 .contract-table2 td,
-.contract-table3 td {
+.contract-table3 td,
+.contract-table4 td {
     height: 40px;
     width: 14.28%;
     /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
@@ -485,12 +491,6 @@ const formatNumber = (value) => {
     margin-bottom: -20px;
 }
 
-.contract-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
 .contract-attachment-content {
     display: flex;
     justify-content: center;
@@ -523,6 +523,18 @@ const formatNumber = (value) => {
     position: absolute;
     bottom: 10px;
     right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .contract-regist-btn-div33 {
@@ -550,4 +562,6 @@ const formatNumber = (value) => {
 .contract-regist-btn33:hover {
     background-color: #007bff;
 }
+
+
 </style>

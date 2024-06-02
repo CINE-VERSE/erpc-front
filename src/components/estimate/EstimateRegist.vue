@@ -99,20 +99,21 @@
                 </tbody>
             </table>
         </div>
-
         <div class="estimate-attachment3">
             <h2 class="estimate-file">첨부파일</h2>
             <div v-for="(file, index) in files" :key="index" class="file-list">
                 <span class="file-icon">📄</span>
                 <span class="file-name">{{ file.name }}</span>
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
+            <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
         <div class="estimate-regist-btn-div33">
             <button @click="registerQuotation" class="estimate-regist-btn33">견적 등록하기</button>
         </div>
     </div>
 </template>
+
 
 
 
@@ -360,7 +361,6 @@ watch(products, (newProducts) => {
 }, { deep: true });
 </script>
 
-
 <style>
 .estimate-regist-content11 {
     /* margin-top: 8%; */
@@ -504,7 +504,7 @@ watch(products, (newProducts) => {
     /* 너비를 90%로 설정 */
     max-width: 1400px;
     /* 최대 너비를 1400px로 설정 */
-    height: 200px;
+    height: 300px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -549,6 +549,24 @@ watch(products, (newProducts) => {
 
 .file-name {
     font-size: 18px;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .estimate-regist-btn-div33 {

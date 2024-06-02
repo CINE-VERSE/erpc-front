@@ -1,34 +1,29 @@
 <template>
-    <div class="regist-content">
-        <div class="order-regist">
+    <div class="order-regist-content11">
+        <div class="order-regist11">
             <h1>수주 등록</h1>
-        </div>
-        <div class="order-search-box">
-            <h3>계약서 불러오기</h3>
-            <div class="contract-number">
-                <p class="contract-number-text">계약서 코드</p>
-                <input type="text" v-model="contractCode" class="contract-number-box" placeholder="계약서 코드를 입력해주세요.">
-            </div>
-            <div class="order-search-btn-div1">
-                <button @click="fetchContractData" class="order-search-btn1">조회하기</button>
-            </div>
         </div>
         <div class="order-list-box1">
             <table class="order-table1">
                 <thead>
                     <tr>
-                        <th>프로젝트 코드</th>
+                        <th>계약서 코드</th>
                         <th>담당자</th>
-                        <th>거래처 코드</th>
+                        <th>프로젝트 코드</th>
                         <th>거래처명</th>
                         <th>수주 금액</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ contractData.contractCode }}</td>
+                        <td class="contract-test333">
+                            <div class="contract-number-div33">
+                                <input type="text" v-model="contractCode" class="contract-number-box33" placeholder="계약서 코드를 입력해주세요.">
+                                <button @click="fetchContractData" class="contract-number-btn33">조회</button>
+                            </div>
+                        </td>
                         <td>{{ contractData.employee.employeeName }}</td>
-                        <td>{{ contractData.account.accountCode }}</td>
+                        <td>{{ contractData.contractCode }}</td>
                         <td>{{ contractData.account.accountName }}</td>
                         <td>{{ contractData.contractTotalPrice }}</td>
                     </tr>
@@ -80,29 +75,46 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="order-table4">
-                <thead>
-                    <tr>
-                        <th>납부 형태</th>
-                        <th>계약금</th>
-                        <th>중도금</th>
-                        <th>잔금</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="test">{{ contractData.contractCategory.contractCategory }}</td>
-                        <td>{{ contractData.downPayment }}</td>
-                        <td>{{ contractData.progressPayment }}</td>
-                        <td>{{ contractData.balance }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div v-if="contractData.contractCategory.contractCategoryId === 1">
+                <table class="order2-table4">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>수주 금액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>일시납부</td>
+                            <td>{{ contractData.contractTotalPrice.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else>
+                <table class="order2-table5">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>계약금</th>
+                            <th>중도금</th>
+                            <th>잔금</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>분할납부</td>
+                            <td>{{ contractData.downPayment.toLocaleString() }}</td>
+                            <td>{{ contractData.progressPayment.toLocaleString() }}</td>
+                            <td>{{ contractData.balance.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="order-attachment">
             <div class="order-attachment-header">
                 <h2 class="order-file">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="order-pdfimage">
             </div>
             <div class="order-attachment-content">
                 <div class="file-list" v-for="(file, index) in files" :key="index">
@@ -111,10 +123,13 @@
                     <button @click="removeFile(index)">삭제</button>
                 </div>
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <label class="file-upload-label">
+                파일 선택
+                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
+            </label>
         </div>
-        <div class="order-regist-btn-div1">
-            <button class="order-regist-btn1" @click="registerOrder">수주 등록하기</button>
+        <div class="order-regist-btn-div33">
+            <button class="order-regist-btn33" @click="registerOrder">수주 등록하기</button>
         </div>
     </div>
 </template>
@@ -195,6 +210,11 @@ const removeFile = (index) => {
 };
 
 const registerOrder = async () => {
+    if (files.value.length === 0) {
+        alert('첨부파일을 등록해주세요.');
+        return;
+    }
+
     const orderData = {
         contactDate: contractData.value.contractDate,
         orderTotalPrice: contractData.value.contractTotalPrice,
@@ -254,17 +274,19 @@ const registerOrder = async () => {
 
 
 <style>
-.regist-content {
-    margin-top: 4%;
+.order-regist-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
-.order-regist {
+.order-regist11 {
     text-align: center;
-    margin-top: 3%;
 }
 
 .order-list-box1 {
@@ -286,8 +308,8 @@ const registerOrder = async () => {
 .order-table1,
 .order-table2,
 .order-table3,
-.order-table4,
-.order-table5 {
+.order2-table4,
+.order2-table5 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -299,22 +321,29 @@ const registerOrder = async () => {
 .order-table2 th,
 .order-table2 td,
 .order-table3 th,
-.order-table3 td,
-.order-table4 th,
-.order-table4 td,
-.order-table5 th,
-.order-table5 td {
+.order-table3 td {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
 }
 
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+    width: 600px; /* 너비를 늘리기 위해 추가 */
+}
+
 .order-table1 th,
 .order-table2 th,
 .order-table3 th,
-.order-table4 th,
-.order-table5 th {
+.order2-table4 th,
+.order2-table5 th {
     background-color: whitesmoke;
     color: black;
     font-size: 18px;
@@ -325,8 +354,8 @@ const registerOrder = async () => {
 .order-table1 td,
 .order-table2 td,
 .order-table3 td,
-.order-table4 td,
-.order-table5 td {
+.order2-table4 td,
+.order2-table5 td {
     height: 40px;
 }
 
@@ -374,86 +403,36 @@ const registerOrder = async () => {
     display: block;
 }
 
-.test1,
-.test2 {
-    width: 300px;
-}
-
-.order-search-box {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px;
-    margin-bottom: 100px;
-    border-radius: 10px;
-    border: 2px solid #ccc;
-    box-sizing: border-box;
-    background-color: whitesmoke;
-    height: auto;
-    margin: 20px auto;
-    gap: 1px;
-    max-width: 400px;
-}
-
-.contract-number {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* 수직 방향 중앙 정렬 */
-}
-
-.contract-number-text {
+.contract-number-div33 {
     display: flex;
     align-items: center;
-    text-align: center;
-    margin-top: 2px;
-    margin-bottom: 2px;
 }
 
-.contract-number-box {
-    flex-grow: 1;
-    padding: 10px;
-    margin-bottom: 10px;
+.contract-number-box33 {
+    width: calc(100% - 50px);
+    height: 35px;
+    padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 5px 0 0 5px;
     box-sizing: border-box;
-    width: 320px;
-    font-size: 18px;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
 }
 
-.order-search-btn-div1,
-.order-regist-btn-div1 {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.order-search-btn1,
-.order-regist-btn1 {
-    padding: 10px 20px;
-    font-size: 16px;
-    text-align: center;
-    border: none;
-    border-radius: 10px;
+.contract-number-btn33 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
     background-color: #0C2092;
     color: white;
+    font-size: 11px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-left: -1px;
+    padding: 0 10px;
 }
 
-.order-search-btn1 {
-    max-width: 320px;
-}
-
-.order-regist-btn1 {
-    width: 320px;
-    font-size: 18px;
-    margin-top: 30px;
-    margin-bottom: 100px;
+.contract-test333 {
+    width: 250px;
 }
 
 .order-attachment {
@@ -463,7 +442,7 @@ const registerOrder = async () => {
     align-items: center;
     position: relative;
     width: 100%;
-    height: 200px;
+    height: 250px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -474,12 +453,6 @@ const registerOrder = async () => {
     align-items: center;
     padding: 5px;
     margin-bottom: -20px;
-}
-
-.order-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
 }
 
 .order-attachment-content {
@@ -508,5 +481,49 @@ const registerOrder = async () => {
 
 .file-name {
     font-size: 18px;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0; 
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.order-regist-btn-div33 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.order-regist-btn33 {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.order-regist-btn33:hover {
+    background-color: #007bff;
 }
 </style>

@@ -70,31 +70,48 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="order-table4">
-                <thead>
-                    <tr>
-                        <th>납부 형태</th>
-                        <th>계약금</th>
-                        <th>중도금</th>
-                        <th>잔금</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ orderData.contractCategory.contractCategory }}</td>
-                        <td>{{ orderData.downPayment }}</td>
-                        <td>{{ orderData.progressPayment }}</td>
-                        <td>{{ orderData.balance }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="order-attachment9">
-            <div class="order-attachment-header9">
-                <h2 class="order-file">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="order-pdfimage">
+            <div v-if="orderData.contractCategory.contractCategoryId === 1">
+                <table class="order2-table4">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>수주 금액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>일시납부</td>
+                            <td>{{ orderData.orderTotalPrice.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="order-attachment-content9">
+            <div v-else>
+                <table class="order2-table5">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>계약금</th>
+                            <th>중도금</th>
+                            <th>잔금</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>분할납부</td>
+                            <td>{{ orderData.downPayment.toLocaleString() }}</td>
+                            <td>{{ orderData.progressPayment.toLocaleString() }}</td>
+                            <td>{{ orderData.balance.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="order-attachment333">
+            <div class="order-attachment-header">
+                <h2 class="order-file">첨부파일</h2>
+            </div>
+            <div class="order-attachment-content">
                 <div v-if="files.length > 0">
                     <div v-for="(file, index) in files" :key="index" class="file-list">
                         <span class="file-icon">📄</span>
@@ -106,11 +123,14 @@
                     <div v-for="(file, index) in orderData.orderFile" :key="file.fileId" class="file-list">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.originName }}</span>
-                        <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                        <button @click="removeExistingFile(file.fileId, index)">삭제</button>
                     </div>
                 </div>
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <label class="file-upload-label">
+                파일 선택
+                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
+            </label>
         </div>
         <div class="order-regist-btn-div1">
             <button class="order-regist-btn1" @click="registerOrder">수주 수정하기</button>
@@ -128,6 +148,7 @@ const router = useRouter();
 const orderId = route.params.orderId;
 const orderData = ref(null);
 const files = ref([]);
+const removedFiles = ref([]);
 
 const fetchOrderData = async () => {
     try {
@@ -144,21 +165,21 @@ const handleFileUpload = (event) => {
     orderData.value.orderFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
 const removeFile = (index) => {
     files.value.splice(index, 1);
 };
 
+const removeExistingFile = (fileId, index) => {
+    removedFiles.value.push(fileId);
+    orderData.value.orderFile.splice(index, 1);
+};
+
 const registerOrder = async () => {
+    if (files.value.length === 0 && orderData.value.orderFile.length === 0) {
+        alert('첨부파일을 등록해주세요.');
+        return;
+    }
+
     const orderUpdateData = {
         contactDate: orderData.value.contactDate,
         orderTotalPrice: orderData.value.orderTotalPrice,
@@ -186,6 +207,7 @@ const registerOrder = async () => {
     files.value.forEach(file => {
         formData.append('files', file);
     });
+    formData.append('removedFiles', JSON.stringify(removedFiles.value));
 
     try {
         const response = await axios.patch(`http://localhost:7775/order/modify/${orderId}`, formData, {
@@ -237,8 +259,8 @@ onMounted(() => {
 .order-table1,
 .order-table2,
 .order-table3,
-.order-table4,
-.order-table5 {
+.order2-table4,
+.order2-table5 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -250,22 +272,29 @@ onMounted(() => {
 .order-table2 th,
 .order-table2 td,
 .order-table3 th,
-.order-table3 td,
-.order-table4 th,
-.order-table4 td,
-.order-table5 th,
-.order-table5 td {
+.order-table3 td {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
 }
 
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+    width: 600px; /* 너비를 늘리기 위해 추가 */
+}
+
 .order-table1 th,
 .order-table2 th,
 .order-table3 th,
-.order-table4 th,
-.order-table5 th {
+.order2-table4 th,
+.order2-table5 th {
     background-color: whitesmoke;
     color: black;
     font-size: 18px;
@@ -276,8 +305,8 @@ onMounted(() => {
 .order-table1 td,
 .order-table2 td,
 .order-table3 td,
-.order-table4 td,
-.order-table5 td {
+.order2-table4 td,
+.order2-table5 td {
     height: 40px;
 }
 
@@ -406,33 +435,27 @@ onMounted(() => {
     margin-bottom: 100px;
 }
 
-.order-attachment9 {
+.order-attachment333 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
     width: 100%;
-    height: 300px;
+    height: 350px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
 }
 
-.order-attachment-header9 {
+.order-attachment-header {
     display: flex;
     align-items: center;
     padding: 5px;
     margin-bottom: -20px;
 }
 
-.order-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
-.order-attachment-content9 {
+.order-attachment-content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -458,5 +481,49 @@ onMounted(() => {
 
 .file-name {
     font-size: 18px;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0; 
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.order-regist-btn-div1 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.order-regist-btn1 {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+.order-regist-btn1:hover {
+    background-color: #007bff;
 }
 </style>
