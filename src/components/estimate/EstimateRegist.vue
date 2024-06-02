@@ -361,10 +361,6 @@ watch(products, (newProducts) => {
 </script>
 
 
-
-
-
-
 <style>
 .estimate-regist-content11 {
     /* margin-top: 8%; */

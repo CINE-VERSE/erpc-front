@@ -1,5 +1,5 @@
 <template>
-    <div class="contract-content">
+    <div class=".contract-list-content">
         <div class="contract-list">
             <h1>계약서 목록</h1>
         </div>
@@ -29,7 +29,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="(contract, index) in filteredContracts" :key="contract.contractId" @click="goToContractContents(contract.contractId)">
-                        <td>{{ index + 1 }}</td>
+                        <td>{{ filteredContracts.length - index }}</td> <!-- Reverse numbering -->
                         <td>{{ contract.contractCode }}</td>
                         <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contract.contractDate }}</td>
@@ -43,6 +43,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -58,7 +59,7 @@ const filteredContracts = ref([]);
 onMounted(async () => {
     try {
         const response = await axios.get('http://localhost:7775/contract');
-        contracts.value = response.data;
+        contracts.value = response.data.sort((a, b) => b.contractId - a.contractId); // Sort by contractId in descending order
         filteredContracts.value = contracts.value; // 기본적으로 모든 계약서를 표시
     } catch (error) {
         console.error('계약서 정보를 불러오는 중 오류가 발생했습니다.', error);
@@ -88,6 +89,7 @@ function goToContractContents(contractId) {
     router.push({ path: `/contract/${contractId}` });
 }
 </script>
+
 
 <style>
     @import url('@/assets/css/contract/ContractList.css');

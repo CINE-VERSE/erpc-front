@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content" v-if="contractData">
+    <div class="contract-edit-content11" v-if="contractData">
         <h1>계약서 수정</h1>
         <div class="contract-list-box1">
             <table class="contract2-table1">
@@ -88,13 +88,14 @@
                     </tr>
                 </tbody>
             </table>
-            <table class="contract2-table5">
+            <table class="contract-table4">
                 <thead>
                     <tr>
                         <th>납부 형태</th>
-                        <th>계약금</th>
-                        <th>중도금</th>
-                        <th>잔금</th>
+                        <th v-if="searchBy === '일시납부'">일시납부 금액</th>
+                        <th v-if="searchBy === '분할납부'">계약금</th>
+                        <th v-if="searchBy === '분할납부'">중도금</th>
+                        <th v-if="searchBy === '분할납부'">잔금</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -108,39 +109,42 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <input type="text" v-model="downPayment" class="contract-test6">
+                        <td v-if="searchBy === '일시납부'">
+                            {{ contractData.contractTotalPrice.toLocaleString() }}
                         </td>
-                        <td>
-                            <input type="text" v-model="progressPayment" class="contract-test7" :disabled="searchBy === '일시납부'">
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedDeposit" class="contract-test6" @input="updateDeposit">
                         </td>
-                        <td>
-                            <input type="text" v-model="balance" class="contract-test8" :disabled="searchBy === '일시납부'">
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedIntermediatePayment" class="contract-test7" @input="updateIntermediatePayment">
+                        </td>
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedFinalPayment" class="contract-test8" @input="updateFinalPayment">
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="contract-attachment">
-            <h2 class="contract-file">첨부파일</h2>
-            <div v-if="files.length > 0">
-                <div v-for="(file, index) in files" :key="index" class="file-list">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.name }}</span>
-                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+            <div class="contract-attachment3">
+                <h2 class="contract-file">첨부파일</h2>
+                <div v-if="files.length > 0">
+                    <div v-for="(file, index) in files" :key="index" class="file-list">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">{{ file.name }}</span>
+                    </div>
                 </div>
-            </div>
-            <div v-else>
-                <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.originName }}</span>
-                    <button @click="downloadFile(file.accessUrl)">다운로드</button>
+                <div v-else>
+                    <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">{{ file.originName }}</span>
+                    </div>
                 </div>
+                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
             </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <div class="contract-edit-btn-div33">
+                <button @click="updateContract" class="contract-edit-btn33">계약 수정하기</button>
+            </div>
         </div>
-        <button @click="updateContract" class="contract-regist-btn">계약 수정하기</button>
-    </div>
     <div v-else>
         <p>Loading...</p>
     </div>
@@ -162,6 +166,11 @@ const progressPayment = ref(0);
 const balance = ref(0);
 const searchBy = ref('분할납부');
 
+const formattedDeposit = ref('');
+const formattedIntermediatePayment = ref('');
+const formattedFinalPayment = ref('');
+const formattedTotalCost = ref('');
+
 onMounted(async () => {
     const contractId = route.params.contractId;
     try {
@@ -179,6 +188,7 @@ const populateFields = (data) => {
     progressPayment.value = data.progressPayment;
     balance.value = data.balance;
     searchBy.value = data.contractCategory.contractCategoryId === 1 ? '일시납부' : '분할납부';
+    updateFormattedPayments();
 };
 
 const handleFileUpload = (event) => {
@@ -186,38 +196,67 @@ const handleFileUpload = (event) => {
     contractData.value.contractFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
-const downloadFile = (url) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = url.split('/').pop();
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-};
-
 const setSearchBy = (criteria) => {
     searchBy.value = criteria;
-    if (criteria === '일시납부') {
+    calculatePayments();
+};
+
+const calculatePayments = () => {
+    const totalCost = contractData.value.contractTotalPrice || 0;
+    if (searchBy.value === '일시납부') {
+        downPayment.value = 0;
         progressPayment.value = 0;
         balance.value = 0;
+        formattedTotalCost.value = totalCost.toLocaleString();
+    } else {
+        downPayment.value = Math.round(totalCost * 0.1);
+        progressPayment.value = Math.round(totalCost * 0.6);
+        balance.value = Math.round(totalCost * 0.3);
     }
+    updateFormattedPayments();
+};
+
+const updateFormattedPayments = () => {
+    formattedDeposit.value = downPayment.value.toLocaleString();
+    formattedIntermediatePayment.value = progressPayment.value.toLocaleString();
+    formattedFinalPayment.value = balance.value.toLocaleString();
+    formattedTotalCost.value = (downPayment.value + progressPayment.value + balance.value).toLocaleString();
+};
+
+const updateDeposit = (event) => {
+    downPayment.value = parseInt(event.target.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
+};
+
+const updateIntermediatePayment = (event) => {
+    progressPayment.value = parseInt(event.target.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
+};
+
+const updateFinalPayment = (event) => {
+    balance.value = parseInt(event.target.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
 };
 
 const updateContract = async () => {
     const contractId = route.params.contractId;
+
+    const contractCategoryId = searchBy.value === '일시납부' ? 1 : 2;
 
     const contract = {
         contractId: contractId,
         contractNote: contractNote.value,
         contractTotalPrice: contractData.value.contractTotalPrice,
         contractDueDate: contractData.value.contractDueDate,
-        downPayment: downPayment.value,
-        progressPayment: progressPayment.value,
-        balance: balance.value,
+        downPayment: searchBy.value === '일시납부' ? 0 : downPayment.value,
+        progressPayment: searchBy.value === '일시납부' ? 0 : progressPayment.value,
+        balance: searchBy.value === '일시납부' ? 0 : balance.value,
         employee: contractData.value.employee,
         account: contractData.value.account,
         warehouse: contractData.value.warehouse,
+        contractCategory: {
+            contractCategoryId: contractCategoryId
+        },
         contractProduct: contractData.value.contractProduct.map(product => ({
             contractProductCount: product.contractProductCount,
             contractSupplyPrice: product.contractSupplyPrice,
@@ -247,21 +286,23 @@ const updateContract = async () => {
 </script>
 
 <style>
-.regist-content {
-    margin-top: 4%;
+.contract-edit-content11 {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
 }
 
 .contract-regist {
     text-align: center;
-    margin-top: 3%;
+    /* margin-top: 3%; */
 }
 
 .contract-list-box1 {
     width: 100%;
+    max-width: 1400px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -271,10 +312,7 @@ const updateContract = async () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    width: 100%;
-    max-width: 1200px;
     margin: 20px auto;
-    margin-bottom: 20px;
     gap: 1px;
 }
 
@@ -287,11 +325,6 @@ const updateContract = async () => {
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
-}
-
-.contract-test1,
-.contract-test2 {
-    width: 100px;
 }
 
 .contract-table1 th,
@@ -308,21 +341,6 @@ const updateContract = async () => {
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
-}
-
-.contract-table1 th,
-.contract-table1 td,
-.contract-table3 th,
-.contract-table3 td,
-.contract-table4 th,
-.contract-table4 td,
-.contract-table5 th,
-.contract-table5 td {
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 8px;
-    font-family: GmarketSansMedium;
-    width: 160px;
 }
 
 .contract-table1 th,
@@ -343,6 +361,8 @@ const updateContract = async () => {
 .contract-table4 td,
 .contract-table5 td {
     height: 40px;
+    box-sizing: border-box;
+    padding: 8px;
 }
 
 .contract-dropdown1 {
@@ -351,8 +371,7 @@ const updateContract = async () => {
     width: 160px;
 }
 
-.contract-dropdown-btn1,
-.contract-pdf1-btn {
+.contract-dropdown-btn1 {
     background-color: white;
     border: 2px solid #0C2092;
     border-radius: 10px;
@@ -390,7 +409,7 @@ const updateContract = async () => {
     display: block;
 }
 
-.contract-attachment {
+.contract-attachment3 {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -404,7 +423,7 @@ const updateContract = async () => {
     margin-bottom: 50px;
 }
 
-.contract-attachment-header {
+.contract-attachment3-header {
     display: flex;
     align-items: center;
     padding: 5px;
@@ -445,15 +464,19 @@ const updateContract = async () => {
     font-size: 18px;
 }
 
-.contract-test3,
-.contract-test5,
-.contract-test6,
-.contract-test7,
-.contract-test8 {
-    height: 35px;
+.file-upload-btn {
+    margin-top: 10px;
 }
 
-.contract-regist-btn {
+.contract-edit-btn-div33 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.contract-edit-btn33 {
+    width: 320px;
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -462,11 +485,11 @@ const updateContract = async () => {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    width: 320px;
     font-size: 18px;
-    margin-top: 20px;
-    margin-bottom: 100px;
+    margin-bottom: 50px;
+}
+
+.contract-edit-btn33:hover {
+    background-color: #007bff;
 }
 </style>

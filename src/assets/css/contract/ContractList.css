@@ -1,5 +1,5 @@
-.contract-content {
-    margin-top: 51px;
+.contract-list-content {
+    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,7 +8,7 @@
 
 .contract-list {
     text-align: center;
-    margin-top: 50px;
+    /* margin-top: 50px; */
 }
 
 .contract-list-search {

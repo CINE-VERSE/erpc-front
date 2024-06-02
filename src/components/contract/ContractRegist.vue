@@ -1,5 +1,5 @@
 <template>
-    <div class="regist-content9">
+    <div class="contract-regist-content11">
         <div class="contract-regist">
             <h1>계약서 등록</h1>
         </div>
@@ -24,7 +24,7 @@
                         </td>
                         <td>{{ employee.employeeName }}</td>
                         <td>{{ account.accountName }}</td>
-                        <td>{{ quotation.quotationTotalCost }}</td>
+                        <td>{{ formattedTotalCost }}</td>
                         <td>{{ quotation.quotationDueDate }}</td>
                     </tr>
                 </tbody>
@@ -53,8 +53,8 @@
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
                         <td>{{ product.quotationProductCount }}</td>
-                        <td>{{ product.product.productPrice }}</td>
-                        <td>{{ product.quotationSupplyPrice }}</td>
+                        <td>{{ formatNumber(product.product.productPrice) }}</td>
+                        <td>{{ formatNumber(product.quotationSupplyPrice) }}</td>
                         <td>{{ product.quotationProductionNote }}</td>
                     </tr>
                 </tbody>
@@ -87,9 +87,10 @@
                 <thead>
                     <tr>
                         <th>납부 형태</th>
-                        <th>계약금</th>
-                        <th>중도금</th>
-                        <th>잔금</th>
+                        <th v-if="searchBy === '분할납부'">계약금</th>
+                        <th v-if="searchBy === '분할납부'">중도금</th>
+                        <th v-if="searchBy === '분할납부'">잔금</th>
+                        <th v-if="searchBy === '일시납부'">일시납부 금액</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,16 +104,17 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
-                            <input type="text" v-model="deposit" class="contract-test6">
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedDeposit" class="contract-test6" @input="updateDeposit">
                         </td>
-                        <td>
-                            <input type="text" v-model="intermediatePayment" class="contract-test7"
-                                :disabled="searchBy === '일시납부'">
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedIntermediatePayment" class="contract-test7" @input="updateIntermediatePayment">
                         </td>
-                        <td>
-                            <input type="text" v-model="finalPayment" class="contract-test8"
-                                :disabled="searchBy === '일시납부'">
+                        <td v-if="searchBy === '분할납부'">
+                            <input type="text" v-model="formattedFinalPayment" class="contract-test8" @input="updateFinalPayment">
+                        </td>
+                        <td v-if="searchBy === '일시납부'">
+                            {{ formattedTotalCost }}
                         </td>
                     </tr>
                 </tbody>
@@ -131,7 +133,7 @@
             </table>
         </div>
 
-        <div class="contract-attachment">
+        <div class="contract-attachment3">
             <h2 class="contract-file">첨부파일</h2>
             <div v-for="(file, index) in files" :key="index" class="file-list">
                 <span class="file-icon">📄</span>
@@ -146,16 +148,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 import router from '@/router/mainRouter';
 
 const searchBy = ref('분할납부'); // 기본 값을 분할납부로 설정
 const quotationCode = ref('');
-const quotationNote = ref('');
+const quotationNote = ref(''); // 비고란
 const deposit = ref(0);
 const intermediatePayment = ref(0);
 const finalPayment = ref(0);
+
+const formattedDeposit = ref('');
+const formattedIntermediatePayment = ref('');
+const formattedFinalPayment = ref('');
 
 // 견적서 데이터
 const quotation = ref({});
@@ -166,6 +172,8 @@ const quotationProductList = ref([]);
 
 // 파일 첨부
 const files = ref([]);
+
+const formattedTotalCost = computed(() => formatNumber(quotation.value.quotationTotalCost));
 
 const fetchQuotationData = async () => {
     try {
@@ -181,6 +189,8 @@ const fetchQuotationData = async () => {
         warehouse.value = data.warehouse;
         quotationProductList.value = data.quotationProduct;
         quotationNote.value = data.quotationNote; // 견적서 비고 내역을 계약서 비고 내역으로 사용
+
+        calculatePayments();
     } catch (error) {
         console.error('견적서 정보를 조회하는 중 오류가 발생했습니다.', error);
         alert('견적서 정보를 조회하는 중 오류가 발생했습니다.');
@@ -197,12 +207,46 @@ const clearQuotationData = () => {
     quotationNote.value = '';
 };
 
-function setSearchBy(criteria) {
-    searchBy.value = criteria;
-    if (criteria === '일시납부') {
+const calculatePayments = () => {
+    const totalCost = quotation.value.quotationTotalCost || 0;
+    if (searchBy.value === '일시납부') {
+        deposit.value = totalCost;
         intermediatePayment.value = 0;
         finalPayment.value = 0;
+    } else {
+        deposit.value = Math.round(totalCost * 0.1);
+        intermediatePayment.value = Math.round(totalCost * 0.6);
+        finalPayment.value = Math.round(totalCost * 0.3);
     }
+    updateFormattedPayments();
+};
+
+const updateFormattedPayments = () => {
+    formattedDeposit.value = deposit.value.toLocaleString();
+    formattedIntermediatePayment.value = intermediatePayment.value.toLocaleString();
+    formattedFinalPayment.value = finalPayment.value.toLocaleString();
+};
+
+const updateDeposit = () => {
+    deposit.value = parseInt(formattedDeposit.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
+};
+
+const updateIntermediatePayment = () => {
+    intermediatePayment.value = parseInt(formattedIntermediatePayment.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
+};
+
+const updateFinalPayment = () => {
+    finalPayment.value = parseInt(formattedFinalPayment.value.replace(/,/g, ''), 10) || 0;
+    updateFormattedPayments();
+};
+
+watch([formattedDeposit, formattedIntermediatePayment, formattedFinalPayment], updateFormattedPayments);
+
+function setSearchBy(criteria) {
+    searchBy.value = criteria;
+    calculatePayments();
 }
 
 const handleFileUpload = (event) => {
@@ -210,12 +254,21 @@ const handleFileUpload = (event) => {
 };
 
 const registerContract = async () => {
-    if (!quotation.value.quotationCode) {
-        alert('먼저 견적서 정보를 불러오세요.');
+    // 필수 입력 필드가 모두 채워졌는지 확인
+    const isQuotationValid = quotationCode.value && employee.value.employeeName && account.value.accountName && quotation.value.quotationTotalCost && quotation.value.quotationDueDate;
+    const areProductsValid = quotationProductList.value.length > 0 && quotationProductList.value.every(product =>
+        product.product.productCode && product.product.productName && product.quotationProductCount && product.product.productPrice && product.quotationSupplyPrice
+    );
+    const isWarehouseValid = warehouse.value.warehouseCode && warehouse.value.warehouseName && warehouse.value.warehouseType && warehouse.value.warehouseLocation && warehouse.value.warehouseUsage;
+    const arePaymentsValid = searchBy.value === '일시납부' || (formattedDeposit.value && formattedIntermediatePayment.value && formattedFinalPayment.value);
+    const areFilesUploaded = files.value.length > 0;
+
+    if (!isQuotationValid || !areProductsValid || !isWarehouseValid || !arePaymentsValid) {
+        alert('모든 필수 입력란을 채워주세요.');
         return;
     }
 
-    if (files.value.length === 0) {
+    if (!areFilesUploaded) {
         alert('첨부파일을 등록해주세요.');
         return;
     }
@@ -223,15 +276,14 @@ const registerContract = async () => {
     const contractCategoryId = searchBy.value === '일시납부' ? 1 : 2;
 
     const contractData = {
-        contractNote: quotationNote.value,
+        contractNote: quotationNote.value, // 비고란은 선택사항
         contractTotalPrice: quotation.value.quotationTotalCost,
         contractDueDate: quotation.value.quotationDueDate,
-        downPayment: deposit.value,
-        progressPayment: intermediatePayment.value,
-        balance: finalPayment.value,
+        downPayment: searchBy.value === '일시납부' ? 0 : deposit.value,
+        progressPayment: searchBy.value === '일시납부' ? 0 : intermediatePayment.value,
+        balance: searchBy.value === '일시납부' ? 0 : finalPayment.value,
         employee: {
             employeeId: employee.value.employeeId,
-            // employeeCode:"123"
         },
         account: {
             accountId: account.value.accountId
@@ -275,18 +327,28 @@ const registerContract = async () => {
         alert('계약서를 등록하는 중 오류가 발생했습니다.');
     }
 };
+
+const formatNumber = (value) => {
+    return value ? value.toLocaleString() : '';
+};
 </script>
+
+
+
 
 <style>
 
-.regist-content9 {
+.contract-regist-content11 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: 1200px;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
+
 
 .customer-regist {
     text-align: center;
@@ -320,41 +382,11 @@ const registerContract = async () => {
     padding: 0 10px;
 }
 
-.search-btn-div1,
-.regist-btn-div {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-.search-btn1,
-.customer-regist-btn {
-    padding: 10px 20px;
-    text-align: center;
-    border: none;
-    border-radius: 10px;
-    background-color: #0C2092;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.search-btn1 {
-    max-width: 320px;
-}
-
-.customer-regist-btn {
-    width: 320px;
-    font-size: 18px;
-    margin-top: 20px;
-    margin-bottom: 100px;
-}
-
-.customer-list-box1 {
-    width: 100%;
+.contract-list-box {
+    width: 90%;
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -364,37 +396,34 @@ const registerContract = async () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
+    margin: 20px auto;
     gap: 1px;
 }
 
-.customer-table1,
-.customer-table2,
-.customer-table3,
-.customer-table4 {
+.contract-table1,
+.contract-table2,
+.contract-table3 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
 }
 
-.customer-table1 th,
-.customer-table1 td,
-.customer-table2 th,
-.customer-table2 td,
-.customer-table3 th,
-.customer-table3 td,
-.customer-table4 th,
-.customer-table4 td {
+.contract-table1 th,
+.contract-table1 td,
+.contract-table2 th,
+.contract-table2 td,
+.contract-table3 th,
+.contract-table3 td {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
 }
 
-.customer-table1 th,
-.customer-table2 th,
-.customer-table3 th,
-.customer-table4 th {
+.contract-table1 th,
+.contract-table2 th,
+.contract-table3 th {
     background-color: whitesmoke;
     color: black;
     font-size: 18px;
@@ -402,44 +431,98 @@ const registerContract = async () => {
     height: 60px;
 }
 
-.customer-table1 td,
-.customer-table2 td,
-.customer-table3 td,
-.customer-table4 td {
+.contract-table1 td,
+.contract-table2 td,
+.contract-table3 td {
     height: 40px;
-    width: 25%;
-    /* 테이블 셀 너비를 균일하게 설정 */
+    width: 14.28%;
+    /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
     box-sizing: border-box;
     padding: 8px;
 }
 
-.customer-test1,
-.customer-test2,
-.customer-test3,
-.customer-test4,
-.customer-test5,
-.customer-test6,
-.customer-test7,
-.customer-test8,
-.customer-test9 {
+.contract-test2 {
+    width: 80px;
+    /* 수량 필드의 너비를 좁게 설정 */
+    height: 35px;
+    box-sizing: border-box;
+    padding: 8px;
+}
+
+.contract-test1,
+.contract-test3,
+.contract-test4,
+.contract-test5,
+.contract-test6,
+.contract-test7,
+.contract-test8 {
     width: 100%;
     height: 35px;
     box-sizing: border-box;
     padding: 8px;
 }
 
-.customer-test4 {
+.contract-attachment3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
     width: 100%;
-    /* 테이블 셀 너비와 맞춤 */
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
+    height: 200px;
+    background-color: #d5e6ff;
+    border-radius: 10px;
+    margin-bottom: 50px;
 }
 
-.customer-test9 {
-    width: 100%;
-    /* 테이블 셀 너비와 맞춤 */
+.contract-attachment3-header {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: -20px;
 }
 
-.contract-test5 {
-    width: 95%; /* 테이블 셀 너비와 맞춤 */
+.contract-pdfimage {
+    width: 30px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+}
+
+.contract-attachment-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.file-list {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    height: 70px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: -5px;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.file-name {
+    font-size: 18px;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
 }
 
 .contract-regist-btn-div33 {

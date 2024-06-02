@@ -2,13 +2,13 @@
     <div class="estimate-content11" v-if="quotationData">
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
-        <div class="estimate-btn">
-            <button class="estimate-request" @click="showApprovalPopup = true">결재 요청</button>
-            <button class="estimate-edit" @click="goToQuotationPage">수정</button>
-            <button class="estimate-delete" @click="deleteQuotation">삭제</button>
-            <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
-        </div>
-        <div class="estimate-pdf">
+            <div class="estimate-btn">
+                <button class="estimate-request" @click="showApprovalPopup = true">결재 요청</button>
+                <button class="estimate-edit" @click="goToQuotationPage">수정</button>
+                <button class="estimate-delete" @click="deleteQuotation">삭제</button>
+                <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
+            </div>
+            <div class="estimate-pdf">
                 <div v-if="quotationData.quotationFile.length > 0">
                     <div v-for="file in quotationData.quotationFile" :key="file.fileId" class="file-download">
                         <button class="estimate-pdf1" @click="downloadFile(file.accessUrl)">
@@ -122,11 +122,10 @@
             <div class="estimate-process-reply">
                 <input type="text" v-model="newNote" id="estimate-process-reply-box" class="estimate-process-reply-box"
                     placeholder="내용을 입력해주세요.">
-                    <div class="estimate-process-btn2">
-                <button class="estimate-process-regist" @click="addNote">등록하기</button>
+                <div class="estimate-process-btn2">
+                    <button class="estimate-process-regist" @click="addNote">등록하기</button>
                 </div>
             </div>
-
         </div>
     </div>
     <div v-else>
@@ -337,6 +336,7 @@ const deleteNote = async (quotationNoteId) => {
     max-width: calc(100% - 220px);
     /* main1의 너비를 뺀 나머지 공간 */
 }
+
 .order-search {
     text-align: center;
     margin-top: 3%;
