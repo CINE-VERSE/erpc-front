@@ -83,3 +83,51 @@ export default {
   }
 };
 </script>
+<style scoped>
+div {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+p {
+  color: #555;
+  margin: 10px 0;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.edit-button, .register-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin: 0 10px;
+}
+
+.edit-button:hover, .register-button:hover {
+  background-color: #0056b3;
+}
+
+.edit-button:active, .register-button:active {
+  background-color: #004080;
+}
+</style>

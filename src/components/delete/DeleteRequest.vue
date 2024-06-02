@@ -145,3 +145,60 @@ export default {
   }
 };
 </script>
+<style scoped>
+.delete-requests {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-requests h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.delete-requests h2 {
+  color: #555;
+  margin-top: 20px;
+}
+
+.delete-requests ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.delete-requests li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-requests button {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-requests button:hover {
+  background-color: #0056b3;
+}
+
+.delete-requests button:active {
+  background-color: #004080;
+}
+
+.delete-requests div {
+  margin-bottom: 20px;
+}
+</style>

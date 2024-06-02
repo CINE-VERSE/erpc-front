@@ -163,34 +163,146 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+textarea {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    padding-left: 10px;
+    padding-top: 5px;
+}
+.btn {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+}
+
+.box {
+    width: 900px; 
+    max-width: 900px; 
+    height: 100px;
+    max-height: 100px;
+    margin-left: 250px;
+}
+
 .closebutton {
-  background-color: #ff6b6b; /* 밝은 핑크 배경색 */
-  color: #fff; /* 흰색 텍스트 */
-  border: none; /* 테두리 없음 */
-  padding: 10px 15px; /* 내부 여백 */
-  border-radius: 50%; /* 완전히 둥근 모서리 */
-  font-size: 16px; /* 글자 크기 */
-  line-height: 1; /* 줄 높이 */
-  display: flex; /* 플렉스 박스 사용 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
-  cursor: pointer; /* 커서 모양 변경 */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
-  transition: background-color 0.3s, transform 0.3s; /* 부드러운 전환 효과 */
+    border: 0;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
 }
 
-.closebutton:hover {
-  background-color: #ff4c4c; /* 마우스 호버시 배경색 변경 */
-  transform: translateY(-2px); /* 약간 위로 이동 */
+.btn {
+    background-color: #6c7aa1;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-style: bold;
+    margin-left: auto; 
+    display: block; 
 }
 
-.closebutton:active {
-  background-color: #e04343; /* 클릭시 배경색 변경 */
-  transform: translateY(0); /* 원래 위치로 돌아오기 */
+.replyregistline, .replyregistbottomline {
+    width: 1100px;
+    height: 3px;
+    border: 0;
+    background-color: #6c7aa1;
+    margin-bottom: 30px;
 }
 
-.closebutton::before {
-  content: '✖'; /* 버튼 안에 X 기호 추가 */
-  font-size: 16px; /* X 기호 크기 */
+.new-replyline{
+    width: 1100px; 
+    height: 2px;
+    background-color: gray; 
+    margin-right: auto; 
+}
+
+.replyregistline, .replyregistbottomline {
+    margin-top: 3%;
+}
+
+.allreply {
+    display: flex;
+    align-items: center; 
+    width: 1000px;
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    border-bottom: 1px solid #6c7aa1dc;
+    padding-left: 60px;
+}
+
+.replywriterdiv {
+    margin-left: 30px;
+}
+
+.replydatediv{
+    margin-left: 110px;
+}
+
+.closebuttondiv {
+    padding-right: 100px;
+}
+
+.replywriterdiv {
+    flex-basis: 11%; 
+}
+
+.replycontentdiv {
+    flex-basis: 60%;
+    margin-left: 100px;   
+}
+
+.replydatediv {
+    flex-basis: 20%;
+    font-size: 12px;
+    margin-left: 100px;
+}
+
+.closebuttondiv {
+    flex-basis: 10%;
+    justify-content: flex-end;
+}
+
+.noreply {
+    text-align: center;
+    font-size: 20px;
+    margin-top: 50px;
+    margin-left: 250px
+}
+
+.registreplywriterdiv, .registreplydiv {
+    float: none;
+    clear: both;
+    width: 100%;
+}
+
+.registreplywriterdiv {
+    margin-left: 80px;
+    margin-top: 30px;
+}
+
+.registreplydiv {
+    display: flex;
+    justify-content: center; 
+    margin-top: 10px;
+}
+
+textarea::placeholder {
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .btn, .box, .allreply div {
+        width: 90%;
+        margin: 10px auto;
+    }
+
+    .replywriterdiv, .replycontentdiv, .replydatediv, .closebuttondiv {
+        flex-direction: column; 
+    }
 }
 </style >

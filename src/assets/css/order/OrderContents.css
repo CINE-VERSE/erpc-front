@@ -41,22 +41,14 @@
 }
 
 .order-edit,
-.order-delete {
-    width: 60px;
-    height: 40px;
-    cursor: pointer;
-    margin-left: 15px;
-}
-
-.order-delete {
-    margin-right: 15px;
-}
-
-.order-request {
+.order-delete,
+.order-request,
+.order-excel {
     width: 80px;
     height: 40px;
     cursor: pointer;
-    margin-left: 15px;   
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .order-pdf {
@@ -71,7 +63,7 @@
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 350px;
+    width: 500px;
     height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
@@ -150,14 +142,14 @@
 .order2-table2 td,
 .order2-table3 th,
 .order2-table3 td,
-.order2-table4 th,
-.order2-table4 td,
-.order2-table5 th,
-.order2-table5 td,
-.order2-table6 th,
-.order2-table6 td,
-.order2-table7 th,
-.order2-table7 td,
+order2-table4 th,
+order2-table4 td,
+order2-table5 th,
+order2-table5 td,
+order2-table6 th,
+order2-table6 td,
+order2-table7 th,
+order2-table7 td,
 .shipment-table1 th,
 .shipment-table1 td,
 .shipment-table2 th,
@@ -172,9 +164,9 @@
 .order2-table2 th,
 .order2-table3 th,
 .order2-table4 th,
-.order2-table5 th,
-.order2-table6 th,
-.order2-table7 th,
+order2-table5 th,
+order2-table6 th,
+order2-table7 th,
 .shipment-table1 th,
 .shipment-table2 th {
     background-color: whitesmoke;
@@ -186,11 +178,11 @@
 
 .order2-table1 td,
 .order2-table2 td,
-.order2-table3 td,
-.order2-table4 td,
-.order2-table5 td,
-.order2-table6 td,
-.order2-table7 td,
+order2-table3 td,
+order2-table4 td,
+order2-table5 td,
+order2-table6 td,
+order2-table7 td,
 .shipment-table1 td,
 .shipment-table2 td {
     height: 40px;
@@ -344,4 +336,39 @@
     margin-left: 992px;
     cursor: pointer;
     margin-bottom: 7px;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
 }
