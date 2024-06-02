@@ -1,6 +1,6 @@
 <template>
-    <div class="regist-content" v-if="orderData">
-        <div class="order-regist">
+    <div class="regist-content21" v-if="orderData">
+        <div class="order-regist21">
             <h1>수주 수정</h1>
         </div>
         <div class="order-list-box1">
@@ -227,17 +227,17 @@ onMounted(() => {
 </script>
 
 <style>
-.regist-content {
-    margin-top: 4%;
+.regist-content21 {
+    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
 }
 
-.order-regist {
+.order-regist21 {
     text-align: center;
-    margin-top: 3%;
+    /* margin-top: 3%; */
 }
 
 .order-list-box1 {

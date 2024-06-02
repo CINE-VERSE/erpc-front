@@ -197,25 +197,25 @@
                 </tbody>
             </table>
         </div>
-        <div class="order-process-box">
-            <h1 class="order-process-text">Process</h1>
-            <div class="order-process-box-detail">
-                <div class="order-process-info">
-                    <h4 class="order-process-writer">{{ orderData.employee.employeeName }} {{
-                        orderData.employee.employeeRank.employeeRank }}</h4>
-                    <p class="order-process-date">{{ orderData.orderDate }}</p>
+        <div class="order22-process-box">
+            <h1 class="order22-process-text">Process</h1>
+            <div v-for="note in filteredOrderNotes" :key="note.orderNoteId" class="order22-process-box-detail">
+                <div class="order22-process-info">
+                    <h4 class="order22-process-writer">{{ employeeName }}</h4>
+                    <p class="order22-process-date">{{ note.orderNoteDate }}</p>
                 </div>
-                <button class="order-process-detail">
-                    프로젝트 진행 정보 공유합니다~
+                <button class="order22-process-detail">
+                    {{ note.orderNote }}
                 </button>
-                <div class="order-process-btn">
-                    <button class="order-process-edit">수정</button>
-                    <button class="order-process-delete">삭제</button>
+                <div class="order22-process-btn">
+                    <button class="order22-process-delete" @click="deleteNote(note.orderNoteId)">삭제하기</button>
                 </div>
-                <div class="order-process-reply">
-                    <input type="text" id="order-process-reply-box" class="order-process-reply-box"
-                        placeholder="내용을 입력해주세요.">
-                    <button class="order-process-regist">등록하기</button>
+            </div>
+            <div class="order22-process-reply">
+                <input type="text" v-model="newNote" id="order22-process-reply-box" class="order22-process-reply-box"
+                    placeholder="내용을 입력해주세요.">
+                <div class="order22-process-btn2">
+                    <button class="order22-process-regist" @click="addNote">등록하기</button>
                 </div>
             </div>
         </div>
@@ -245,43 +245,85 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
-const orderId = route.params.orderId;
 const orderData = ref(null);
+const orderNoteData = ref([]); // 수주 노트 데이터를 저장하는 배열
 const showPopup = ref(false);
-const taxInvoiceRequestData = ref(null);
+const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
 const deleteReason = ref('');
-const showApprovalPopup = ref(false); // 결재 요청 팝업 상태
-const approvalContent = ref(''); // 결재 요청 비고
+const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
+const newNote = ref('');
+const employeeName = ref('');
+const employeeId = ref('');
+const taxInvoiceRequestData = ref(null);
+const approvalStatus = ref('Pending'); // Default value as Pending
 
+// filteredOrderNotes는 orderDeleteDate가 null인 노트만 반환합니다.
+const filteredOrderNotes = computed(() => {
+    return orderNoteData.value.filter(note => note.orderDeleteDate === null);
+});
+
+// 컴포넌트가 마운트될 때 실행되는 코드
 onMounted(async () => {
-    try {
-        if (orderId) {
-            const response = await axios.get(`http://localhost:7775/order/${orderId}`);
-            orderData.value = response.data;
+    const orderId = route.params.orderId;
+    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
 
-            if (orderData.value.taxInvoiceRequest && orderData.value.taxInvoiceRequest.length > 0) {
-                const taxInvoiceRequestId = orderData.value.taxInvoiceRequest[0].taxInvoiceRequestId;
-                const taxInvoiceResponse = await axios.get(`http://localhost:7775/tax_invoice/${taxInvoiceRequestId}`);
-                taxInvoiceRequestData.value = taxInvoiceResponse.data;
-            }
-        } else {
-            console.error('Order ID is undefined');
-        }
+    try {
+        // 수주 데이터를 가져오는 API 호출
+        const orderResponse = await axios.get(`http://localhost:7775/order/${orderId}`);
+        orderData.value = orderResponse.data;
+
+        // 수주 노트 데이터를 가져오는 API 호출
+        const noteResponse = await axios.get(`http://localhost:7775/order_note/${orderId}`);
+        orderNoteData.value = noteResponse.data;
+
+        // userId로 직원 이름을 가져오는 API 호출
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
+        employeeName.value = employeeResponse.data.employeeName;
+
+        // approvalStatus를 가져오는 API 호출
+        const approvalResponse = await axios.get(`http://localhost:7775/approval/order/${orderId}`);
+        approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
+
     } catch (error) {
         console.error('Error fetching order data:', error);
     }
 });
 
+// 결재 요청 팝업 닫기 함수
+const closeApprovalPopup = () => {
+    showApprovalPopup.value = false;
+    approvalContent.value = '';
+};
+
+// 결재 요청 확인 함수
+const confirmApproval = async () => {
+    const orderId = route.params.orderId;
+    try {
+        const response = await axios.post('http://localhost:7775/approval/order/regist', {
+            approvalContent: approvalContent.value,
+            order: { orderRegistrationId: orderId }
+        });
+        alert('결재 요청이 성공적으로 완료되었습니다.');
+        console.log('Approval request sent successfully:', response.data);
+        closeApprovalPopup();
+    } catch (error) {
+        console.error('Error sending approval request:', error);
+        alert('결재 요청 중 오류가 발생했습니다.');
+    }
+};
+
+// 수주 수정 페이지로 이동하는 함수
 const goToOrderPage = () => {
     router.push({ path: `/order/modify/${route.params.orderId}` });
 };
 
+// 파일 다운로드 함수
 const downloadFile = (url) => {
     const link = document.createElement('a');
     link.href = url;
@@ -292,26 +334,30 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
+// 엑셀 다운로드 함수
 const downloadExcel = () => {
-    const orderRegistrationId = route.params.orderId;
-    const url = `http://localhost:7775/excel/order/${orderRegistrationId}`;
+    const orderId = route.params.orderId;
+    const url = `http://localhost:7775/excel/order/${orderId}`;
     const link = document.createElement('a');
     link.href = url;
-    link.download = `order_${orderRegistrationId}.xlsx`;
+    link.download = `order_${orderId}.xlsx`;
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 };
 
+// 수주 삭제 요청 함수
 const deleteOrder = () => {
     showPopup.value = true;
 };
 
+// 팝업 닫기 함수
 const closePopup = () => {
     showPopup.value = false;
 };
 
+// 수주 삭제 확인 함수
 const confirmDelete = async () => {
     const orderId = route.params.orderId;
     try {
@@ -330,28 +376,49 @@ const confirmDelete = async () => {
     }
 };
 
-// 결재 요청 팝업 닫기 함수
-const closeApprovalPopup = () => {
-    showApprovalPopup.value = false;
-    approvalContent.value = '';
+// 노트 추가 함수
+const addNote = async () => {
+    const orderId = route.params.orderId;
+    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
+    try {
+        const response = await axios.post('http://localhost:7775/order_note/regist', {
+            orderNote: newNote.value,
+            order: { orderRegistrationId: orderId },
+            employee: { employeeId: userId } // employeeId를 userId로 설정
+        });
+        alert('process 등록되었습니다.');
+        console.log('order note added successfully:', response.data);
+        orderNoteData.value.push(response.data);
+        newNote.value = '';
+        location.reload(); // 페이지 새로고침 추가
+    } catch (error) {
+        console.error('Error adding order note:', error);
+        alert('노트 추가 중 오류가 발생했습니다.');
+    }
 };
 
-// 결재 요청 확인 함수
-const confirmApproval = async () => {
+
+// 노트 삭제 함수
+const deleteNote = async (orderNoteId) => {
     try {
-        const response = await axios.post('http://localhost:7775/approval/shipment/regist', {
-            approvalContent: approvalContent.value,
-            order: { orderRegistrationId: orderData.value.orderRegistrationId }
+        const response = await axios.patch('http://localhost:7775/order_note/delete', null, {
+            params: {
+                orderNoteId
+            }
         });
-        alert('결재 요청이 성공적으로 완료되었습니다.');
-        console.log('Approval request sent successfully:', response.data);
-        closeApprovalPopup();
+        const updatedNote = response.data;
+        const noteIndex = orderNoteData.value.findIndex(note => note.orderNoteId === orderNoteId);
+        alert('process 삭제되었습니다.');
+        if (noteIndex !== -1) {
+            orderNoteData.value[noteIndex] = updatedNote;
+        }
     } catch (error) {
-        console.error('Error sending approval request:', error);
-        alert('결재 요청 중 오류가 발생했습니다.');
+        console.error('Error deleting note:', error);
+        alert('노트 삭제 중 오류가 발생했습니다.');
     }
 };
 </script>
+
 
 
 <style>
@@ -560,7 +627,7 @@ const confirmApproval = async () => {
     margin-bottom: 7%;
 }
 
-.order-process-box {
+.order22-process-box {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -571,30 +638,32 @@ const confirmApproval = async () => {
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 1200px;
+    width: 100%;
+    max-width: 1100px;
+    min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
-    margin-top: 30px;
+    margin-top: 60px;
     height: auto;
     flex-direction: column;
     margin-bottom: 7%;
 }
 
-.order-process-text {
-    margin-bottom: 20px;
+.order22-process-text {
     color: #0C2092;
 }
 
-.order-process-box-detail {
+.order22-process-box-detail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-left: 8px;
 }
 
-.order-process-info {
+.order22-process-info {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -602,12 +671,13 @@ const confirmApproval = async () => {
     margin-bottom: 10px;
 }
 
-.order-process-writer {
+.order22-process-writer {
     margin: 0;
-    margin-left: 45px;
+    margin-left: 30px;
+    margin-bottom: -13px;
 }
 
-.order-process-detail {
+.order22-process-detail {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -619,14 +689,14 @@ const confirmApproval = async () => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 93%;
+    width: 94%;
     height: auto;
-    margin-left: 40px;
+    margin-right: 5px;
     margin-top: -10px;
     font-weight: normal;
 }
 
-.order-process-date {
+.order22-process-date {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -637,42 +707,46 @@ const confirmApproval = async () => {
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 45px;
+    margin-right: 34px;
 }
 
-.order-process-btn {
+.order22-process-btn,
+.order22-process-btn2 {
     display: flex;
     width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     gap: 7px;
 }
 
-.order-process-edit,
-.order-process-delete {
+.order22-process-regist,
+.order22-process-delete {
     background-color: #0C2092;
     border: 2px solid #0C2092;
     color: white;
     border-radius: 10px;
     padding: 5px 7px;
-    margin-top: 4px;
+    margin-top: 10px;
     cursor: pointer;
 }
 
-.order-process-delete {
-    margin-right: 46px;
+.order22-process-regist {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
-.order-process-reply {
+.order22-process-reply {
     display: flex;
     width: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 5px;
+    padding: 10px;
     margin-top: 10px;
 }
 
-.order-process-reply-box {
+.order22-process-reply-box {
     background-color: white;
     border: 2px solid #0C2092;
     border-radius: 10px;
@@ -680,21 +754,9 @@ const confirmApproval = async () => {
     font-size: 15px;
     outline: none;
     color: black;
-    width: 90.5%;
+    width: 91%;
     height: auto;
     font-weight: normal;
-}
-
-.order-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    width: 95px;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-left: 992px;
-    cursor: pointer;
-    margin-bottom: 7px;
 }
 
 .popup-overlay {
