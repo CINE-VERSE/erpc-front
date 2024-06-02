@@ -1,6 +1,6 @@
 <template>
     <div class="order-content11" v-if="orderData">
-        <div class="order-search">
+        <div class="order-search11">
             <h1 class="maintext">수주 정보 조회 내역</h1>
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
@@ -156,20 +156,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-if="taxInvoiceRequestData">
-                        <td>{{ taxInvoiceRequestData.collection.depositCode }}</td>
-                        <td>{{ taxInvoiceRequestData.collection.depositPic }}</td>
-                        <td>{{ taxInvoiceRequestData.collection.depositPrice.toLocaleString() }}</td>
-                        <td>{{ taxInvoiceRequestData.collection.depositDate }}</td>
-                        <td>{{ taxInvoiceRequestData.taxInvoiceRequestDate }}</td>
-                        <td>{{ taxInvoiceRequestData.taxInvoiceNote }}</td>
-                        <td>{{ taxInvoiceRequestData.taxInvoiceRequestStatus.taxInvoiceRequestStatus }}</td>
+                    <tr v-for="taxInvoice in taxInvoiceRequestData" :key="taxInvoice.taxInvoiceRequestId">
+                        <td>{{ taxInvoice.taxInvoiceRequestId }}</td>
+                        <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
+                        <td>{{ taxInvoice.taxInvoiceNote }}</td>
+                        <td>{{ taxInvoice.taxInvoiceFile.length > 0 ? taxInvoice.taxInvoiceFile[0].uploadDate : '' }}
+                        </td>
+                        <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
+                        <td>{{ taxInvoice.taxInvoiceNote }}</td>
+                        <td>{{ taxInvoice.taxInvoiceRequestStatus?.taxInvoiceRequestStatus }}</td>
+                        <!-- 여기서 상태 값을 가져옴 -->
                     </tr>
-                    <tr v-else>
-                        <td colspan="8"></td>
+                    <tr v-if="taxInvoiceRequestData.length === 0">
+                        <td colspan="7">세금계산서 요청 내역이 없습니다.</td>
                     </tr>
                 </tbody>
             </table>
+
         </div>
         <div class="shipment-search">
             <h1 class="maintext3">출하 정보</h1>
@@ -260,7 +263,7 @@ const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태
 const newNote = ref('');
 const employeeName = ref('');
 const employeeId = ref('');
-const taxInvoiceRequestData = ref(null);
+const taxInvoiceRequestData = ref([]); // 세금계산서 요청 데이터를 저장하는 배열
 const approvalStatus = ref('Pending'); // Default value as Pending
 
 // filteredOrderNotes는 orderDeleteDate가 null인 노트만 반환합니다.
@@ -287,9 +290,16 @@ onMounted(async () => {
         employeeName.value = employeeResponse.data.employeeName;
 
         // approvalStatus를 가져오는 API 호출
-        const approvalResponse = await axios.get(`http://localhost:7775/approval/order/${orderId}`);
-        approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
+        // const approvalResponse = await axios.get(`http://localhost:7775/approval/order/${orderId}`);
+        // approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
 
+        // 세금계산서 요청 데이터를 가져오는 API 호출
+        if (orderData.value.taxInvoiceRequest && orderData.value.taxInvoiceRequest.length > 0) {
+            for (const taxInvoice of orderData.value.taxInvoiceRequest) {
+                const taxInvoiceResponse = await axios.get(`http://localhost:7775/tax_invoice/${taxInvoice.taxInvoiceRequestId}`);
+                taxInvoiceRequestData.value.push(taxInvoiceResponse.data);
+            }
+        }
     } catch (error) {
         console.error('Error fetching order data:', error);
     }
@@ -397,7 +407,6 @@ const addNote = async () => {
     }
 };
 
-
 // 노트 삭제 함수
 const deleteNote = async (orderNoteId) => {
     try {
@@ -420,7 +429,6 @@ const deleteNote = async (orderNoteId) => {
 </script>
 
 
-
 <style>
 .order-content11 {
     /* margin-top: 8%; */
@@ -432,9 +440,10 @@ const deleteNote = async (orderNoteId) => {
     max-width: calc(100% - 220px);
     /* main1의 너비를 뺀 나머지 공간 */
 }
-.order-search {
+
+.order-search11 {
     text-align: center;
-    margin-top: 3%;
+    /* margin-top: 3%; */
 }
 
 .maintext,

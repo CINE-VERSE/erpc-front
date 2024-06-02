@@ -1,20 +1,7 @@
 <template>
-    <div class="cb-search-content">
-        <div class="cb-search">
+    <div class="cb-search-content33">
+        <div class="cb-search33">
             <h1 class="cbtext">세금계산서 발행 요청</h1>
-            <h2>프로젝트 조회</h2>
-        </div>
-        <div class="cb-search-box">
-            <div class="business-number">
-                <p class="business-number-text">프로젝트 코드</p>
-                <input v-model="projectCode" type="text" id="business-number-box" class="business-number-box" placeholder="프로젝트 코드를 입력해주세요.">
-            </div>
-            <div class="search-btn-div1">
-                <button class="search-btn1" @click="fetchOrderData">조회하기</button>
-            </div>
-        </div>
-        <div class="cb-search2">
-            <h2>세금계산서 발행 정보</h2>
         </div>
         <div class="cb-list-box1">
             <table class="cb-table1">
@@ -28,7 +15,12 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.transaction.transactionCode }}</td>
+                        <td class="order-test333">
+                            <div class="order-number-div33">
+                                <input v-model="projectCode" type="text" id="order-number-box33" class="order-number-box33" placeholder="프로젝트 코드를 입력해주세요.">
+                                <button @click="fetchOrderData" class="order-number-btn33">조회</button>
+                            </div>
+                        </td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.corporationStatus }}</td>
                         <td>{{ orderData.orderTotalPrice ? orderData.orderTotalPrice.toLocaleString() : '' }}</td>
@@ -82,10 +74,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>
-                            <div class="deposit-code-div2">
-                                <input v-model="depositCode" type="text" id="deposit-code-box2" class="deposit-code-box2" placeholder="입금 코드를 입력해주세요.">
-                                <button class="deposit-code-btn2" @click="fetchCollectionData">확인</button>
+                        <td class="order-test333">
+                            <div class="deposit-code-div33">
+                                <input v-model="depositCode" type="text" id="deposit-code-box33" class="deposit-code-box33" placeholder="입금 코드를 입력해주세요.">
+                                <button class="deposit-code-btn33" @click="fetchCollectionData">확인</button>
                             </div>
                         </td>
                         <td>{{ collectionData.depositDate }}</td>
@@ -225,7 +217,7 @@ const registerRequest = async () => {
     };
 
     const formData = new FormData();
-    formData.append('taxInvoiceRequest', JSON.stringify(taxInvoiceRequest));
+    formData.append('taxInvoiceRequest', new Blob([JSON.stringify(taxInvoiceRequest)], { type: 'application/json' }));
     files.value.forEach(file => {
         formData.append('files', file);
     });
@@ -243,58 +235,65 @@ const registerRequest = async () => {
         alert('발행 요청 중 오류가 발생했습니다.');
     }
 };
+
 </script>
 
 
 <style>
-.cbtext {
-    margin-bottom: 50px;
-}
 
-.cb-search-content {
-    margin-top: 4%;
+.cb-search-content33 {
+    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
+    /* main1의 너비를 뺀 나머지 공간 */
 }
 
-.cb-search,
-.cb-search2 {
+
+.cb-search33 {
     text-align: center;
-    margin-top: 3%;
 }
 
-.cb-search-box,
-.cb-search-box2 {
-    width: 100%;
+.cbtext {
+    margin-bottom: 50px;
+}
+
+.order-number-div33,
+.deposit-code-div33 {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin: 15px;
-    margin-bottom: 100px;
-    border-radius: 10px;
-    border: 2px solid #ccc;
+}
+
+.order-number-box33,
+.deposit-code-box33 {
+    width: calc(100% - 50px);
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
     box-sizing: border-box;
-    background-color: whitesmoke;
-    height: auto;
-    width: 100%;
-    margin: 20px auto;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
 }
 
-.cb-search-box {
-    max-width: 400px;
+.order-number-btn33,
+.deposit-code-btn33 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: -1px;
+    padding: 0 10px;
 }
 
-.cb-search-box2 {
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin: 20px auto;
-    gap: 20px;
+.order-test333 {
+    width: 250px;
 }
 
 .cb-list-box1 {
