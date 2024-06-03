@@ -91,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in filteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.order.orderRegistrationId)">
+                        <tr v-for="(approval, index) in filteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.shipmentApprovalId)">
                             <td>{{ index + 1 }}</td>
                             <td>{{ approval.order.transaction.transactionCode }}</td>
                             <td>{{ approval.order.account.accountName }}</td>
@@ -242,8 +242,8 @@ const goToContractContents = (contractApprovalId) => {
     router.push({ path: `/approval/contract/${contractApprovalId}` });
 };
 
-const goToShipmentContents = (orderRegistrationId) => {
-    router.push({ path: `/approval/shipment/${orderRegistrationId}` });
+const goToShipmentContents = (shipmentApprovalId) => {
+    router.push({ path: `/approval/order/${shipmentApprovalId}` });
 };
 </script>
 
