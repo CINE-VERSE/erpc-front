@@ -39,8 +39,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in filteredApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotationApprovalId)">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for="(approval, index) in sortedFilteredApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotationApprovalId)">
+                            <td>{{ sortedFilteredApprovals.length - index }}</td>
                             <td>{{ approval.quotation.quotationCode }}</td>
                             <td>{{ approval.quotation.account.accountName }}</td>
                             <td>{{ approval.quotation.quotationTotalCost.toLocaleString() }}</td>
@@ -65,8 +65,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in filteredContractApprovals" :key="approval.contractApprovalId" @click="goToContractContents(approval.contractApprovalId)">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for="(approval, index) in sortedFilteredContractApprovals" :key="approval.contractApprovalId" @click="goToContractContents(approval.contractApprovalId)">
+                            <td>{{ sortedFilteredContractApprovals.length - index }}</td>
                             <td>{{ approval.contract.contractCode }}</td>
                             <td>{{ approval.contract.account.accountName }}</td>
                             <td>{{ approval.contract.contractTotalPrice.toLocaleString() }}</td>
@@ -91,8 +91,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in filteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.shipmentApprovalId)">
-                            <td>{{ index + 1 }}</td>
+                        <tr v-for="(approval, index) in sortedFilteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.shipmentApprovalId)">
+                            <td>{{ sortedFilteredShipmentApprovals.length - index }}</td>
                             <td>{{ approval.order.transaction.transactionCode }}</td>
                             <td>{{ approval.order.account.accountName }}</td>
                             <td>{{ approval.order.orderTotalPrice.toLocaleString() }}</td>
@@ -232,7 +232,24 @@ const applyFilter = () => {
             approval.approvalStatus.approvalStatus === selectedApprovalStatus.value
         );
     }
+
+    // Sort filtered results by approvalRequestDate in descending order
+    filteredApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    filteredContractApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    filteredShipmentApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
 };
+
+const sortedFilteredApprovals = computed(() => {
+    return filteredApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+});
+
+const sortedFilteredContractApprovals = computed(() => {
+    return filteredContractApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+});
+
+const sortedFilteredShipmentApprovals = computed(() => {
+    return filteredShipmentApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+});
 
 const goToApprovalContents = (quotationApprovalId) => {
     router.push({ path: `/approval/quotation/${quotationApprovalId}` });
@@ -246,6 +263,7 @@ const goToShipmentContents = (shipmentApprovalId) => {
     router.push({ path: `/approval/order/${shipmentApprovalId}` });
 };
 </script>
+
 
 <style>
 .approval-content1 {

@@ -8,7 +8,7 @@
                 <button class="contract-reject" @click="openRejectPopup">결재 반려</button>
             </div>
 
-            <div class="contract-approval-note1">
+            <div class="contract-approval-note1" v-if="approveContractData.approvalContent">
                 <h3 class="contract-approval-note2">결재 비고란</h3>
                 <div class="contract-approval-note3">{{ approveContractData.approvalContent }}</div>
             </div>

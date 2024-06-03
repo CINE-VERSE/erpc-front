@@ -8,7 +8,7 @@
                 <button class="shipment-reject" @click="openRejectPopup">결재 반려</button>
             </div>
 
-            <div class="order-approval-note1">
+            <div class="order-approval-note1" v-if="approveShipmentData.approvalContent">
                 <h3 class="order-approval-note2">결재 비고란</h3>
                 <div class="order-approval-note3">{{ approveShipmentData.approvalContent }}</div>
             </div>

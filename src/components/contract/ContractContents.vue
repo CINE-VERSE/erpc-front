@@ -3,10 +3,16 @@
         <div class="contract-search">
             <h1 class="maintext">계약서 정보 조회 내역</h1>
             <div class="contract-btn">
-                <button class="contract-request" @click="requestApproval">결재 요청</button>
+                <div class="contract-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
+                    <button class="contract-request" @click="requestApproval">결재 요청</button>
+                </div>
                 <button class="contract-edit" @click="goToEditPage">수정</button>
                 <button class="contract-delete" @click="deleteContract">삭제</button>
                 <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
+            </div>
+            <div class="contract-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && contractData.approvalContent">
+                <h3 class="contract-approval-note2">결재 비고란</h3>
+                <div class="contract-approval-note3">{{ contractData.approvalContent }}</div>
             </div>
             <div class="contract-pdf">
                 <div v-if="contractData.contractFile.length > 0">
@@ -161,7 +167,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -173,6 +179,7 @@ const deleteReason = ref('');
 const employeeName = ref('');
 const approvalStatus = ref('Pending'); // Default value as Pending
 
+// 컴포넌트가 마운트될 때 실행되는 코드
 onMounted(async () => {
     const contractId = route.params.contractId;
     const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
@@ -185,6 +192,17 @@ onMounted(async () => {
         // userId로 직원 이름을 가져오는 API 호출
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
+
+        // 전체 승인 데이터를 가져오는 API 호출
+        const approvalResponse = await axios.get('http://localhost:7775/approval/contract');
+        const approvalData = approvalResponse.data;
+
+        // 현재 계약서에 해당하는 결재 상태를 찾기
+        const currentApproval = approvalData.find(approval => approval.contract.contractId === parseInt(contractId));
+        if (currentApproval) {
+            approvalStatus.value = currentApproval.approvalStatus.approvalStatus;
+            contractData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
+        }
 
     } catch (error) {
         console.error('Error fetching contract data:', error);
@@ -200,20 +218,19 @@ const requestApproval = async () => {
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
+        approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
     }
 };
 
-const populateFields = (data) => {
-    searchBy.value = data.contractCategory.contractCategoryId === 1 ? '일시납부' : '분할납부';
-};
-
+// 계약서 수정 페이지로 이동하는 함수
 const goToEditPage = () => {
     router.push({ path: `/contract/modify/${route.params.contractId}` });
 };
 
+// 파일 다운로드 함수
 const downloadFile = (url) => {
     const link = document.createElement('a');
     link.href = url;
@@ -224,20 +241,30 @@ const downloadFile = (url) => {
     document.body.removeChild(link);
 };
 
+// 엑셀 다운로드 함수
 const downloadExcel = () => {
     const contractId = route.params.contractId;
     const url = `http://localhost:7775/excel/contract/${contractId}`;
-    window.open(url, '_blank');
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `contract_${contractId}.xlsx`;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 };
 
+// 계약서 삭제 요청 함수
 const deleteContract = () => {
     showPopup.value = true;
 };
 
+// 팝업 닫기 함수
 const closePopup = () => {
     showPopup.value = false;
 };
 
+// 계약서 삭제 확인 함수
 const confirmDelete = async () => {
     const contractId = route.params.contractId;
     try {
@@ -255,7 +282,6 @@ const confirmDelete = async () => {
         closePopup();
     }
 };
-
 </script>
 
 <style>
@@ -270,7 +296,7 @@ const confirmDelete = async () => {
 
 .contract-search {
     text-align: center;
-    /* margin-top: 3%; */
+    margin-top: 3%;
 }
 
 .maintext,
@@ -311,13 +337,6 @@ const confirmDelete = async () => {
     cursor: pointer;
     margin-left: 15px;
     margin-right: 15px;
-}
-
-.contract-request {
-    width: 80px;
-    height: 40px;
-    cursor: pointer;
-    margin-left: 15px;
 }
 
 .contract-pdf {
@@ -362,14 +381,6 @@ const confirmDelete = async () => {
 .contract-pdf1:hover,
 .contract-pdf2:hover {
     background-color: #d5e6ff;
-}
-
-.pdfimage1,
-.pdfimage2 {
-    width: 30px;
-    height: auto;
-    margin-left: 5px;
-    margin-right: -10px;
 }
 
 .contract-list-box2 {
@@ -625,5 +636,35 @@ const confirmDelete = async () => {
 
 .file-download.no-file {
     cursor: default;
+}
+
+.contract-approval-note1 {
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    color: black;
+    background-color: #F6E5FF;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.contract-approval-note3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 16px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 300px;
+    margin-bottom: 25px;
 }
 </style>

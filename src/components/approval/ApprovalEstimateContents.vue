@@ -8,7 +8,7 @@
                 <button class="estimate-reject" @click="openRejectPopup">결재 반려</button>
             </div>
 
-            <div class="estimate-approval-note1">
+            <div class="estimate-approval-note1" v-if="approveQuotationData.approvalContent">
                 <h3 class="estimate-approval-note2">결재 비고란</h3>
                 <div class="estimate-approval-note3">{{ approveQuotationData.approvalContent }}</div>
             </div>
@@ -135,6 +135,7 @@
         <p>Loading...</p>
     </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue';

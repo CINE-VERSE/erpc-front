@@ -3,10 +3,16 @@
         <div class="order-search">
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
-                <button class="estimate-request" @click="requestApproval">결재 요청</button>
+                <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
+                    <button class="estimate-request" @click="requestApproval">결재 요청</button>
+                </div>
                 <button class="estimate-edit" @click="goToQuotationPage">수정</button>
                 <button class="estimate-delete" @click="deleteQuotation">삭제</button>
                 <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
+            </div>
+            <div class="estimate-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && quotationData.approvalContent">
+                <h3 class="estimate-approval-note2">결재 비고란</h3>
+                <div class="estimate-approval-note3">{{ quotationData.approvalContent }}</div>
             </div>
             <div class="estimate-pdf">
                 <div v-if="quotationData.quotationFile.length > 0">
@@ -21,6 +27,7 @@
                 </div>
             </div>
         </div>
+
         <div class="estimate-list-box">
             <table class="estimate2-table1">
                 <thead>
@@ -180,9 +187,16 @@ onMounted(async () => {
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
-        // approvalStatus를 가져오는 API 호출
-        const approvalResponse = await axios.get(`http://localhost:7775/approval/quotation/${quotationId}`);
-        approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
+        // 전체 승인 데이터를 가져오는 API 호출
+        const approvalResponse = await axios.get('http://localhost:7775/approval/quotation');
+        const approvalData = approvalResponse.data;
+
+        // 현재 견적서에 해당하는 결재 상태를 찾기
+        const currentApproval = approvalData.find(approval => approval.quotation.quotationId === parseInt(quotationId));
+        if (currentApproval) {
+            approvalStatus.value = currentApproval.approvalStatus.approvalStatus;
+            quotationData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
+        }
 
     } catch (error) {
         console.error('Error fetching quotation data:', error);
@@ -198,6 +212,7 @@ const requestApproval = async () => {
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
+        approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
@@ -306,14 +321,12 @@ const deleteNote = async (quotationNoteId) => {
 
 <style>
 .estimate-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .order-search {
@@ -640,5 +653,35 @@ const deleteNote = async (quotationNoteId) => {
 
 .file-download.no-file {
     cursor: default;
+}
+
+.estimate-approval-note1 {
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    color: black;
+    background-color: #F6E5FF;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.estimate-approval-note3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 16px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 300px;
+    margin-bottom: 25px;
 }
 </style>
