@@ -8,15 +8,15 @@
                 <button class="contract-reject" @click="openRejectPopup">결재 반려</button>
             </div>
 
-            <div class="approval-note">
-                <h3 class="approval-note1">결재 비고란</h3>
-                <div class="approval-note2">{{ approveContractData.approvalContent }}</div>
+            <div class="contract-approval-note1">
+                <h3 class="contract-approval-note2">결재 비고란</h3>
+                <div class="contract-approval-note3">{{ approveContractData.approvalContent }}</div>
             </div>
 
-            <div class="contract-pdf">
+            <div class="contract-approval-attachment">
                 <div v-if="approveContractData.contract.contractFile && approveContractData.contract.contractFile.length > 0">
                     <div v-for="file in approveContractData.contract.contractFile" :key="file.fileId" class="file-download">
-                        <button class="contract-pdf1" @click="downloadFile(file.accessUrl)">
+                        <button class="contract-approval-attachment1" @click="downloadFile(file.accessUrl)">
                             {{ file.originName }} 다운로드
                         </button>
                     </div>
@@ -248,13 +248,7 @@ const submitRejection = async () => {
     color: #0C2092;
 }
 
-.pdfimage {
-    width: 50px;
-    height: auto;
-    cursor: pointer;
-}
-
-.contract-pdf {
+.contract-approval-attachment {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -267,15 +261,19 @@ const submitRejection = async () => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 430px;
-    height: 150px;
+    height: 200px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
-    gap: 20px;
     margin-top: 40px;
 }
 
-.contract-pdf1 {
+.file-download {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.contract-approval-attachment1 {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -289,10 +287,11 @@ const submitRejection = async () => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
-.contract-pdf1:hover {
+
+.contract-approval-attachment1 {
     background-color: #d5e6ff;
 }
 
@@ -443,9 +442,10 @@ const submitRejection = async () => {
     background-color: #c82333; /* Darker Red */
 }
 
-.approval-note {
+.contract-approval-note1 {
     width: 100%;
-    height: 100px;
+    height: 100%;
+    max-height: 200px;
     color: black;
     background-color: #F6E5FF;
     border-radius: 10px;
@@ -453,5 +453,22 @@ const submitRejection = async () => {
     flex-direction: column;
     align-items: center;
     text-align: center;
+}
+
+.contract-approval-note3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 16px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 300px;
+    margin-bottom: 25px;
 }
 </style>

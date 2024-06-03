@@ -8,15 +8,15 @@
                 <button class="shipment-reject" @click="openRejectPopup">결재 반려</button>
             </div>
 
-            <div class="approval-note">
-                <h3 class="approval-note1">결재 비고란</h3>
-                <div class="approval-note2">{{ approveShipmentData.approvalContent }}</div>
+            <div class="order-approval-note1">
+                <h3 class="order-approval-note2">결재 비고란</h3>
+                <div class="order-approval-note3">{{ approveShipmentData.approvalContent }}</div>
             </div>
 
-            <div class="shipment-pdf">
+            <div class="order-approval-attachment">
                 <div v-if="approveShipmentData.order.orderFile && approveShipmentData.order.orderFile.length > 0">
                     <div v-for="file in approveShipmentData.order.orderFile" :key="file.fileId" class="file-download">
-                        <button class="shipment-pdf1" @click="downloadFile(file.accessUrl)">
+                        <button class="order-approval-attachment1" @click="downloadFile(file.accessUrl)">
                             {{ file.originName }} 다운로드
                         </button>
                     </div>
@@ -251,13 +251,7 @@ const submitRejection = async () => {
     color: #0C2092;
 }
 
-.pdfimage {
-    width: 50px;
-    height: auto;
-    cursor: pointer;
-}
-
-.shipment-pdf {
+.order-approval-attachment {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -270,15 +264,19 @@ const submitRejection = async () => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 430px;
-    height: 150px;
+    height: 200px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
-    gap: 20px;
     margin-top: 40px;
 }
 
-.shipment-pdf1 {
+.file-download {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.order-approval-attachment1 {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -292,10 +290,11 @@ const submitRejection = async () => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
-.shipment-pdf1:hover {
+
+.order-approval-attachment1:hover {
     background-color: #d5e6ff;
 }
 
@@ -446,9 +445,10 @@ const submitRejection = async () => {
     background-color: #c82333; /* Darker Red */
 }
 
-.approval-note {
+.order-approval-note1 {
     width: 100%;
-    height: 100px;
+    height: 100%;
+    max-height: 200px;
     color: black;
     background-color: #F6E5FF;
     border-radius: 10px;
@@ -456,5 +456,22 @@ const submitRejection = async () => {
     flex-direction: column;
     align-items: center;
     text-align: center;
+}
+
+.order-approval-note3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 16px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 300px;
+    margin-bottom: 25px;
 }
 </style>
