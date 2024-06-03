@@ -1,8 +1,35 @@
+<template>
+  <Header></Header>
+  <main class="container">
+    <div class="main1">
+      <ul class="menu">
+        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+          <div class="menu-header">
+            <span class="menu-button-text">{{ item.title }}</span>
+            <button class="menu-button" @click="() => { toggleSubItems(index); }">
+              <img src="@/assets/img/plus.png" class="menuimage">
+            </button>
+          </div>
+          <ul v-if="item.isOpen" class="sub-menu">
+            <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex">
+              <RouterLink :to="subItem.path" class="sub-menu-link">{{ subItem.title }}</RouterLink>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="main2">
+      <RouterView />
+    </div>
+  </main>
+  <Footer></Footer>
+</template>
+
 <script setup>
 import Header from './components/main/Header.vue';
 import Footer from './components/main/Footer.vue';
 
-import { RouterView } from 'vue-router';
+import { RouterView, RouterLink } from 'vue-router';
 import { ref } from 'vue';
 
 const menuItems = ref([
@@ -91,33 +118,6 @@ const toggleSubItems = (index) => {
   menuItems.value[index].isOpen = !menuItems.value[index].isOpen;
 };
 </script>
-
-<template>
-  <Header></Header>
-  <main class="container">
-    <div class="main1">
-      <ul class="menu">
-        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
-          <div class="menu-header">
-            <span class="menu-button-text">{{ item.title }}</span>
-            <button class="menu-button" @click="() => { toggleSubItems(index); }">
-              <img src="@/assets/img/plus.png" class="menuimage">
-            </button>
-          </div>
-          <ul v-if="item.isOpen" class="sub-menu">
-            <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex">
-              <RouterLink :to="subItem.path">{{ subItem.title }}</RouterLink>
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div class="main2">
-      <RouterView />
-    </div>
-  </main>
-  <Footer></Footer>
-</template>
 
 <style>
 @font-face {
@@ -216,5 +216,14 @@ const toggleSubItems = (index) => {
 .sub-menu li {
   padding: 5px 0;
   color: #0C2092;
+}
+
+.sub-menu-link {
+  text-decoration: none;
+  color: #0C2092;
+}
+
+.sub-menu-link:hover {
+  text-decoration: underline;
 }
 </style>

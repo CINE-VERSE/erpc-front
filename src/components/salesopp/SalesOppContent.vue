@@ -2,7 +2,7 @@
     <div class="order-content">
         <div class="order-search">
             <h1 class="maintext">영업기회 조회 내역</h1>
-            <h3 class="maintext2">{{ salesOppData.salesOppStatus.salesOppStatus }}</h3>
+            <h3 class="maintext2">{{ salesOppData.salesOppStatus ? salesOppData.salesOppStatus.salesOppStatus : '' }}</h3>
             <div class="order-btn">
                 <button class="order-request" @click="openStatusPopup">상태변경</button>
                 <button class="order-edit" @click="goToEditPage">수정</button>
@@ -43,9 +43,9 @@
                 </table>
                 <div class="order-process-box">
                     <h1 class="order-process-text">Process</h1>
-                    <div class="order-process-box-detail" v-for="(note, index) in salesOppNoteData" :key="index">
-                        <div class="order-process-info">
-                            <h4 class="order-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank.employeeRank }}</h4>
+                    <div class="order-process-box-detail" v-for="(note, index) in filteredSalesOppNoteData" :key="index">
+                        <div class="order-process-info" v-if="note.employee">
+                            <h4 class="order-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank ? note.employee.employeeRank.employeeRank : '' }}</h4>
                             <p class="order-process-date">{{ note.salesOppNoteDate }}</p>
                         </div>
                         <div class="order-process-detail">
@@ -90,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -121,7 +121,8 @@ const fetchData = async () => {
 
         // 각 프로세스에 대해 salesOppNote 데이터를 가져옵니다.
         const noteResponse = await axios.get(`http://localhost:7775/sales_opp_note`);
-        salesOppNoteData.value = noteResponse.data;
+        salesOppNoteData
+.value = noteResponse.data;
         
         console.log('SalesOppData:', salesOppData.value);
         console.log('SalesOppNoteData:', salesOppNoteData.value);
@@ -236,18 +237,6 @@ const registerProcess = async () => {
     }
 };
 
-// Open edit popup
-const openEditPopup = (note) => {
-    editProcessDetail.value = note.salesOppNote;
-    showEditPopup.value = true;
-};
-
-const closeEditPopup = () => {
-    showEditPopup.value = false;
-};
-
-
-
 // Delete process
 const deleteProcess = async (salesOppNoteId) => {
     try {
@@ -258,6 +247,15 @@ const deleteProcess = async (salesOppNoteId) => {
         console.error('Error deleting process:', error);
     }
 };
+
+const filteredSalesOppNoteData = computed(() => {
+    if (!salesOppData.value || !salesOppData.value.salesOppId || !salesOppNoteData.value) {
+        return [];
+    }
+
+    const salesOppId = salesOppData.value.salesOppId;
+    return salesOppNoteData.value.filter(note => note.salesOpp && note.salesOpp.salesOppId === salesOppId);
+});
 </script>
 
 <style>

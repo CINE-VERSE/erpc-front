@@ -1,13 +1,14 @@
 <template>
-  <div>
-    <h2>권한 신청</h2>
+  <div class="access-request-container">
+    <h1>권한 신청</h1>
     <form @submit.prevent="submitAccessRequest">
-      <div>
-        <label v-for="(access, index) in accessRights" :key="index">
-          <input type="checkbox" v-model="selectedAccess" :value="access.id">{{ access.name }}
+      <div class="checkbox-group">
+        <label v-for="(access, index) in accessRights" :key="index" class="checkbox-label">
+          <input type="checkbox" v-model="selectedAccess" :value="access.id">
+          {{ access.name }}
         </label>
       </div>
-      <button type="submit">신청</button>
+      <button type="submit" class="submit-button">신청</button>
     </form>
   </div>
 </template>
@@ -44,12 +45,9 @@ const selectedAccess = ref([]);
 
 const submitAccessRequest = async () => {
   try {
-    // 선택된 접근 권한의 ID 배열
-    const selectedAccessIds = selectedAccess.value.map(access => {
-    return {
-        accessId: access
-    };
-});
+    const selectedAccessIds = selectedAccess.value.map(access => ({
+      accessId: access
+    }));
     const requestAccess = {
       accessRight: selectedAccessIds,
       employee: {
@@ -65,3 +63,65 @@ const submitAccessRequest = async () => {
   }
 };
 </script>
+
+<style scoped>
+
+.access-request-container {
+  font-family: Arial, sans-serif;
+  padding: 40px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+  flex-direction: column;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.checkbox-label {
+  flex: 0 0 48%;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.submit-button:active {
+  background-color: #004080;
+}
+</style>

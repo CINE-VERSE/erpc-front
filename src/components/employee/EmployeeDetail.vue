@@ -10,21 +10,16 @@
     <p>직급: {{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</p>
     <p>팀: {{ mapTeamCode(employee.teamCode.teamCodeId) }}</p>
 
-    
-  <div class="button-container">
-    <router-link :to="{ path: '/employees/modify', query: { employeeId: employee.employeeId }}" class="edit-button">수정</router-link>
+    <div class="button-container">
+      <router-link :to="{ path: '/employees/modify', query: { employeeId: employee.employeeId }}" class="edit-button">수정</router-link>
       <router-link :to="{ path: '/employees/regist' }" class="register-button">등록</router-link>
     </div>
   </div>
-
 </template>
 
 <script>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
-
-const router = useRouter();
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:7775/employees', // Spring Boot 서버의 URL
@@ -33,21 +28,37 @@ const axiosInstance = axios.create({
 export default {
   data() {
     return {
-      employee: {},
+      employee: {
+        employeeCode: '',
+        employeeName: '',
+        employeePassword: '',
+        employeeEmail: '',
+        employeeHp: '',
+        employeeNumber: '',
+        employmentDate: '',
+        employeeRank: { employeeRankId: '' },
+        teamCode: { teamCodeId: '' }
+      },
     };
   },
-  async created() {
-    try {
-      const employeeId = this.$route.params.employeeId;
-      const response = await axiosInstance.get(`/${employeeId}`);
-      this.employee = response.data;
-    } catch (error) {
-      console.error('Error fetching employee details:', error);
-    }
+  created() {
+    this.fetchEmployeeDetails(); // 데이터 가져오기만 처리
   },
   methods: {
-    mapEmployeeRank(rankId) {
-      switch(parseInt(rankId)) {
+    async fetchEmployeeDetails() {
+      try {
+        const employeeId = this.$route.params.employeeId; // 변경
+        if (!employeeId) {
+          throw new Error('Employee ID not found in route parameters');
+        }
+        const response = await axiosInstance.get(`/${employeeId}`);
+        this.employee = response.data;
+      } catch (error) {
+        console.error('Error fetching employee details:', error);
+      }
+    },
+    mapEmployeeRank(employeeRankId) {
+      switch (parseInt(employeeRankId)) {
         case 1:
           return '사원';
         case 2:
@@ -63,7 +74,7 @@ export default {
       }
     },
     mapTeamCode(teamCodeId) {
-  switch(parseInt(teamCodeId)) {
+      switch (parseInt(teamCodeId)) {
         case 1:
           return '영업 1팀';
         case 2:

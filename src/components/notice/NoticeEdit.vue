@@ -17,7 +17,7 @@
       </ul>
     </div>
     <div class="notice-button-section">
-      <button class="notice-submit-btn" @click="modifyNotice">등록</button>
+      <button class="notice-submit-btn" @click="modifyNotice">수정</button>
     </div>
   </div>
   <div v-else>
@@ -27,7 +27,6 @@
 
 <script>
 import axios from 'axios';
-import { useRoute, useRouter } from 'vue-router';
 
 export default {
   data() {
@@ -35,7 +34,8 @@ export default {
       noticeId: null,
       noticeTitle: '',
       noticeContent: '',
-      files: []
+      files: [],
+      existingFiles: [] // 서버에서 받아온 기존 파일 목록
     };
   },
   methods: {
@@ -64,11 +64,24 @@ export default {
       } catch (error) {
         console.error('Error modifying notice:', error.response.data);
       }
+    },
+    async fetchNoticeDetails() {
+      try {
+        const response = await axios.get(`http://localhost:7775/notice_board/${this.noticeId}`);
+        const notice = response.data;
+        this.noticeTitle = notice.noticeTitle;
+        this.noticeContent = notice.noticeContent;
+        this.existingFiles = notice.files || []; // 기존 파일 목록 설정
+      } catch (error) {
+        console.error('Error fetching notice details:', error);
+      }
     }
   },
   mounted() {
     // URL 파라미터에서 noticeId 가져오기
     this.noticeId = this.$route.params.noticeId;
+    // 공지사항 정보 가져오기
+    this.fetchNoticeDetails();
   }
 };
 </script>

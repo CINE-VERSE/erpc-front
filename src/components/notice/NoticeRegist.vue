@@ -41,6 +41,7 @@ const submitPost = async () => {
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('사용자 정보가 없습니다.');
+      submitting.value = false;
       return;
     }
 
@@ -49,30 +50,40 @@ const submitPost = async () => {
       noticeTitle: freeTitle.value,
       noticeContent: freeContent.value,
       employee: { employeeId: userId },
-      team: { teamCodeId: 1 }  
+      team: { teamCodeId: 1 }
     }));
 
-    if (images.value.length > 0) {
-      images.value.forEach(image => {
+    // 프록시 객체를 실제 배열로 변환하여 FormData에 추가
+    const actualImagesArray = Array.from(images.value);
+    if (actualImagesArray.length > 0) {
+      actualImagesArray.forEach(image => {
+        console.log(`Appending file: ${image.name}`);
         formData.append('files', image);
       });
     } else {
+      // 이미지가 없을 경우 빈 파일 추가
       formData.append('files', new Blob(), 'empty_image');
     }
 
-    await axios.post('http://localhost:7775/notice_board/regist', formData);
+    await axios.post('http://localhost:7775/notice_board/regist', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
 
     console.log('게시물 작성 완료');
     router.push('/notice/list');
   } catch (error) {
-    console.error('게시물 작성 오류:', error);
+    console.error('게시물 작성 오류:', error.response ? error.response.data : error.message);
   } finally {
     submitting.value = false;
   }
 };
 
 const handleFileChange = (event) => {
+  // input[type="file"]에서 파일을 가져와 images 배열에 저장
   images.value = Array.from(event.target.files);
+  console.log('Files selected:', images.value);
 };
 </script>
 
