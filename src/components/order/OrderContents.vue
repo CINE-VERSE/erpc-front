@@ -26,27 +26,24 @@
             <table class="order2-table1">
                 <thead>
                     <tr>
+                        <th>프로젝트 코드</th>
+                        <th>계약 일자</th>
                         <th>작성 일자</th>
                         <th>삭제 일자</th>
-                        <th>결재 일자</th>
-                        <th>계약 일자</th>
-                        <th>입금 완료일</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td>{{ orderData.transaction.transactionCode }}</td>
+                        <td>{{ orderData.contactDate }}</td>
                         <td>{{ orderData.orderDate }}</td>
                         <td>{{ orderData.orderDeleteDate }}</td>
-                        <td></td>
-                        <td>{{ orderData.contactDate }}</td>
-                        <td></td>
                     </tr>
                 </tbody>
             </table>
             <table class="order2-table2">
                 <thead>
                     <tr>
-                        <th>프로젝트 코드</th>
                         <th>담당자</th>
                         <th>거래처 코드</th>
                         <th>거래처명</th>
@@ -56,7 +53,6 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.transaction.transactionCode }}</td>
                         <td>{{ orderData.employee.employeeName }}</td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.accountName }}</td>
@@ -148,7 +144,7 @@
                     <tr>
                         <th>입금 코드</th>
                         <th>입금자명</th>
-                        <th>세금계산서 발행 금액</th>
+                        <th>입금 금액</th>
                         <th>입금 일자</th>
                         <th>발행 요청 일자</th>
                         <th>비고</th>
@@ -157,15 +153,13 @@
                 </thead>
                 <tbody>
                     <tr v-for="taxInvoice in taxInvoiceRequestData" :key="taxInvoice.taxInvoiceRequestId">
-                        <td>{{ taxInvoice.taxInvoiceRequestId }}</td>
-                        <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
-                        <td>{{ taxInvoice.taxInvoiceNote }}</td>
-                        <td>{{ taxInvoice.taxInvoiceFile.length > 0 ? taxInvoice.taxInvoiceFile[0].uploadDate : '' }}
-                        </td>
+                        <td>{{ taxInvoice.collection.depositCode }}</td>
+                        <td>{{ taxInvoice.collection.depositPic }}</td>
+                        <td>{{ taxInvoice.collection.depositPrice.toLocaleString() }}</td>
+                        <td>{{ taxInvoice.collection.depositDate }}</td>
                         <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
                         <td>{{ taxInvoice.taxInvoiceNote }}</td>
                         <td>{{ taxInvoice.taxInvoiceRequestStatus?.taxInvoiceRequestStatus }}</td>
-                        <!-- 여기서 상태 값을 가져옴 -->
                     </tr>
                     <tr v-if="taxInvoiceRequestData.length === 0">
                         <td colspan="7">세금계산서 요청 내역이 없습니다.</td>
@@ -246,6 +240,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -427,6 +422,7 @@ const deleteNote = async (orderNoteId) => {
     }
 };
 </script>
+
 
 
 <style>

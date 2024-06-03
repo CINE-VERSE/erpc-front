@@ -145,33 +145,10 @@
                 </table>
             </div>
         </div>
-        <div class="contract-process-box">
-            <h1 class="contract-process-text">Process</h1>
-            <!-- <div v-for="note in filteredContractNotes" :key="note.contractNoteId" class="contract-process-box-detail">
-                <div class="contract-process-info">
-                    <h4 class="contract-process-writer">{{ employeeName }}</h4>
-                    <p class="contract-process-date">{{ note.contractNoteDate }}</p>
-                </div>
-                <button class="contract-process-detail">
-                    {{ note.contractNote }}
-                </button>
-                <div class="contract-process-btn">
-                    <button class="contract-process-delete" @click="deleteNote(note.contractNoteId)">삭제하기</button>
-                </div>
-            </div> -->
-            <div class="contract-process-reply">
-                <input type="text" v-model="newNote" id="contract-process-reply-box" class="contract-process-reply-box"
-                    placeholder="내용을 입력해주세요.">
-                <div class="contract-process-btn2">
-                    <button class="contract-process-regist" @click="addNote">등록하기</button>
-                </div>
-            </div>
-        </div>
     </div>
     <div v-else>
         <p>Loading...</p>
     </div>
-
     <!-- 결재 요청 팝업 -->
     <div v-if="showApprovalPopup" class="popup-overlay">
         <div class="popup-content">
@@ -205,14 +182,8 @@ const showPopup = ref(false);
 const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
 const deleteReason = ref('');
 const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
-const newNote = ref('');
 const employeeName = ref('');
 const approvalStatus = ref('Pending'); // Default value as Pending
-
-// filteredContractNotes는 contractDeleteDate가 null인 노트만 반환합니다.
-const filteredContractNotes = computed(() => {
-    return contractNoteData.value.filter(note => note.contractDeleteDate === null);
-});
 
 onMounted(async () => {
     const contractId = route.params.contractId;
@@ -222,10 +193,6 @@ onMounted(async () => {
         // 계약서 데이터를 가져오는 API 호출
         const contractResponse = await axios.get(`http://localhost:7775/contract/${contractId}`);
         contractData.value = contractResponse.data;
-
-        // 계약서 노트 데이터를 가져오는 API 호출
-        // const noteResponse = await axios.get(`http://localhost:7775/contract_note/${contractId}`);
-        // contractNoteData.value = noteResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
@@ -313,46 +280,6 @@ const confirmDelete = async () => {
     }
 };
 
-// 노트 추가 함수
-const addNote = async () => {
-    const contractId = route.params.contractId;
-    const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
-    try {
-        const response = await axios.post('http://localhost:7775/contract_note/regist', {
-            contractNote: newNote.value,
-            contract: { contractId: contractData.value.contractId },
-            employee: { employeeId: userId } // employeeId를 userId로 설정
-        });
-        alert('process 등록되었습니다.');
-        console.log('Contract note added successfully:', response.data);
-        contractNoteData.value.push(response.data);
-        newNote.value = '';
-        location.reload(); // 페이지 새로고침 추가
-    } catch (error) {
-        console.error('Error adding contract note:', error);
-        alert('노트 추가 중 오류가 발생했습니다.');
-    }
-};
-
-// 노트 삭제 함수
-const deleteNote = async (contractNoteId) => {
-    try {
-        const response = await axios.patch('http://localhost:7775/contract_note/delete', null, {
-            params: {
-                contractNoteId
-            }
-        });
-        const updatedNote = response.data;
-        const noteIndex = contractNoteData.value.findIndex(note => note.contractNoteId === contractNoteId);
-        alert('process 삭제되었습니다.');
-        if (noteIndex !== -1) {
-            contractNoteData.value[noteIndex] = updatedNote;
-        }
-    } catch (error) {
-        console.error('Error deleting note:', error);
-        alert('노트 삭제 중 오류가 발생했습니다.');
-    }
-};
 </script>
 
 <style>

@@ -143,11 +143,16 @@ const fetchOrderData = async () => {
     try {
         const response = await axios.get('http://localhost:7775/order', {
             params: {
-                transactionCode: projectCode.value
+                contractCode: projectCode.value
             }
         });
         if (response.data && response.data.length > 0) {
-            orderData.value = response.data[0];
+            const matchedOrder = response.data.find(order => order.transaction.transactionCode === projectCode.value);
+            if (matchedOrder) {
+                orderData.value = matchedOrder;
+            } else {
+                alert('프로젝트 코드를 찾을 수 없습니다.');
+            }
         } else {
             alert('프로젝트 코드를 찾을 수 없습니다.');
         }
@@ -237,6 +242,7 @@ const registerRequest = async () => {
 };
 
 </script>
+
 
 
 <style>
