@@ -35,7 +35,7 @@ const employeePassword = ref('');
 
 const login = async () => {
     try {
-        const response = await axios.post('http://localhost:7775/login', {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/login', {
             employeeCode: employeeCode.value,
             employeePassword: employeePassword.value
         }, {
