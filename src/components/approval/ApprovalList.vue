@@ -249,16 +249,17 @@ const goToShipmentContents = (shipmentApprovalId) => {
 
 <style>
 .approval-content1 {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%; /* 추가 */
+    box-sizing: border-box; /* 추가 */
 }
 
 .approval-search {
     text-align: center;
-    /* margin-top: 3%; */
+    width: 100%; /* 추가 */
 }
 
 .approval-search-text {
@@ -270,6 +271,7 @@ const goToShipmentContents = (shipmentApprovalId) => {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap; /* 추가 */
 }
 
 .search-start-date-box,
@@ -341,6 +343,7 @@ const goToShipmentContents = (shipmentApprovalId) => {
     margin: 20px auto;
     margin-bottom: 7%;
     gap: 1px;
+    overflow-x: auto; /* 추가 */
 }
 
 .approval-table {
@@ -348,13 +351,14 @@ const goToShipmentContents = (shipmentApprovalId) => {
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
+    table-layout: auto; /* 추가 */
 }
 
 .approval-table th,
 .approval-table td {
     text-align: center;
     border: 1px solid #ccc;
-    width: 160px;
+    min-width: 160px; /* 수정 */
     padding: 8px;
     font-family: GmarketSansMedium;
 }
@@ -370,4 +374,5 @@ const goToShipmentContents = (shipmentApprovalId) => {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
 </style>

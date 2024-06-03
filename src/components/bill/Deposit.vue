@@ -73,10 +73,13 @@ function applyFilter() {
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%; /* 추가 */
+    box-sizing: border-box; /* 추가 */
 }
 
 .deposit-search {
     text-align: center;
+    width: 100%; /* 추가 */
 }
 
 .deposit-search-text {
@@ -88,6 +91,7 @@ function applyFilter() {
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
+    flex-wrap: wrap; /* 추가 */
 }
 
 .search-date-box {
@@ -149,6 +153,7 @@ function applyFilter() {
     margin: 20px auto;
     margin-bottom: 7%;
     gap: 1px;
+    overflow-x: auto; /* 추가 */
 }
 
 .deposit-table {
@@ -156,6 +161,7 @@ function applyFilter() {
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
+    table-layout: auto; /* 추가 */
 }
 
 .deposit-table th,
@@ -164,7 +170,7 @@ function applyFilter() {
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
-    width: 170px;
+    min-width: 170px; /* 수정 */
 }
 
 .deposit-table th {
@@ -176,5 +182,7 @@ function applyFilter() {
 
 .deposit-table tr:hover {
     background-color: #d5e6ff;
+    cursor: pointer;
 }
+
 </style>
