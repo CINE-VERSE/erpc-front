@@ -195,7 +195,7 @@ function goToContractContents(contractId) {
     background-color: #e5f0ff;
     color: #0c2092;
     outline: none;
-    width: 200px;
+    width: 250px;
 }
 
 .contract-search-btn22 {
