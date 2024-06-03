@@ -31,6 +31,7 @@ import TeamPerformance from '@/components/performance/TeamPerformance.vue';
 
 import ApprovalList from '@/components/approval/ApprovalList.vue';
 import ApprovalEstimateContents from '@/components/approval/ApprovalEstimateContents.vue';
+import ApprovalContractContents from '@/components/approval/ApprovalContractContents.vue';
 
 import SalesOppRegist from '@/components/salesopp/SalesOppRegist.vue';
 import SalesOppList from '@/components/salesopp/SalesOppList.vue';
@@ -157,6 +158,10 @@ const routes = [
     {
         path: '/approval/quotation/:quotationId',
         component: ApprovalEstimateContents
+    },
+    {
+        path: '/approval/contract/:contractId',
+        component: ApprovalContractContents
     },
     {
         path: '/salesopp/regist',
