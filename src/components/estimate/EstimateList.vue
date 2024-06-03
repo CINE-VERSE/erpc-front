@@ -12,7 +12,7 @@
                 </div>
             </div>
             <input type="text" class="estimate-search-input" v-model="searchQuery" placeholder="검색어를 입력하세요">
-            <button class="estimate-search-btn" @click="applyFilter">검색</button>
+            <button class="estimate-search-btn" @click="applyFilter">조회하기</button>
         </div>
         <div class="estimate-list-box">
             <table class="estimate-table">
@@ -185,25 +185,32 @@ function goToEstimateContents(quotationId) {
 }
 
 .estimate-search-input {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
     border-radius: 5px;
-    outline: none;
+    box-sizing: border-box;
     font-size: 14px;
-    background-color: #d5e6ff;
-    color: black;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
 }
 
 .estimate-search-btn {
-    background-color: #0C2092;
+    height: 40px;
+    padding: 10px 20px;
     border: none;
-    color: white;
-    padding: 8px 12px;
-    font-size: 14px;
     border-radius: 5px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 14px;
     cursor: pointer;
-    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.estimate-search-btn:hover {
+    background-color: #007bff;
 }
 
 .estimate-list-box {

@@ -165,7 +165,7 @@ function goToCustomerContents(accountId) {
 .customer-search-input {
     width: 250px;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
     outline: none;
     font-size: 14px;

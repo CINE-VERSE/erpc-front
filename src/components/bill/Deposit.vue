@@ -37,6 +37,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -68,7 +69,6 @@ function applyFilter() {
 
 <style>
 .deposit-search-content {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -77,11 +77,9 @@ function applyFilter() {
 
 .deposit-search {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .deposit-search-text {
-    /* margin-top: 5%; */
     margin-bottom: 30px;
 }
 
@@ -93,11 +91,13 @@ function applyFilter() {
 }
 
 .search-date-box {
-    padding: 8px;
+    height: 40px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: GmarketSansMedium;
-    font-size: 15px;
+    box-sizing: border-box;
+    width: 200px;
+    font-size: 14px;
 }
 
 .search-date-separator {
@@ -106,28 +106,28 @@ function applyFilter() {
 }
 
 .search-depositor-box {
-    padding: 8px;
-    border: 1px solid #ccc;
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
     border-radius: 5px;
-    font-family: GmarketSansMedium;
-    font-size: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
     width: 200px;
-    background-color: #d5e6ff;
 }
 
 .deposit-search-btn {
-    padding: 8px 20px;
+    height: 40px;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     background-color: #0C2092;
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.deposit-search-btn:hover {
-    background-color: #007bff;
 }
 
 .deposit-list-box {

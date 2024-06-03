@@ -5,12 +5,10 @@
         </div>
         <div class="approval-box">
             <div class="search-date">
-                <p class="search-start-date-text">조회 시작 일자</p>
                 <input type="date" class="search-start-date-box" id="search-start-date-box" v-model="startDate">
-                <p class="search-end-date-text">조회 종료 일자</p>
+                <span>-</span>
                 <input type="date" class="search-end-date-box" id="search-end-date-box" v-model="endDate">
-            </div>
-            <div class="approval-search-btn-div">
+                <input type="text" class="approval-search-input" v-model="searchQuery" placeholder="견적서 코드로 조회">
                 <button class="approval-search-btn" @click="applyFilter">조회하기</button>
             </div>
         </div>
@@ -41,6 +39,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -51,6 +50,7 @@ const router = useRouter();
 const approvals = ref([]);
 const startDate = ref('');
 const endDate = ref('');
+const searchQuery = ref('');
 const filteredApprovals = ref([]);
 
 onMounted(async () => {
@@ -76,6 +76,12 @@ const applyFilter = () => {
     } else {
         filteredApprovals.value = approvals.value;
     }
+
+    if (searchQuery.value) {
+        filteredApprovals.value = filteredApprovals.value.filter(approval =>
+            approval.quotation.quotationCode.includes(searchQuery.value)
+        );
+    }
 };
 
 const goToApprovalContents = (quotationId) => {
@@ -85,7 +91,7 @@ const goToApprovalContents = (quotationId) => {
 
 <style>
 .approval-content1 {
-    margin-top: 4%;
+    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -94,7 +100,7 @@ const goToApprovalContents = (quotationId) => {
 
 .approval-search {
     text-align: center;
-    margin-top: 3%;
+    /* margin-top: 3%; */
 }
 
 .approval-search-text {
@@ -102,65 +108,46 @@ const goToApprovalContents = (quotationId) => {
     margin-bottom: 30px;
 }
 
-.approval-box {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px;
-    margin-bottom: 50px;
-    border-radius: 10px;
-    border: 2px solid #ccc;
-    box-sizing: border-box;
-    background-color: whitesmoke;
-    height: auto;
-    max-width: 300px;
-}
-
 .search-date {
     display: flex;
-    flex-direction: column;
     align-items: center;
-}
-
-.search-start-date-text,
-.search-end-date-text {
-    min-width: 50px;
-    margin-right: 10px;
-    margin-bottom: 2px;
+    gap: 10px;
 }
 
 .search-start-date-box,
 .search-end-date-box {
-    flex-grow: 1;
+    height: 40px;
     padding: 10px;
-    margin-bottom: 10px;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 5px;
     box-sizing: border-box;
-    width: 220px;
+    width: 200px;
+    font-size: 14px;
 }
 
-.approval-search-btn-div {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 10px;
-    margin-top: 10px;
+.approval-search-input {
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
 }
 
 .approval-search-btn {
+    height: 40px;
     padding: 10px 20px;
-    text-align: center;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     background-color: #0C2092;
     color: white;
+    font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    max-width: 320px;
 }
 
 .approval-list-box {

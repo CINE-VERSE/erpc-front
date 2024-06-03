@@ -12,7 +12,7 @@
                 </div>
             </div>
             <input type="text" class="contract-search-input22" v-model="searchQuery" placeholder="검색어를 입력하세요">
-            <button class="contract-search-btn22" @click="applyFilter">검색</button>
+            <button class="contract-search-btn22" @click="applyFilter">조회하기</button>
         </div>
         <div class="contract-list-box7">
             <table class="contract-table7">
@@ -186,25 +186,32 @@ function goToContractContents(contractId) {
 }
 
 .contract-search-input22 {
-    width: 200px;
-    padding: 8px;
-    border: 1px solid #ccc;
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
     border-radius: 5px;
-    outline: none;
+    box-sizing: border-box;
     font-size: 14px;
-    background-color: #d5e6ff;
-    color: black;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
 }
 
 .contract-search-btn22 {
-    background-color: #0C2092;
+    height: 40px;
+    padding: 10px 20px;
     border: none;
-    color: white;
-    padding: 8px 12px;
-    font-size: 14px;
     border-radius: 5px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 14px;
     cursor: pointer;
-    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.contract-search-btn22:hover {
+    background-color: #007bff;
 }
 
 .contract-list-box7 {
