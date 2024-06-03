@@ -130,6 +130,10 @@ function applyFilter() {
     transition: background-color 0.3s ease;
 }
 
+.deposit-search-btn:hover {
+    background-color: #007bff;
+}
+
 .deposit-list-box {
     width: 100%;
     display: flex;

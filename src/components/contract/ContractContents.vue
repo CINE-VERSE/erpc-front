@@ -3,7 +3,7 @@
         <div class="contract-search">
             <h1 class="maintext">계약서 정보 조회 내역</h1>
             <div class="contract-btn">
-                <button class="contract-request" @click="showApprovalPopup = true">결재 요청</button>
+                <button class="contract-request" @click="requestApproval">결재 요청</button>
                 <button class="contract-edit" @click="goToEditPage">수정</button>
                 <button class="contract-delete" @click="deleteContract">삭제</button>
                 <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
@@ -149,18 +149,9 @@
     <div v-else>
         <p>Loading...</p>
     </div>
-    <!-- 결재 요청 팝업 -->
-    <div v-if="showApprovalPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>결재 비고란 입력</h2>
-            <textarea v-model="approvalContent" placeholder="결재 비고란를 입력하세요"></textarea>
-            <button @click="confirmApproval">확인</button>
-            <button @click="closeApprovalPopup">취소</button>
-        </div>
-    </div>
     <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay">
-        <div class="popup-content">
+    <div v-if="showPopup" class="popup-overlay55">
+        <div class="popup-content55">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
             <button @click="confirmDelete">확인</button>
@@ -170,18 +161,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const contractData = ref(null);
-const contractNoteData = ref([]); // Contract notes data
 const showPopup = ref(false);
-const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
 const deleteReason = ref('');
-const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
 const employeeName = ref('');
 const approvalStatus = ref('Pending'); // Default value as Pending
 
@@ -198,32 +186,20 @@ onMounted(async () => {
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
-        // approvalStatus를 가져오는 API 호출
-        // const approvalResponse = await axios.get(`http://localhost:7775/approval/contract/${contractId}`);
-        // approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
-
     } catch (error) {
         console.error('Error fetching contract data:', error);
     }
 });
 
-// 결재 요청 팝업 닫기 함수
-const closeApprovalPopup = () => {
-    showApprovalPopup.value = false;
-    approvalContent.value = '';
-};
-
-// 결재 요청 확인 함수
-const confirmApproval = async () => {
+// 결재 요청 함수
+const requestApproval = async () => {
     const contractId = route.params.contractId;
     try {
         const response = await axios.post('http://localhost:7775/approval/contract/regist', {
-            approvalContent: approvalContent.value,
             contract: { contractId: contractId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
-        closeApprovalPopup();
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
@@ -612,7 +588,7 @@ const confirmDelete = async () => {
     width: 300px;
 }
 
-.popup-overlay {
+.popup-overlay55 {
     position: fixed;
     top: 0;
     left: 0;
@@ -624,7 +600,7 @@ const confirmDelete = async () => {
     align-items: center;
 }
 
-.popup-content {
+.popup-content55 {
     background: white;
     padding: 20px;
     border-radius: 5px;
@@ -633,17 +609,17 @@ const confirmDelete = async () => {
     width: 100%;
 }
 
-.popup-content h2 {
+.popup-content55 h2 {
     margin-bottom: 15px;
 }
 
-.popup-content textarea {
+.popup-content55 textarea {
     width: 90%;
     height: 100px;
     margin-bottom: 15px;
 }
 
-.popup-content button {
+.popup-content55 button {
     margin: 5px;
 }
 
@@ -651,4 +627,3 @@ const confirmDelete = async () => {
     cursor: default;
 }
 </style>
-

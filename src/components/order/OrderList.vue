@@ -12,7 +12,7 @@
                 </div>
             </div>
             <input type="text" class="order-search-input" v-model="searchQuery" placeholder="검색어를 입력하세요">
-            <button class="order-search-btn" @click="applyFilter">검색</button>
+            <button class="order-search-btn" @click="applyFilter">조회하기</button>
         </div>
         <div class="order-list-box">
             <table class="order-table">

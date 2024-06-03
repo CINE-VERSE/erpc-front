@@ -12,7 +12,9 @@
                 <button class="approval-search-btn" @click="applyFilter">조회하기</button>
             </div>
         </div>
+
         <div class="approval-list-box">
+            <h2>Quotation Approval List</h2>
             <table class="approval-table">
                 <thead>
                     <tr>
@@ -35,10 +37,57 @@
                     </tr>
                 </tbody>
             </table>
+
+            <h2>Contract Approval List</h2>
+            <table class="approval-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>계약서 코드</th>
+                        <th>거래처명</th>
+                        <th>계약금액</th>
+                        <th>요청일자</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(approval, index) in filteredContractApprovals" :key="approval.contractApprovalId" @click="goToContractContents(approval.contract.contractId)">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ approval.contract.contractCode }}</td>
+                        <td>{{ approval.contract.account.accountName }}</td>
+                        <td>{{ approval.contract.contractTotalPrice.toLocaleString() }}</td>
+                        <td>{{ approval.approvalRequestDate }}</td>
+                        <td>{{ approval.approvalStatus.approvalStatus }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Shipment Approval List</h2>
+            <table class="approval-table">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>출하 코드</th>
+                        <th>거래처명</th>
+                        <th>주문금액</th>
+                        <th>요청일자</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(approval, index) in filteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.order.orderRegistrationId)">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ approval.order.transaction.transactionCode }}</td>
+                        <td>{{ approval.order.account.accountName }}</td>
+                        <td>{{ approval.order.orderTotalPrice.toLocaleString() }}</td>
+                        <td>{{ approval.approvalRequestDate }}</td>
+                        <td>{{ approval.approvalStatus.approvalStatus }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -48,13 +97,19 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 const approvals = ref([]);
+const contractApprovals = ref([]);
+const shipmentApprovals = ref([]);
 const startDate = ref('');
 const endDate = ref('');
 const searchQuery = ref('');
 const filteredApprovals = ref([]);
+const filteredContractApprovals = ref([]);
+const filteredShipmentApprovals = ref([]);
 
 onMounted(async () => {
     await fetchApprovals();
+    await fetchContractApprovals();
+    await fetchShipmentApprovals();
     applyFilter();
 });
 
@@ -68,24 +123,66 @@ const fetchApprovals = async () => {
     }
 };
 
+const fetchContractApprovals = async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/approval/contract');
+        contractApprovals.value = response.data;
+        filteredContractApprovals.value = contractApprovals.value;
+    } catch (error) {
+        console.error('Error fetching contract approvals:', error);
+    }
+};
+
+const fetchShipmentApprovals = async () => {
+    try {
+        const response = await axios.get('http://localhost:7775/approval/shipment');
+        shipmentApprovals.value = response.data;
+        filteredShipmentApprovals.value = shipmentApprovals.value;
+    } catch (error) {
+        console.error('Error fetching shipment approvals:', error);
+    }
+};
+
 const applyFilter = () => {
     if (startDate.value && endDate.value) {
         filteredApprovals.value = approvals.value.filter(approval => {
             return approval.approvalRequestDate >= startDate.value && approval.approvalRequestDate <= endDate.value;
         });
+        filteredContractApprovals.value = contractApprovals.value.filter(approval => {
+            return approval.approvalRequestDate >= startDate.value && approval.approvalRequestDate <= endDate.value;
+        });
+        filteredShipmentApprovals.value = shipmentApprovals.value.filter(approval => {
+            return approval.approvalRequestDate >= startDate.value && approval.approvalRequestDate <= endDate.value;
+        });
     } else {
         filteredApprovals.value = approvals.value;
+        filteredContractApprovals.value = contractApprovals.value;
+        filteredShipmentApprovals.value = shipmentApprovals.value;
     }
 
     if (searchQuery.value) {
         filteredApprovals.value = filteredApprovals.value.filter(approval =>
             approval.quotation.quotationCode.includes(searchQuery.value)
         );
+        filteredContractApprovals.value = filteredContractApprovals.value.filter(approval =>
+            approval.contract.contractId.toString().includes(searchQuery.value)
+        );
+        filteredShipmentApprovals.value = filteredShipmentApprovals.value.filter(approval =>
+            approval.order.orderRegistrationId.toString().includes(searchQuery.value)
+        );
     }
 };
 
 const goToApprovalContents = (quotationId) => {
     router.push({ path: `/approval/quotation/${quotationId}` });
+};
+
+const goToContractContents = (contractId) => {
+    router.push({ path: `/approval/contract/${contractId}` });
+};
+
+const goToShipmentContents = (orderRegistrationId) => {
+    router.push({ path: `/approval/shipment/${orderRegistrationId}` });
 };
 </script>
 
@@ -148,6 +245,10 @@ const goToApprovalContents = (quotationId) => {
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.approval-search-btn:hover {
+    background-color: #007bff;
 }
 
 .approval-list-box {
