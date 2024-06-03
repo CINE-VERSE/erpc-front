@@ -54,6 +54,7 @@ import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
 import ModifyEmployee from '@/components/employee/ModifyEmployee.vue';
 import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
 import EmployeeApp from '@/components/employee/EmployeeApp.vue';
+import ChangePassword from '@/components/employee/ChangePassword.vue'
 
 import DeleteRequest from '@/components/delete/DeleteRequest.vue'; 
 
@@ -222,6 +223,7 @@ const routes = [
     { path: '/employees/access', component: EmployeeAccess },
     { path: '/employees/app', component: EmployeeApp },
     { path: '/delete' , component: DeleteRequest },
+    { path: '/change-password', component: ChangePassword },
 ];
 
 const router = createRouter({

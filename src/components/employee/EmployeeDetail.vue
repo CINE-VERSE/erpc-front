@@ -22,7 +22,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:7775/employees', // Spring Boot 서버의 URL
+  baseURL: 'http://localhost:7775/employees', 
 });
 
 export default {

@@ -15,6 +15,7 @@
                 <div v-if="isLoggedIn" class="logged-in-message">
                     <h1>ERPC</h1>
                     <p>{{ loggedInMessage }}</p>
+                    <button @click="logout">로그아웃</button>
                 </div>
                 <div v-else class="login-container">
                     <h1>ERPC</h1>
@@ -23,18 +24,19 @@
                     <label for="password">Password</label>
                     <input type="password" v-model="employeePassword" id="password" name="password">
                     <button @click="login">로그인</button>
+                    <button @click="changePassword">비밀번호 찾기</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+const router = useRouter();
 const employeeCode = ref('');
 const employeePassword = ref('');
 const employeeName = ref('');
@@ -51,7 +53,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeName.value = employeeData.employeeName;
         } catch (error) {
@@ -95,8 +97,18 @@ const login = async () => {
         alert('로그인 실패: 서버 오류');
     }
 };
-</script>
 
+const logout = () => {
+    localStorage.removeItem('token'); // 토큰 삭제
+    localStorage.removeItem('userId'); // 사용자 ID 삭제
+    employeeName.value = ''; // 로그인한 사용자 이름 초기화
+    location.reload(); // 페이지 새로고침하여 상태 초기화
+};
+
+const changePassword = () => {
+    router.push('/change-password');
+};
+</script>
 
 
 <style>
