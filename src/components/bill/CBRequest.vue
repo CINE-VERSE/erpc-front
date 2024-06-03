@@ -87,22 +87,17 @@
                 </tbody>
             </table>
         </div>
-        <div class="order-attachment">
-            <div class="order-attachment-header">
-                <h2 class="order-file">첨부파일</h2>
-                <img src="@/assets/img/pdf.png" class="order-pdfimage">
+        <div class="billing-attachment3">
+            <h2 class="billing-file">첨부파일</h2>
+            <div v-for="(file, index) in files" :key="index" class="file-list">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.name }}</span>
             </div>
-            <div class="order-attachment-content">
-                <div class="file-list" v-for="(file, index) in files" :key="index">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.name }}</span>
-                    <button @click="removeFile(index)">삭제</button>
-                </div>
-            </div>
-            <input type="file" @change="handleFileUpload" multiple />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
+            <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
-        <div class="regist-btn-div">
-            <button class="regist-btn2" @click="registerRequest">발행 요청하기</button>
+        <div class="billing-regist-btn-div">
+            <button class="billing-regist-btn" @click="registerRequest">발행 요청하기</button>
         </div>
     </div>
 </template>
@@ -110,6 +105,7 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import router from '@/router/mainRouter';
 
 const projectCode = ref('');
 const depositCode = ref('');
@@ -195,12 +191,24 @@ const removeFile = (index) => {
 };
 
 const registerRequest = async () => {
-    if (!orderData.value.transaction.transactionCode) {
-        alert('먼저 프로젝트 정보를 불러오세요.');
+    // 모든 필수 필드가 채워졌는지 확인
+    const isOrderValid = orderData.value.transaction.transactionCode;
+    const isAccountValid = orderData.value.account.accountCode && orderData.value.account.corporationStatus && orderData.value.account.corporationNum && orderData.value.account.accountName && orderData.value.account.accountRepresentative && orderData.value.account.accountType && orderData.value.account.accountNote && orderData.value.account.accountLocation && orderData.value.account.accountContact && orderData.value.account.accountEmail;
+    const isCollectionValid = collectionData.value.depositDate && collectionData.value.depositPrice;
+    const isTaxInvoiceNoteValid = taxInvoiceNote.value.trim();
+    const areFilesUploaded = files.value.length > 0;
+
+    if (!isOrderValid || !isAccountValid || !isCollectionValid) {
+        alert('모든 필수 입력란을 채워주세요.');
         return;
     }
 
-    if (files.value.length === 0) {
+    if (!isTaxInvoiceNoteValid) {
+        alert('비고란에 계약금/중도금/잔금/일시납부 여부를 입력해주세요.');
+        return;
+    }
+
+    if (!areFilesUploaded) {
         alert('첨부파일을 등록해주세요.');
         return;
     }
@@ -234,14 +242,14 @@ const registerRequest = async () => {
             }
         });
         alert('발행 요청이 성공적으로 완료되었습니다.');
-        // 여기에 라우터 이동 코드 추가 필요
+        router.push({ path: `/order` });
     } catch (error) {
         console.error('발행 요청 중 오류가 발생했습니다.', error);
         alert('발행 요청 중 오류가 발생했습니다.');
     }
 };
-
 </script>
+
 
 
 
@@ -261,10 +269,6 @@ const registerRequest = async () => {
 
 .cb-search33 {
     text-align: center;
-}
-
-.cbtext {
-    margin-bottom: 50px;
 }
 
 .order-number-div33,
@@ -380,68 +384,84 @@ const registerRequest = async () => {
     cursor: pointer;
 }
 
-.order1-pdf {
+.billing-attachment3 {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    font-size: 17px;
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #CCEAFF;
-    border: 2px solid #CCEAFF;
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 800px;
-    height: 90px;
-    margin-bottom: 20px;
-    font-family: GmarketSansMedium;
-    font-size: 17px;
-    gap: 70px;
-    margin-top: 30px;
-}
-
-.order1-pdf1,
-.order1-pdf2 {
-    display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 6px 30px;
-    font-size: 16px;
-    cursor: pointer;
-    outline: none;
-    color: black;
-    font-weight: bold;
-    width: 330px;
-}
-
-.order1-pdf1:hover,
-.order1-pdf2:hover {
+    position: relative;
+    width: 100%;
+    /* 너비를 90%로 설정 */
+    max-width: 1400px;
+    /* 최대 너비를 1400px로 설정 */
+    height: 200px;
     background-color: #d5e6ff;
+    border-radius: 10px;
+    margin-bottom: 50px;
 }
 
-.pdfimage1,
-.pdfimage2 {
-    width: 30px;
-    height: auto;
-    margin-left: 5px;
-    margin-right: -10px;
+.billing-attachment3-header {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: -20px;
 }
 
-.search-btn-div1,
-.regist-btn-div {
+.billing-attachment-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.file-list {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 90%;
+    height: 70px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: -5px;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 5px;
+}
+
+.file-name {
+    font-size: 18px;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.billing-regist-btn-div {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.search-btn1,
-.regist-btn2 {
+.billing-regist-btn {
+    width: 320px;
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -450,18 +470,12 @@ const registerRequest = async () => {
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.search-btn1 {
-    max-width: 320px;
-}
-
-.regist-btn2 {
-    width: 350px;
     font-size: 18px;
-    margin-top: 30px;
-    margin-bottom: 7%;
+    /* margin-top: 20px; */
+    margin-bottom: 50px;
+}
+
+.billing-regist-btn:hover {
+    background-color: #007bff;
 }
 </style>

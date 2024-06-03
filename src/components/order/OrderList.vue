@@ -41,6 +41,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -116,5 +117,135 @@ function goToOrderContents(orderId) {
 
 
 <style>
-    @import url('@/assets/css/order/OrderList.css');
+.order-content33 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.order-list33 {
+    text-align: center;
+}
+
+.order-list-search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.order-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.order-dropdown-btn {
+    width: 150px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    color: black;
+}
+
+.order-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.order-dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ccc;
+}
+
+.order-dropdown-content a:hover {
+    background-color: #d5e6ff;
+}
+
+.order-dropdown:hover .order-dropdown-content {
+    display: block;
+}
+
+.order-search-input {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 14px;
+    background-color: #d5e6ff;
+    color: black;
+}
+
+.order-search-btn {
+    background-color: #0C2092;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    outline: none;
+}
+
+.order-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    margin-bottom: 7%;
+    gap: 1px;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.order-table th,
+.order-table td {
+    text-align: center;
+    width: 160px; /* 너비 조절 */
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.order-table th {
+    background-color: #0C2092;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.order-table tr:hover {
+    background-color: #d5e6ff;
+    cursor: pointer;
+}
 </style>
