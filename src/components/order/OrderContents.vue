@@ -4,12 +4,12 @@
             <h1 class="maintext">수주 정보 조회 내역</h1>
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
-                <button class="order-request" @click="showApprovalPopup = true">결재 요청</button>
+                <button class="order-request" @click="requestApproval">결재 요청</button>
                 <button class="order-edit" @click="goToOrderPage">수정</button>
                 <button class="order-delete" @click="deleteOrder">삭제</button>
                 <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
-            <div class="order-pdf">
+            <div class="order-pdf77">
                 <div v-if="orderData.orderFile.length > 0">
                     <div v-for="file in orderData.orderFile" :key="file.fileId" class="file-download">
                         <button class="order-pdf2" @click="downloadFile(file.accessUrl)">
@@ -26,27 +26,24 @@
             <table class="order2-table1">
                 <thead>
                     <tr>
+                        <th>프로젝트 코드</th>
+                        <th>계약 일자</th>
                         <th>작성 일자</th>
                         <th>삭제 일자</th>
-                        <th>결재 일자</th>
-                        <th>계약 일자</th>
-                        <th>입금 완료일</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
+                        <td>{{ orderData.transaction.transactionCode }}</td>
+                        <td>{{ orderData.contactDate }}</td>
                         <td>{{ orderData.orderDate }}</td>
                         <td>{{ orderData.orderDeleteDate }}</td>
-                        <td></td>
-                        <td>{{ orderData.contactDate }}</td>
-                        <td></td>
                     </tr>
                 </tbody>
             </table>
             <table class="order2-table2">
                 <thead>
                     <tr>
-                        <th>프로젝트 코드</th>
                         <th>담당자</th>
                         <th>거래처 코드</th>
                         <th>거래처명</th>
@@ -56,7 +53,6 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{ orderData.transaction.transactionCode }}</td>
                         <td>{{ orderData.employee.employeeName }}</td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.accountName }}</td>
@@ -148,7 +144,7 @@
                     <tr>
                         <th>입금 코드</th>
                         <th>입금자명</th>
-                        <th>세금계산서 발행 금액</th>
+                        <th>입금 금액</th>
                         <th>입금 일자</th>
                         <th>발행 요청 일자</th>
                         <th>비고</th>
@@ -157,15 +153,13 @@
                 </thead>
                 <tbody>
                     <tr v-for="taxInvoice in taxInvoiceRequestData" :key="taxInvoice.taxInvoiceRequestId">
-                        <td>{{ taxInvoice.taxInvoiceRequestId }}</td>
-                        <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
-                        <td>{{ taxInvoice.taxInvoiceNote }}</td>
-                        <td>{{ taxInvoice.taxInvoiceFile.length > 0 ? taxInvoice.taxInvoiceFile[0].uploadDate : '' }}
-                        </td>
+                        <td>{{ taxInvoice.collection.depositCode }}</td>
+                        <td>{{ taxInvoice.collection.depositPic }}</td>
+                        <td>{{ taxInvoice.collection.depositPrice.toLocaleString() }}</td>
+                        <td>{{ taxInvoice.collection.depositDate }}</td>
                         <td>{{ taxInvoice.taxInvoiceRequestDate }}</td>
                         <td>{{ taxInvoice.taxInvoiceNote }}</td>
                         <td>{{ taxInvoice.taxInvoiceRequestStatus?.taxInvoiceRequestStatus }}</td>
-                        <!-- 여기서 상태 값을 가져옴 -->
                     </tr>
                     <tr v-if="taxInvoiceRequestData.length === 0">
                         <td colspan="7">세금계산서 요청 내역이 없습니다.</td>
@@ -226,19 +220,9 @@
     <div v-else>
         Loading...
     </div>
-
-    <!-- 결재 요청 팝업 -->
-    <div v-if="showApprovalPopup" class="popup-overlay">
-        <div class="popup-content">
-            <h2>결재 비고란 입력</h2>
-            <textarea v-model="approvalContent" placeholder="결재 비고란를 입력하세요"></textarea>
-            <button @click="confirmApproval">확인</button>
-            <button @click="closeApprovalPopup">취소</button>
-        </div>
-    </div>
     <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay">
-        <div class="popup-content">
+    <div v-if="showPopup" class="popup-overlay77">
+        <div class="popup-content77">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
             <button @click="confirmDelete">확인</button>
@@ -246,6 +230,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -257,9 +242,7 @@ const router = useRouter();
 const orderData = ref(null);
 const orderNoteData = ref([]); // 수주 노트 데이터를 저장하는 배열
 const showPopup = ref(false);
-const showApprovalPopup = ref(false); // 결재 요청 사유 입력 팝업을 위한 상태 변수
 const deleteReason = ref('');
-const approvalContent = ref(''); // 결재 요청 사유 입력을 위한 상태 변수
 const newNote = ref('');
 const employeeName = ref('');
 const employeeId = ref('');
@@ -289,10 +272,6 @@ onMounted(async () => {
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
-        // approvalStatus를 가져오는 API 호출
-        // const approvalResponse = await axios.get(`http://localhost:7775/approval/order/${orderId}`);
-        // approvalStatus.value = approvalResponse.data.approvalStatus.approvalStatus;
-
         // 세금계산서 요청 데이터를 가져오는 API 호출
         if (orderData.value.taxInvoiceRequest && orderData.value.taxInvoiceRequest.length > 0) {
             for (const taxInvoice of orderData.value.taxInvoiceRequest) {
@@ -305,23 +284,15 @@ onMounted(async () => {
     }
 });
 
-// 결재 요청 팝업 닫기 함수
-const closeApprovalPopup = () => {
-    showApprovalPopup.value = false;
-    approvalContent.value = '';
-};
-
-// 결재 요청 확인 함수
-const confirmApproval = async () => {
+// 결재 요청 함수
+const requestApproval = async () => {
     const orderId = route.params.orderId;
     try {
-        const response = await axios.post('http://localhost:7775/approval/order/regist', {
-            approvalContent: approvalContent.value,
+        const response = await axios.post('http://localhost:7775/approval/shipment/regist', {
             order: { orderRegistrationId: orderId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
-        closeApprovalPopup();
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
@@ -486,7 +457,7 @@ const deleteNote = async (orderNoteId) => {
     margin-right: 15px;
 }
 
-.order-pdf {
+.order-pdf77 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -498,13 +469,14 @@ const deleteNote = async (orderNoteId) => {
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 500px;
+    width: 420px;
     height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
     gap: 20px;
     margin-top: 40px;
+    margin-left: 9px;
 }
 
 .order-pdf1,
@@ -768,7 +740,7 @@ const deleteNote = async (orderNoteId) => {
     font-weight: normal;
 }
 
-.popup-overlay {
+.popup-overlay77 {
     position: fixed;
     top: 0;
     left: 0;
@@ -780,7 +752,7 @@ const deleteNote = async (orderNoteId) => {
     align-items: center;
 }
 
-.popup-content {
+.popup-content77 {
     background: white;
     padding: 20px;
     border-radius: 5px;
@@ -789,17 +761,17 @@ const deleteNote = async (orderNoteId) => {
     width: 100%;
 }
 
-.popup-content h2 {
+.popup-content77 h2 {
     margin-bottom: 15px;
 }
 
-.popup-content textarea {
+.popup-content77 textarea {
     width: 90%;
     height: 100px;
     margin-bottom: 15px;
 }
 
-.popup-content button {
+.popup-content77 button {
     margin: 5px;
 }
 </style>

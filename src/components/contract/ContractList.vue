@@ -3,16 +3,16 @@
         <div class="contract-list">
             <h1>계약서 목록</h1>
         </div>
-        <div class="contract-list-search">
-            <div class="contract-dropdown">
-                <button class="contract-dropdown-btn">{{ searchBy }} ▼</button>
-                <div class="contract-dropdown-content">
+        <div class="contract-list-search22">
+            <div class="contract-dropdown22">
+                <button class="contract-dropdown-btn22">{{ searchBy }} ▼</button>
+                <div class="contract-dropdown-content22">
                     <a href="#" @click="setSearchBy('계약서 코드')">계약서 코드</a>
                     <a href="#" @click="setSearchBy('담당자')">담당자</a>
                 </div>
             </div>
-            <input type="text" class="contract-search-input" v-model="searchQuery" placeholder="검색어를 입력하세요">
-            <button class="contract-search-btn7" @click="applyFilter">검색</button>
+            <input type="text" class="contract-search-input22" v-model="searchQuery" placeholder="검색어를 입력하세요">
+            <button class="contract-search-btn22" @click="applyFilter">조회하기</button>
         </div>
         <div class="contract-list-box7">
             <table class="contract-table7">
@@ -121,5 +121,142 @@ function goToContractContents(contractId) {
 
 
 <style>
-    @import url('@/assets/css/contract/ContractList.css');
+.contract-list-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.contract-list {
+    text-align: center;
+}
+
+.contract-list-search22 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.contract-dropdown22 {
+    position: relative;
+    display: inline-block;
+}
+
+.contract-dropdown-btn22 {
+    width: 150px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    outline: none;
+    color: black;
+}
+
+.contract-dropdown-content22 {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.contract-dropdown-content22 a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ccc;
+}
+
+.contract-dropdown-content22 a:hover {
+    background-color: #d5e6ff;
+}
+
+.contract-dropdown22:hover .contract-dropdown-content22 {
+    display: block;
+}
+
+.contract-search-input22 {
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 250px;
+}
+
+.contract-search-btn22 {
+    height: 40px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.contract-search-btn22:hover {
+    background-color: #007bff;
+}
+
+.contract-list-box7 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    margin-bottom: 7%;
+    gap: 1px;
+}
+
+.contract-table7 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.contract-table7 th,
+.contract-table7 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+    width: 160px; /* 너비 조절 */
+}
+
+.contract-table7 th {
+    background-color: #0C2092;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.contract-table7 tr:hover {
+    background-color: #d5e6ff;
+    cursor: pointer;
+}
 </style>

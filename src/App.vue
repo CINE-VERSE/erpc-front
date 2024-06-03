@@ -142,6 +142,7 @@ const toggleSubItems = (index) => {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
+  margin-top: 20px;
   padding: 20px;
 }
 
@@ -151,7 +152,9 @@ const toggleSubItems = (index) => {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .menu {
