@@ -11,8 +11,12 @@
             <div class="inmainbanner">
                 <img src="@/assets/img/mainbanner5.jpg" class="mainbannerimage2" />
             </div>
-            <div class="inmainbanner2">
-                <div class="login-container">
+            <div class="inmainbanner2" :class="{'logged-in': isLoggedIn}">
+                <div v-if="isLoggedIn" class="logged-in-message">
+                    <h1>ERPC</h1>
+                    <p>{{ loggedInMessage }}</p>
+                </div>
+                <div v-else class="login-container">
                     <h1>ERPC</h1>
                     <label for="employee-id">Employee ID</label>
                     <input type="text" v-model="employeeCode" id="employee-id" name="employee-id">
@@ -25,13 +29,43 @@
     </div>
 </template>
 
+
+
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
-// import router from '@/router/mainRouter';
 
 const employeeCode = ref('');
 const employeePassword = ref('');
+const employeeName = ref('');
+
+const isLoggedIn = computed(() => {
+    return !!localStorage.getItem('userId');
+});
+
+const loggedInMessage = computed(() => {
+    return `${employeeName.value}님 로그인되었습니다.`;
+});
+
+const fetchEmployeeData = async () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        try {
+            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
+            const employeeData = response.data;
+            employeeName.value = employeeData.employeeName;
+        } catch (error) {
+            console.error('직원 정보를 조회하는 중 오류가 발생했습니다.', error);
+            alert('직원 정보를 조회하는 중 오류가 발생했습니다.');
+        }
+    }
+};
+
+onMounted(() => {
+    if (isLoggedIn.value) {
+        fetchEmployeeData();
+    }
+});
 
 const login = async () => {
     try {
@@ -45,10 +79,6 @@ const login = async () => {
             withCredentials: true // CORS 관련 설정
         });
 
-        // 콘솔에 응답 전체를 출력해 확인
-        console.log(response);
-
-        // 헤더에서 값을 가져옴
         const token = response.headers['token'];
         const userId = response.headers['userid'];
 
@@ -56,8 +86,7 @@ const login = async () => {
             localStorage.setItem('token', token);
             localStorage.setItem('userId', userId);
             alert('로그인 성공!');
-
-            // router.push('/notice/list');
+            fetchEmployeeData();
         } else {
             alert('로그인 실패: 토큰을 받지 못했습니다.');
         }
@@ -176,8 +205,29 @@ const login = async () => {
     align-items: center;
 }
 
+.inmainbanner2.logged-in {
+    background-color: #0C2092;
+    color: white;
+}
+
 .login-container {
     text-align: center;
+}
+
+.logged-in-message {
+    text-align: center;
+}
+
+.logged-in-message h1 {
+    font-size: 24px;
+    color: white;
+    margin-bottom: 10px;
+    margin-top: -5px;
+}
+
+.logged-in-message p {
+    font-size: 16px;
+    color: white;
 }
 
 .login-container h1 {
