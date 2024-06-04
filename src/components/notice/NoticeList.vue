@@ -25,7 +25,7 @@
             <div>
               <input type="text" id='searchText' class="form-control" placeholder="Search..."
                 v-model="search_condition" @keyup.enter="callData"
-                style="height: 30px; font-size: 12px;">
+                style="height: 24px; font-size: 12px;">
             </div>
           </td>
         </tr>
@@ -61,7 +61,7 @@
   const filteredfree = ref([]);
   
   const fetchfree = () => {
-    axios.get(`http://localhost:7775/notice_board`)
+    axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board`)
       .then(response => {
         notice.value = response.data;
         filteredfree.value = response.data; 

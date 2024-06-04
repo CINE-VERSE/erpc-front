@@ -54,7 +54,7 @@
     methods: {
       async fetchProductList() {
         try {
-          const response = await axios.get('http://localhost:7775/product');
+          const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/product');
           this.productList = response.data;
         } catch (error) {
           console.error('품목 목록을 불러오는 중 에러 발생:', error);

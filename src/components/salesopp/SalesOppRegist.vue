@@ -11,6 +11,7 @@
                         <th>거래처 담당자</th>
                         <th>거래처 주소</th>
                         <th>연락처</th>
+                        <th>이메일</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -19,6 +20,7 @@
                         <td><input v-model="newOpp.oppAccountPic" placeholder="거래처 담당자"></td>
                         <td><input v-model="newOpp.oppAccountLocation" placeholder="거래처 주소"></td>
                         <td><input v-model="newOpp.oppAccountContact" placeholder="연락처"></td>
+                        <td><input v-model="newOpp.oppAccountEmail" placeholder="이메일"></td>
                     </tr>
                 </tbody>
             </table>
@@ -53,7 +55,7 @@ const newOpp = ref({
     oppAccountLocation: '',
     oppAccountContact: '',
     oppAccountNote: '',
-    oppAccountEmail:'a@naver.com',
+    oppAccountEmail:'',
     salesOppStatus: { salesOppStatusId: 1 }, // 기본 상태 ID 설정
     employee: {
             employeeId: 5
@@ -62,7 +64,7 @@ const newOpp = ref({
 
 const registSalesOpp = async () => {
     try {
-        const response = await axios.post('http://localhost:7775/sales_opportunity/regist', newOpp.value);
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/regist', newOpp.value);
         alert('영업기회가 성공적으로 등록되었습니다.');
         router.push('/salesOpp/list');
         console.log('등록된 영업기회:', response.data);
@@ -74,5 +76,96 @@ const registSalesOpp = async () => {
 </script>
 
 <style>
-@import url('@/assets/css/order/OrderRegist.css');
+.order-regist h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.order-list-box1 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    max-width: 1200px;
+    margin: 20px auto;
+    gap: 1px;
+}
+
+.order-table1,
+.order-table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.order-table1 th,
+.order-table1 td,
+.order-table2 th,
+.order-table2 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.order-table1 th,
+.order-table2 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.order-table1 td,
+.order-table2 td {
+    height: 40px;
+}
+
+.salesOpp-test1,
+.salesOpp-test2,
+.salesOpp-test3,
+.salesOpp-test4,
+.salesOpp-test5,
+.salesOpp-test6 {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.estimate-regist-btn-div {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.estimate-regist-btn {
+    width: 320px;
+    padding: 10px 20px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    background-color: #0C2092;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+.estimate-regist-btn:hover {
+    background-color: #007bff;
+}   
 </style>

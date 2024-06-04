@@ -88,7 +88,7 @@
       if (!employeeId) {
         throw new Error('Employee ID not found in route parameters');
       }
-      const response = await axios.get(`http://localhost:7775/employees/${employeeId}`);
+      const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${employeeId}`);
       employee.value = response.data;
     } catch (error) {
       console.error('Error fetching employee details:', error);
@@ -102,7 +102,7 @@
       if (!employeeId) {
         throw new Error('Employee ID not found in route parameters');
       }
-      const requestURL = `http://localhost:7775/employees/modify?employeeId=${employeeId}`;
+      const requestURL = `http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/modify?employeeId=${employeeId}`;
       console.log('Request URL:', requestURL);
       await axios.patch(requestURL, employee.value);
       router.push('/employees');

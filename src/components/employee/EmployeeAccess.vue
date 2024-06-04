@@ -149,7 +149,7 @@ const accessRightsMap = {
   
   const submitAccessRequest = async () => {
     try {
-      await axios.post('http://localhost:7775/access/access_request', requestAccess.value);
+      await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/access_request', requestAccess.value);
       alert('권한 신청이 완료되었습니다.');
       requestAccess.value.accessRight.accessId = '';
       requestAccess.value.employee.employeeId = '';
@@ -160,7 +160,7 @@ const accessRightsMap = {
   
   const getAccessRequestById = async () => {
     try {
-      const response = await axios.get(`http://localhost:7775/access/${accessRequestId.value}`);
+      const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/${accessRequestId.value}`);
       accessRequest.value = response.data;
       aggregateAllAccessRights([response.data]);
     } catch (error) {
@@ -170,7 +170,7 @@ const accessRightsMap = {
   
   const getEmployeesAccess = async () => {
     try {
-      const response = await axios.get(`http://localhost:7775/access/find_access/${employeeId.value}`);
+      const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/find_access/${employeeId.value}`);
       employeeAccess.value = response.data;
       aggregateAllAccessRights(response.data);
   
@@ -183,7 +183,7 @@ const accessRightsMap = {
   
   const getAllAccessRequests = async () => {
     try {
-      const response = await axios.get('http://localhost:7775/access/list');
+      const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/list');
       allAccessRequests.value = response.data;
       aggregateAllAccessRights(response.data);
     } catch (error) {
@@ -194,7 +194,7 @@ const accessRightsMap = {
   const submitAddAccess = async () => {
     try {
       addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
-      await axios.post('http://localhost:7775/access/add_access', addAccess.value);
+      await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
       alert('추가 권한이 성공적으로 등록되었습니다.');
       addAccess.value.employee.employeeId = '';
       selectedAccessRights.value = [];

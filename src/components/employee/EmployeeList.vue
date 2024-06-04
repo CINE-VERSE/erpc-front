@@ -19,7 +19,7 @@ export default {
     };
   },
   created() {
-    axios.get('http://localhost:7775/employees')
+    axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees')
       .then(response => {
         this.employees = response.data;
       })

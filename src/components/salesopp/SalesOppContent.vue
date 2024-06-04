@@ -116,11 +116,11 @@ const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
     try {
         // 영업기회 데이터를 가져옵니다.
-        const response = await axios.get(`http://localhost:7775/sales_opportunity/${salesOppId}`);
+        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`);
         salesOppData.value = response.data;
 
         // 각 프로세스에 대해 salesOppNote 데이터를 가져옵니다.
-        const noteResponse = await axios.get(`http://localhost:7775/sales_opp_note`);
+        const noteResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opp_note`);
         salesOppNoteData
 .value = noteResponse.data;
         
@@ -149,7 +149,7 @@ const closeDeletePopup = () => {
 const confirmDelete = async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        const response = await axios.post('http://localhost:7775/sales_opportunity/delete', {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/delete', {
             salesOppDeleteRequestReason: deleteReason.value,
             salesOpp: salesOppData.value
         });
@@ -177,7 +177,7 @@ const confirmStatusChange = async () => {
     try {
         // 변경할 상태의 ID를 사용하여 요청을 보냅니다
         const statusId = getStatusIdByName(newStatus.value);
-        const response = await axios.patch(`http://localhost:7775/sales_opportunity/status/${salesOppId}`, {
+        const response = await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/status/${salesOppId}`, {
             salesOppStatus: { salesOppStatusId: statusId }
         });
         salesOppData.value.salesOppStatus.salesOppStatus = newStatus.value; // 상태 업데이트
@@ -224,7 +224,7 @@ const registerProcess = async () => {
         };
 
         // 서버에 프로세스 등록 요청을 보냅니다.
-        const response = await axios.post(`http://localhost:7775/sales_opp_note/regist`, newProcess);
+        const response = await axios.post(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/regist`, newProcess);
 
         // 등록된 프로세스 데이터를 처리합니다.
         salesOppNoteData.value.push(response.data);
@@ -240,7 +240,7 @@ const registerProcess = async () => {
 // Delete process
 const deleteProcess = async (salesOppNoteId) => {
     try {
-        const response = await axios.patch(`http://localhost:7775/sales_opp_note/delete/${salesOppNoteId}`);
+        const response = await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/delete/${salesOppNoteId}`);
         salesOppNoteData.value = salesOppNoteData.value.filter(note => note.salesOppNoteId !== salesOppNoteId);
         alert('삭제됨.');
     } catch (error) {

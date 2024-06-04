@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:7775/delete';
+const API_URL = 'http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/delete';
 
 class DeleteService {
   constructor() {

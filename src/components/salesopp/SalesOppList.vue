@@ -62,7 +62,7 @@
   // 컴포넌트가 생성될 때 영업기회 목록을 가져옴
   onMounted(async () => {
     try {
-      const response = await axios.get('http://localhost:7775/sales_opportunity');
+      const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity');
       approvals.value = response.data;
       filteredapprovals.value = approvals.value;
     } catch (error) {

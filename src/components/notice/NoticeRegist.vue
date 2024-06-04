@@ -65,7 +65,7 @@ const submitPost = async () => {
       formData.append('files', new Blob(), 'empty_image');
     }
 
-    await axios.post('http://localhost:7775/notice_board/regist', formData, {
+    await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/regist', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

@@ -53,7 +53,7 @@ export default {
       });
 
       try {
-        const response = await axios.patch(`http://localhost:7775/notice_board/modify/${this.noticeId}`, formData, {
+        const response = await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
@@ -67,7 +67,7 @@ export default {
     },
     async fetchNoticeDetails() {
       try {
-        const response = await axios.get(`http://localhost:7775/notice_board/${this.noticeId}`);
+        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/${this.noticeId}`);
         const notice = response.data;
         this.noticeTitle = notice.noticeTitle;
         this.noticeContent = notice.noticeContent;

@@ -48,7 +48,7 @@ const route = useRoute();
 
 const fetchNotice = async (noticeId) => {
   try {
-    const response = await axios.get(`http://localhost:7775/notice_board/${noticeId}`);
+    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/${noticeId}`);
     notice.value = response.data;
     console.log('서버로부터 받은 정보:', response.data);
   } catch (error) {
@@ -68,7 +68,7 @@ function mainBoard() {
 async function deletePost() {
   const noticeId = route.params.noticeId;
   try {
-    const response = await axios.patch(`http://localhost:7775/notice_board/delete/${noticeId}`);
+    const response = await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/delete/${noticeId}`);
     console.log('게시물이 성공적으로 삭제되었습니다.');
     router.push('/notice/list');
   } catch (error) {
