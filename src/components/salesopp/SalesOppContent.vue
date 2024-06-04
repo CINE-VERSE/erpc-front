@@ -65,17 +65,17 @@
     </div>
 
  
-    <div class="popup" v-if="showDeletePopup">
-        <div class="popup-content">
-            <p>팝업 창에 표시될 내용</p>
-            <input type="text" v-model="deleteReason" placeholder="삭제 이유를 입력해주세요">
+    <div class="popup-overlay77" v-if="showDeletePopup">
+        <div class="popup-content77">
+            <h2>삭제 요청 사유 입력</h2>
+            <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
             <button @click="confirmDelete">확인</button>
-            <button class="close-btn" @click="closeDeletePopup">닫기</button>
+            <button @click="closePopup">취소</button>
         </div>
     </div>
 
     <!-- 상태변경 팝업 창 -->
-    <div class="popup" v-if="showStatusPopup">
+    <div class="popup-overlay77" v-if="showStatusPopup">
         <div class="popup-content" style="position: fixed; top: 50%; left: 57%; transform: translate(-50%, -50%);">
             <h3>상태변경</h3>
             <select v-model="newStatus">
@@ -231,8 +231,12 @@ const registerProcess = async () => {
         // 등록된 프로세스 데이터를 처리합니다.
         salesOppNoteData.value.push(response.data);
         newProcessDetail.value = '';
-        alert('등록됨.');
         
+        // 등록 완료 후 알림 창 표시
+        alert('참고사항이 등록되었습니다.');
+
+        location.reload();
+
     } catch (error) {
         console.error('Process 등록 중 오류 발생:', error);
         alert('Process 등록에 실패했습니다.');
@@ -262,11 +266,38 @@ const filteredSalesOppNoteData = computed(() => {
 
 <style>
 @import url('@/assets/css/order/OrderContents.css');
-.popup-content {
-  width: 500px;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+.popup-overlay77 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content77 {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content77 h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content77 textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content77 button {
+    margin: 5px;
 }
 </style>

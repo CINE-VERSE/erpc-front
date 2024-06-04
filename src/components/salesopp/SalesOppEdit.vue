@@ -30,7 +30,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" v-model="editedSalesOppData.salesOppNote" class="salesOpp-test6"></td>
+                        <td><input type="text" v-model="editedSalesOppData.oppAccountNote" class="salesOpp-test6"></td>
                     </tr>
                 </tbody>
             </table>
@@ -83,7 +83,7 @@ const updatesalesOpp = async () => {
             oppAccountLocation: editedSalesOppData.value.oppAccountLocation,
             oppAccountContact: editedSalesOppData.value.oppAccountContact,
             oppAccountEmail: editedSalesOppData.value.oppAccountEmail,
-            salesOppNote: editedSalesOppData.value.salesOppNote
+            oppAccountNote: editedSalesOppData.value.oppAccountNote
         };
 
         console.log('Request Data:', requestData); // 데이터를 콘솔에 출력

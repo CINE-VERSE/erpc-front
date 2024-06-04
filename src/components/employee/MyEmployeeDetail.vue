@@ -12,6 +12,7 @@
 
     <div class="button-container">
       <router-link :to="{ path: '/change-password', query: { employeeId: employee.employeeId }}" class="edit-button">비밀번호 변경</router-link>
+      <router-link :to="{ path: '/employees/app'}" class="edit-button">권한 신청</router-link>
     </div>
   </div>
 </template>

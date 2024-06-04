@@ -22,7 +22,7 @@
           </thead>
           <tbody>
             <tr v-for="(approval, index) in filteredapprovals" :key="index" @click="goTosalesOppContents(approval.salesOppId)">
-              <td>{{ index + 1 }}</td>
+              <td>{{ filteredapprovals.length - index }}</td>
               <td>{{ approval.oppAccountName }}</td>
               <td>{{ approval.oppDate }}</td>
               <td>{{ approval.salesOppStatus.salesOppStatus }}</td>
