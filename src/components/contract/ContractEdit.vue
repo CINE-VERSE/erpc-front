@@ -175,7 +175,7 @@ const formattedTotalCost = ref('');
 onMounted(async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.get(`http://localhost:7775/contract/${contractId}`, { withCredentials: true });
+        const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/${contractId}`, { withCredentials: true });
         contractData.value = response.data;
         populateFields(contractData.value);
     } catch (error) {
@@ -273,7 +273,7 @@ const updateContract = async () => {
     });
 
     try {
-        await axios.patch(`http://localhost:7775/contract/modify/${contractId}`, formData, {
+        await axios.patch(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/modify/${contractId}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });

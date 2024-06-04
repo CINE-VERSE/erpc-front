@@ -160,7 +160,7 @@ watch([selectedApprovalStatus, selectedApprovalType], () => {
 
 const fetchApprovals = async () => {
     try {
-        const response = await axios.get('http://localhost:7775/approval/quotation');
+        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation');
         approvals.value = response.data;
         filteredApprovals.value = approvals.value;
     } catch (error) {
@@ -170,7 +170,7 @@ const fetchApprovals = async () => {
 
 const fetchContractApprovals = async () => {
     try {
-        const response = await axios.get('http://localhost:7775/approval/contract');
+        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract');
         contractApprovals.value = response.data;
         filteredContractApprovals.value = contractApprovals.value;
     } catch (error) {
@@ -180,7 +180,7 @@ const fetchContractApprovals = async () => {
 
 const fetchShipmentApprovals = async () => {
     try {
-        const response = await axios.get('http://localhost:7775/approval/shipment');
+        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment');
         shipmentApprovals.value = response.data;
         filteredShipmentApprovals.value = shipmentApprovals.value;
     } catch (error) {

@@ -156,7 +156,7 @@ const fetchApproveShipmentData = async () => {
         return;
     }
     try {
-        const response = await axios.get(`http://localhost:7775/approval/shipment/${orderRegistrationId}`);
+        const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment/${orderRegistrationId}`);
         approveShipmentData.value = response.data;
     } catch (error) {
         console.error("Error fetching approval shipment data:", error);
@@ -187,7 +187,7 @@ const submitApproval = async () => {
         }
     };
     try {
-        await axios.patch(`http://localhost:7775/approval/shipment/process`, payload);
+        await axios.patch(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
         actionCompleted.value = true;
         showApprovalPopup.value = false;
         fetchApproveShipmentData();
@@ -214,7 +214,7 @@ const submitRejection = async () => {
         }
     };
     try {
-        await axios.patch(`http://localhost:7775/approval/shipment/process`, payload);
+        await axios.patch(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
         actionCompleted.value = true;
         showRejectPopup.value = false;
         fetchApproveShipmentData();
