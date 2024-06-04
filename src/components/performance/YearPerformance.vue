@@ -1,40 +1,45 @@
 <template>
-    <div class="year-list-content">
-        <div class="year-list">
-            <h1>연간 실적</h1>
+    <div class="target-list-content">
+        <div class="target-list">
+            <h1>실적 조회</h1>
         </div>
-        <div class="year-list-search">
-            <div class="year-dropdown">
-                <button class="year-dropdown-btn">{{ searchBy }} ▼</button>
-                <div class="year-dropdown-content">
-                    <a href="#" @click="setSearchBy('2024')">2024</a>
-                    <a href="#" @click="setSearchBy('2023')">2023</a>
-                    <a href="#" @click="setSearchBy('2022')">2022</a>
-                </div>
+        <div class="filters">
+            <div class="year-filter">
+                <select id="year-select" class="year-select" v-model="selectedYear" @change="handleDropdownChange">
+                    <option v-for="year in uniqueYears" :key="year" :value="year">{{ year }}</option>
+                </select>
+            </div>
+            <div class="team-filter">
+                <select id="team-select" class="team-select" v-model="selectedTeam" @change="fetchTeams">
+                    <option value="">선택안함</option>
+                    <option value="1">영업1팀</option>
+                    <option value="2">영업2팀</option>
+                    <option value="3">영업3팀</option>
+                    <option value="4">영업4팀</option>
+                </select>
             </div>
         </div>
-        <div class="year-list-box">
-            <table class="year-table">
+        <div class="target-list-box">
+            <table class="target-table" v-if="filteredTargetData.length">
                 <thead>
                     <tr>
-                        <th>연월</th>
+                        <th>연도</th>
+                        <th>월/분기</th>
                         <th>목표 금액</th>
-                        <th>총 달성 금액</th>
-                        <th>영업1팀 기여 금액</th>
-                        <th>영업2팀 기여 금액</th>
-                        <th>영업3팀 기여 금액</th>
+                        <th>달성 금액</th>
+                        <th>달성 필요금액</th>
                         <th>달성률</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(year, index) in filteredyears" :key="index" :class="{'quarter-row': isQuarterRow(year.month), 'total-row': isTotalRow(year.month)}">
-                        <td>{{ year.month }}</td>
-                        <td>{{ year.goal }}</td>
-                        <td>{{ year.grade }}</td>
-                        <td>{{ year.salesteam1 }}</td>
-                        <td>{{ year.salesteam2 }}</td>
-                        <td>{{ year.salesteam3 }}</td>
-                        <td>{{ year.percent }}</td>
+                    <tr v-for="(target, index) in filteredTargetData" :key="index"
+                        :class="{ 'quarter-row': isQuarterRow(target.displayMonthOrQuarter), 'total-row': isTotalRow(target.displayMonthOrQuarter) }">
+                        <td>{{ target.year }}</td>
+                        <td>{{ target.displayMonthOrQuarter }}</td>
+                        <td>{{ target.goal }}</td>
+                        <td>{{ target.grade }}</td>
+                        <td>{{ target.require }}</td>
+                        <td>{{ target.percent }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -42,55 +47,453 @@
     </div>
 </template>
 
+
+
 <script setup>
-import { ref } from 'vue';
-import {useRoute, useRouter} from 'vue-router'
+import { ref, onMounted, computed, watch } from 'vue';
+import axios from 'axios';
 
-const currentRoute = useRoute();
-const router = useRouter();
+const targetData = ref([]);
+const filteredTargetData = ref([]);
+const selectedYear = ref('2024');  // 기본값을 2024로 설정
+const selectedTeam = ref('');  // 팀 필터 추가
+const uniqueYears = ref([]);
 
-const years = ref([
-    { month: '202301', goal: '1,000,000,000', grade: '900,000,000', salesteam1: '400,000,000', salesteam2: '300,000,000', salesteam3: '200,000,000', percent: '90%' },
-    { month: '202302', goal: '1,000,000,000', grade: '800,000,000', salesteam1: '400,000,000', salesteam2: '200,000,000', salesteam3: '200,000,000', percent: '80%' },
-    { month: '202303', goal: '1,000,000,000', grade: '1,200,000,000', salesteam1: '300,000,000', salesteam2: '500,000,000', salesteam3: '400,000,000', percent: '120%' },
-    { month: '1분기', goal: '3,000,000,000', grade: '2,900,000,000', salesteam1: '1,100,000,000', salesteam2: '1,000,000,000', salesteam3: '800,000,000', percent: '96.67%' },
+const fetchTargetData = async () => {
+    try {
+        const response = await axios.get(`http://localhost:7775/target/integrate`);
+        const data = response.data;
 
-    { month: '202304', goal: '1,000,000,000', grade: '1,100,000,000', salesteam1: '500,000,000', salesteam2: '300,000,000', salesteam3: '300,000,000', percent: '110%' },
-    { month: '202305', goal: '1,000,000,000', grade: '700,000,000', salesteam1: '200,000,000', salesteam2: '300,000,000', salesteam3: '400,000,000', percent: '70%' },
-    { month: '202306', goal: '1,500,000,000', grade: '1,600,000,000', salesteam1: '600,000,000', salesteam2: '500,000,000', salesteam3: '500,000,000', percent: '106.67%' },
-    { month: '2분기', goal: '3,500,000,000', grade: '3,400,000,000', salesteam1: '1,300,000,000', salesteam2: '1,100,000,000', salesteam3: '1,200,000,000', percent: '97.14%' },
+        console.log('Fetched target data:', data);
 
-    { month: '202307', goal: '2,000,000,000', grade: '2,000,000,000', salesteam1: '800,000,000', salesteam2: '700,000,000', salesteam3: '500,000,000', percent: '100%' },
-    { month: '202308', goal: '2,000,000,000', grade: '2,700,000,000', salesteam1: '900,000,000', salesteam2: '900,000,000', salesteam3: '900,000,000', percent: '135%' },
-    { month: '202309', goal: '1,500,000,000', grade: '1,300,000,000', salesteam1: '600,000,000', salesteam2: '400,000,000', salesteam3: '300,000,000', percent: '86.67%' },
-    { month: '3분기', goal: '5,500,000,000', grade: '6,000,000,000', salesteam1: '2,300,000,000', salesteam2: '2,000,000,000', salesteam3: '1,700,000,000', percent: '109.09%' },
+        const order = [
+            { targetMonth: 1, display: '1월' },
+            { targetMonth: 2, display: '2월' },
+            { targetMonth: 3, display: '3월' },
+            { targetQuarter: 1, display: '1분기' },
+            { targetMonth: 4, display: '4월' },
+            { targetMonth: 5, display: '5월' },
+            { targetMonth: 6, display: '6월' },
+            { targetQuarter: 2, display: '2분기' },
+            { targetMonth: 7, display: '7월' },
+            { targetMonth: 8, display: '8월' },
+            { targetMonth: 9, display: '9월' },
+            { targetQuarter: 3, display: '3분기' },
+            { targetMonth: 10, display: '10월' },
+            { targetMonth: 11, display: '11월' },
+            { targetMonth: 12, display: '12월' },
+            { targetQuarter: 4, display: '4분기' },
+            { targetMonth: null, display: '총계' }
+        ];
 
-    { month: '202310', goal: '1,500,000,000', grade: '1,700,000,000', salesteam1: '600,000,000', salesteam2: '500,000,000', salesteam3: '600,000,000', percent: '113.33%' },
-    { month: '202311', goal: '2,000,000,000', grade: '1,700,000,000', salesteam1: '500,000,000', salesteam2: '600,000,000', salesteam3: '600,000,000', percent: '85%' },
-    { month: '202312', goal: '2,000,000,000', grade: '2,300,000,000', salesteam1: '1,000,000,000', salesteam2: '700,000,000', salesteam3: '600,000,000', percent: '115%' },
-    { month: '4분기', goal: '5,500,000,000', grade: '5,700,000,000', salesteam1: '2,100,000,000', salesteam2: '1,800,000,000', salesteam3: '1,800,000,000', percent: '103.64%' },
+        const yearDataMap = {};
 
-    { month: '총계', goal: '17,500,000,000 ', grade: '17,000,000,000 ', salesteam1: '6,800,000,000', salesteam2: '5,900,000,000', salesteam3: '5,500,000,000', percent: '97.14%' }
-]);
-const searchQuery = ref('');
-const searchBy = ref('연도');
-const filteredyears = ref(years.value);
+        data.forEach(entry => {
+            const year = entry.targetYear;
+            const month = parseInt(entry.targetMonth);
+            const quarter = parseInt(entry.targetQuarter);
 
-function setSearchBy(criteria) {
-    searchBy.value = criteria;
-}
+            if (!yearDataMap[year]) {
+                yearDataMap[year] = {};
+            }
 
-function isQuarterRow(month) {
-    return ['1분기', '2분기', '3분기', '4분기'].includes(month);
-}
+            if (month) {
+                yearDataMap[year][`month-${month}`] = {
+                    year,
+                    displayMonthOrQuarter: `${month}월`,
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            } else if (quarter) {
+                yearDataMap[year][`quarter-${quarter}`] = {
+                    year,
+                    displayMonthOrQuarter: `${quarter}분기`,
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            } else {
+                yearDataMap[year]['total'] = {
+                    year,
+                    displayMonthOrQuarter: '총계',
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            }
+        });
 
-function isTotalRow(month) {
-    return month === '총계';
-}
+        targetData.value = [];
+        for (const year of Object.keys(yearDataMap).sort((a, b) => b - a)) {
+            for (const item of order) {
+                const key = item.targetMonth ? `month-${item.targetMonth}` : item.targetQuarter ? `quarter-${item.targetQuarter}` : 'total';
+                if (yearDataMap[year][key]) {
+                    targetData.value.push(yearDataMap[year][key]);
+                }
+            }
+        }
+
+        uniqueYears.value = [...new Set(targetData.value.map(item => item.year))].sort((a, b) => b - a);
+
+        // 기본 데이터를 불러오면 기본 연도 설정 후 필터링
+        filterData();
+    } catch (error) {
+        console.error('Error fetching target data:', error);
+        alert('실적 정보를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const fetchTeamData = async (teamCodeId) => {
+    try {
+        console.log(`Fetching data for team: ${teamCodeId}`);
+        const response = await axios.get(`http://localhost:7775/target/team/${teamCodeId}`);
+        const data = response.data;
+
+        console.log(`Fetched team data for team ${teamCodeId}:`, data);
+
+        const order = [
+            { targetMonth: 1, display: '1월' },
+            { targetMonth: 2, display: '2월' },
+            { targetMonth: 3, display: '3월' },
+            { targetQuarter: 1, display: '1분기' },
+            { targetMonth: 4, display: '4월' },
+            { targetMonth: 5, display: '5월' },
+            { targetMonth: 6, display: '6월' },
+            { targetQuarter: 2, display: '2분기' },
+            { targetMonth: 7, display: '7월' },
+            { targetMonth: 8, display: '8월' },
+            { targetMonth: 9, display: '9월' },
+            { targetQuarter: 3, display: '3분기' },
+            { targetMonth: 10, display: '10월' },
+            { targetMonth: 11, display: '11월' },
+            { targetMonth: 12, display: '12월' },
+            { targetQuarter: 4, display: '4분기' },
+            { targetMonth: null, display: '총계' }
+        ];
+
+        const yearDataMap = {};
+
+        data.forEach(entry => {
+            const year = entry.targetYear;
+            const month = parseInt(entry.targetMonth);
+            const quarter = parseInt(entry.targetQuarter);
+
+            if (!yearDataMap[year]) {
+                yearDataMap[year] = {};
+            }
+
+            if (month) {
+                yearDataMap[year][`month-${month}`] = {
+                    year,
+                    displayMonthOrQuarter: `${month}월`,
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            } else if (quarter) {
+                yearDataMap[year][`quarter-${quarter}`] = {
+                    year,
+                    displayMonthOrQuarter: `${quarter}분기`,
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            } else {
+                yearDataMap[year]['total'] = {
+                    year,
+                    displayMonthOrQuarter: '총계',
+                    goal: entry.targetPrice.toLocaleString(),
+                    grade: entry.grade || 0,
+                    require: entry.require || 0,
+                    percent: entry.percent || 0,
+                    teamCodeId: entry.team?.teamCodeId || entry.employee?.teamCode?.teamCodeId || null
+                };
+            }
+        });
+
+        targetData.value = [];
+        for (const year of Object.keys(yearDataMap).sort((a, b) => b - a)) {
+            for (const item of order) {
+                const key = item.targetMonth ? `month-${item.targetMonth}` : item.targetQuarter ? `quarter-${item.targetQuarter}` : 'total';
+                if (yearDataMap[year][key]) {
+                    targetData.value.push(yearDataMap[year][key]);
+                }
+            }
+        }
+
+        filterData();
+    } catch (error) {
+        console.error('Error fetching team data:', error);
+        alert('팀 실적 정보를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const fetchTeams = async () => {
+    const teamCodeId = selectedTeam.value;  // Use the selectedTeam value to determine the teamCodeId
+
+    if (!teamCodeId) {
+        filterData();  // Apply filtering for year only if no team is selected
+        return;
+    }
+
+    try {
+        await fetchTeamData(teamCodeId);  // Fetch data for the selected team
+    } catch (error) {
+        console.error('Error fetching teams:', error);
+        alert('팀 목록을 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const isQuarterRow = (monthOrQuarter) => {
+    return ['1분기', '2분기', '3분기', '4분기'].includes(monthOrQuarter);
+};
+
+const isTotalRow = (monthOrQuarter) => {
+    return monthOrQuarter === '총계';
+};
+
+const filterData = () => {
+    console.log('Filtering data...');
+    let filteredData = targetData.value;
+
+    if (selectedYear.value) {
+        filteredData = filteredData.filter(target => target.year === selectedYear.value);
+    }
+    if (selectedTeam.value) {
+        filteredData = filteredData.filter(target => target.teamCodeId == selectedTeam.value);
+    }
+    console.log('Filtered target data:', filteredData);
+    filteredTargetData.value = filteredData;
+};
+
+const handleDropdownChange = () => {
+    searchQuery.value = '';  // Clear the search input
+    applyFilter();           // Apply filter immediately
+};
+
+onMounted(async () => {
+    await fetchTargetData();  // Load initial target data
+});
+
+watch([selectedYear, selectedTeam], () => {
+    filterData();
+});
 </script>
 
 
 
 <style>
-    @import url('@/assets/css/performance/YearPerformance.css');
+.target-list-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.target-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 3%;
+}
+
+.year-filter {
+    margin-bottom: 20px;
+}
+
+.year-filter label {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.year-filter select {
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.target-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    margin-top: 3%;
+    margin-bottom: 7%;
+    gap: 1px;
+}
+
+.target-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.target-table th,
+.target-table td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 13px;
+    font-family: GmarketSansMedium;
+}
+
+.target-table th {
+    background-color: #0C2092;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.quarter-row {
+    background-color: #E5F7FE;
+}
+
+.total-row {
+    background-color: #F6E5FF;
+}
+
+.year-select {
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
+}
+
+.filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.year-filter,
+.team-filter {
+    margin-bottom: 20px;
+}
+
+.year-filter label,
+.team-filter label {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.year-filter select,
+.team-filter select {
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.team-filter select {
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
+}
+
+.target-list-content {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.target-list {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-top: 3%;
+}
+
+.target-list-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    height: auto;
+    width: 100%;
+    max-width: 1400px;
+    margin: 20px auto;
+    margin-top: 3%;
+    margin-bottom: 7%;
+    gap: 1px;
+}
+
+.target-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.target-table th,
+.target-table td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 13px;
+    font-family: GmarketSansMedium;
+}
+
+.target-table th {
+    background-color: #0C2092;
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+}
+
+.quarter-row {
+    background-color: #E5F7FE;
+}
+
+.total-row {
+    background-color: #F6E5FF;
+}
+
+.year-select {
+    height: 40px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #e5f0ff;
+    color: #0c2092;
+    outline: none;
+    width: 200px;
+}
 </style>
