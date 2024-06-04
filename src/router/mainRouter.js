@@ -216,19 +216,59 @@ const routes = [
         path: '/notice/modify/:noticeId',
         component: NoticeEdit
     },
-    { path: '/employees', component: EmployeeList },
-    { path: '/employees/:employeeId', component: EmployeeDetail },
-    { path: '/employees/regist', component: RegisterEmployee },
-    { path: '/employees/modify', component: ModifyEmployee },
-    { path: '/employees/access', component: EmployeeAccess },
-    { path: '/employees/app', component: EmployeeApp },
-    { path: '/delete' , component: DeleteRequest },
-    { path: '/change-password', component: ChangePassword },
+    {
+        path: '/employees',
+        component: EmployeeList,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/:employeeId',
+        component: EmployeeDetail,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/regist',
+        component: RegisterEmployee,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/modify',
+        component: ModifyEmployee,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/access',
+        component: EmployeeAccess,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/app',
+        component: EmployeeApp,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/delete',
+        component: DeleteRequest,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/change-password',
+        component: ChangePassword,
+        beforeEnter: requirePermission(22)
+    },
 ];
 
 const router = createRouter({
     history: createWebHistory(),
     routes
+});
+
+router.beforeEach((to, from, next) => {
+    if (requirePermission(22)) {
+        next();
+    } else {
+        next('/');
+    }
 });
 
 export default router;
