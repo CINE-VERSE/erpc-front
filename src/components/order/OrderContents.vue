@@ -4,10 +4,16 @@
             <h1 class="maintext">수주 정보 조회 내역</h1>
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
-                <button class="order-request" @click="requestApproval">결재 요청</button>
+                <div class="order-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
+                    <button class="order-request" @click="requestApproval">결재 요청</button>
+                </div>
                 <button class="order-edit" @click="goToOrderPage">수정</button>
                 <button class="order-delete" @click="deleteOrder">삭제</button>
                 <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
+            </div>
+            <div class="order-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && orderData.approvalContent">
+                <h3 class="order-approval-note2">결재 비고란</h3>
+                <div class="order-approval-note3">{{ orderData.approvalContent }}</div>
             </div>
             <div class="order-pdf77">
                 <div v-if="orderData.orderFile.length > 0">
@@ -166,7 +172,6 @@
                     </tr>
                 </tbody>
             </table>
-
         </div>
         <div class="shipment-search">
             <h1 class="maintext3">출하 정보</h1>
@@ -231,7 +236,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -254,18 +258,24 @@ const filteredOrderNotes = computed(() => {
     return orderNoteData.value.filter(note => note.orderDeleteDate === null);
 });
 
-// 컴포넌트가 마운트될 때 실행되는 코드
 onMounted(async () => {
-    const orderId = route.params.orderId;
+    const orderRegistrationId = route.params.orderRegistrationId;
+    console.log('Order Registration ID:', orderRegistrationId);  // Debugging line
+
+    if (!orderRegistrationId) {
+        console.error('Order Registration ID is not defined');
+        return;
+    }
+
     const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
 
     try {
         // 수주 데이터를 가져오는 API 호출
-        const orderResponse = await axios.get(`http://localhost:7775/order/${orderId}`);
+        const orderResponse = await axios.get(`http://localhost:7775/order/${orderRegistrationId}`);
         orderData.value = orderResponse.data;
 
         // 수주 노트 데이터를 가져오는 API 호출
-        const noteResponse = await axios.get(`http://localhost:7775/order_note/${orderId}`);
+        const noteResponse = await axios.get(`http://localhost:7775/order_note/${orderRegistrationId}`);
         orderNoteData.value = noteResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
@@ -279,20 +289,34 @@ onMounted(async () => {
                 taxInvoiceRequestData.value.push(taxInvoiceResponse.data);
             }
         }
+
+        // 전체 승인 데이터를 가져오는 API 호출
+        const approvalResponse = await axios.get('http://localhost:7775/approval/shipment');
+        const approvalData = approvalResponse.data;
+
+        // 현재 수주에 해당하는 결재 상태를 찾기
+        const currentApproval = approvalData.find(approval => approval.order.orderRegistrationId === parseInt(orderRegistrationId));
+        if (currentApproval) {
+            approvalStatus.value = currentApproval.approvalStatus.approvalStatus;
+            orderData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
+        }
+
     } catch (error) {
         console.error('Error fetching order data:', error);
     }
 });
 
+
 // 결재 요청 함수
 const requestApproval = async () => {
-    const orderId = route.params.orderId;
+    const orderRegistrationId = route.params.orderRegistrationId;
     try {
         const response = await axios.post('http://localhost:7775/approval/shipment/regist', {
-            order: { orderRegistrationId: orderId }
+            order: { orderRegistrationId: orderRegistrationId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
+        approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
@@ -301,7 +325,7 @@ const requestApproval = async () => {
 
 // 수주 수정 페이지로 이동하는 함수
 const goToOrderPage = () => {
-    router.push({ path: `/order/modify/${route.params.orderId}` });
+    router.push({ path: `/order/modify/${route.params.orderRegistrationId}` });
 };
 
 // 파일 다운로드 함수
@@ -317,11 +341,11 @@ const downloadFile = (url) => {
 
 // 엑셀 다운로드 함수
 const downloadExcel = () => {
-    const orderId = route.params.orderId;
-    const url = `http://localhost:7775/excel/order/${orderId}`;
+    const orderRegistrationId = route.params.orderRegistrationId;
+    const url = `http://localhost:7775/excel/order/${orderRegistrationId}`;
     const link = document.createElement('a');
     link.href = url;
-    link.download = `order_${orderId}.xlsx`;
+    link.download = `order_${orderRegistrationId}.xlsx`;
     link.target = '_blank';
     document.body.appendChild(link);
     link.click();
@@ -340,7 +364,7 @@ const closePopup = () => {
 
 // 수주 삭제 확인 함수
 const confirmDelete = async () => {
-    const orderId = route.params.orderId;
+    const orderRegistrationId = route.params.orderRegistrationId;
     try {
         const response = await axios.post('http://localhost:7775/order/delete', {
             orderDeleteRequestReason: deleteReason.value,
@@ -359,12 +383,12 @@ const confirmDelete = async () => {
 
 // 노트 추가 함수
 const addNote = async () => {
-    const orderId = route.params.orderId;
+    const orderRegistrationId = route.params.orderRegistrationId;
     const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
     try {
         const response = await axios.post('http://localhost:7775/order_note/regist', {
             orderNote: newNote.value,
-            order: { orderRegistrationId: orderId },
+            order: { orderRegistrationId: orderRegistrationId },
             employee: { employeeId: userId } // employeeId를 userId로 설정
         });
         alert('process 등록되었습니다.');
@@ -398,6 +422,7 @@ const deleteNote = async (orderNoteId) => {
     }
 };
 </script>
+
 
 
 <style>

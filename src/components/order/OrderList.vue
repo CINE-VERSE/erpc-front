@@ -110,8 +110,8 @@ function applyFilter() {
     }
 }
 
-function goToOrderContents(orderId) {
-    router.push({ path: `/order/${orderId}` });
+function goToOrderContents(orderRegistrationId) {
+    router.push({ path: `/order/${orderRegistrationId}` });
 }
 </script>
 
