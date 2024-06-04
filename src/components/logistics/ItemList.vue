@@ -4,6 +4,10 @@
       <h1>품목 목록</h1>
     </div>
     <div class="contract-list-box7">
+      <div class="search-bar">
+        <input type="text" v-model="searchKeyword" placeholder="검색어를 입력하세요">
+        <button @click="search">검색</button>
+      </div>
       <table class="contract-table7">
         <thead>
           <tr class="header1">
@@ -52,17 +56,31 @@ export default {
     return {
       productList: [],
       currentPage: 1,
-      pageSize: 15
+      pageSize: 15,
+      searchKeyword: ''
     };
   },
   computed: {
     paginatedProductList() {
       const startIndex = (this.currentPage - 1) * this.pageSize;
       const endIndex = this.currentPage * this.pageSize;
-      return this.productList.slice(startIndex, endIndex);
+      return this.filteredProductList.slice(startIndex, endIndex);
     },
     totalPages() {
-      return Math.ceil(this.productList.length / this.pageSize);
+      return Math.ceil(this.filteredProductList.length / this.pageSize);
+    },
+    filteredProductList() {
+      const keyword = this.searchKeyword.trim().toLowerCase();
+      if (!keyword) {
+        return this.productList;
+      }
+      return this.productList.filter(product =>
+        product.productName.toLowerCase().includes(keyword) ||
+        product.productMainCategory.toLowerCase().includes(keyword) ||
+        product.productSubCategory.toLowerCase().includes(keyword) ||
+        product.productStatus.toLowerCase().includes(keyword) ||
+        product.productInventory.toString().includes(keyword)
+      );
     }
   },
   mounted() {
@@ -86,6 +104,9 @@ export default {
       if (this.currentPage < this.totalPages) {
         this.currentPage++;
       }
+    },
+    search() {
+      this.currentPage = 1; // 검색할 때 페이지를 1페이지로 초기화
     }
   }
 };

@@ -26,6 +26,7 @@
               <input type="text" id='searchText' class="form-control" placeholder="Search..."
                 v-model="search_condition" @keyup.enter="callData"
                 style="height: 24px; font-size: 12px;">
+                <button @click="search" class="searchButton">검색</button>
             </div>
           </td>
         </tr>
@@ -83,38 +84,42 @@
     router.push(`/notice/regist`);
   }
 
+  function search() {
+  filterNotice();
+}
   watch([search_condition, search_type], () => {
-    if (search_condition.value && search_type.value) {
-      filterfree();
-    } else {
-      filteredfree.value = notice.value;
-    }
-  });
-  
-  function filterfree() {
-    const condition = search_condition.value.toLowerCase();
-    const type = search_type.value;
-  
-    if (type === "titleContent") {
-      filteredfree.value = free.value.filter(item =>
-        item.freeTitle.toLowerCase().includes(condition) ||
-        item.freeContent.toLowerCase().includes(condition)
-      );
-    } else if (type === "title") {
-      filteredfree.value = free.value.filter(item =>
-        item.freeTitle.toLowerCase().includes(condition)
-      );
-    } else if (type === "content") {
-      filteredfree.value = free.value.filter(item =>
-        item.freeContent.toLowerCase().includes(condition)
-      );
-    } else if (type === "writerId") {
-      filteredfree.value = free.value.filter(item =>
-        item.member.nickname.toLowerCase().includes(condition)
-      );
-    }
+  if (search_condition.value && search_type.value) {
+    filterNotice();
+  } else {
+    filteredfree.value = notice.value;
   }
-  </script>
+});
+
+
+function filterNotice() {
+  const condition = search_condition.value.toLowerCase();
+  const type = search_type.value;
+
+  if (type === "titleContent") {
+    filteredfree.value = notice.value.filter(item =>
+      item.noticeTitle.toLowerCase().includes(condition) ||
+      item.noticeContent.toLowerCase().includes(condition)
+    );
+  } else if (type === "title") {
+    filteredfree.value = notice.value.filter(item =>
+      item.noticeTitle.toLowerCase().includes(condition)
+    );
+  } else if (type === "content") {
+    filteredfree.value = notice.value.filter(item =>
+      item.noticeContent.toLowerCase().includes(condition)
+    );
+  } else if (type === "writerId") {
+    filteredfree.value = notice.value.filter(item =>
+      item.employee.employeeName.toLowerCase().includes(condition)
+    );
+  }
+}
+</script>
   
   <style scoped>
      @import url('@/assets/css/notice/NoticeList.css'); 
