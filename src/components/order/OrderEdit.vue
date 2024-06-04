@@ -145,14 +145,18 @@ import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const orderId = route.params.orderId;
+const orderRegistrationId = route.params.orderRegistrationId;
 const orderData = ref(null);
 const files = ref([]);
 const removedFiles = ref([]);
 
 const fetchOrderData = async () => {
     try {
-        const response = await axios.get(`http://localhost:7775/order/${orderId}`);
+        const response = await axios.get(`http://localhost:7775/order/${orderRegistrationId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
         orderData.value = response.data;
     } catch (error) {
         console.error('Error fetching order data:', error);
@@ -181,10 +185,11 @@ const registerOrder = async () => {
     }
 
     const orderUpdateData = {
+        orderRegistrationId: orderData.value.orderRegistrationId,
         contactDate: orderData.value.contactDate,
         orderTotalPrice: orderData.value.orderTotalPrice,
         orderDueDate: orderData.value.orderDueDate,
-        totalBalance: orderData.value.balance,
+        totalBalance: orderData.value.totalBalance,
         downPayment: orderData.value.downPayment,
         progressPayment: orderData.value.progressPayment,
         balance: orderData.value.balance,
@@ -210,13 +215,19 @@ const registerOrder = async () => {
     formData.append('removedFiles', JSON.stringify(removedFiles.value));
 
     try {
-        const response = await axios.patch(`http://localhost:7775/order/modify/${orderId}`, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        const response = await axios.patch(`http://localhost:7775/order/modify`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            },
+            withCredentials: true
         });
         alert('수주 수정이 성공적으로 완료되었습니다.');
         router.push({ path: `/order` });
     } catch (error) {
         console.error('수주 수정 중 오류가 발생했습니다.', error);
+        console.log('Response data:', error.response?.data); // Additional logging
+        console.log('Request config:', error.config); // Additional logging
         alert('수주 수정 중 오류가 발생했습니다.');
     }
 };
@@ -225,6 +236,9 @@ onMounted(() => {
     fetchOrderData();
 });
 </script>
+
+
+
 
 <style>
 .regist-content21 {

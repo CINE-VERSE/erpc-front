@@ -129,12 +129,12 @@ const routes = [
         component: OrderList
     },
     {
-        path: '/order/:orderId',
+        path: '/order/:orderRegistrationId',
         component: OrderContents,
         beforeEnter: requirePermission(14)
     },
     {
-        path: '/order/modify/:orderId',
+        path: '/order/modify/:orderRegistrationId',
         component: OrderEdit
     },
     {
