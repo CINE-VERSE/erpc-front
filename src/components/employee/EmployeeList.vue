@@ -1,11 +1,30 @@
 <template>
   <div>
-    <h2>직원 목록</h2>
-    <div class="employee-grid">
-      <router-link v-for="employee in employees" :key="employee.employeeId" :to="'/employees/' + employee.employeeId" class="employee-item">
-        {{ employee.employeeName }}
-      </router-link>
-    </div>
+    <div class="table-container">
+      <router-link :to="{ path: '/employees/regist' }" class="writebutton">직원 등록</router-link>
+    <table class="table">
+      <thead>
+        <tr class="header1">
+          <th class="num">No</th>
+          <th>이름</th>
+          <th>팀</th>
+          <th>직급</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(employee, index) in employees" :key="employee.employeeId" class="allpost">
+          <td>{{ index + 1 }}</td>
+          <td>
+            <router-link :to="'/employees/' + employee.employeeId" class="employee-item">
+              {{ employee.employeeName }}
+            </router-link>
+          </td>
+          <td>{{ mapTeamCode(employee.teamCode.teamCodeId) }}</td>
+          <td>{{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   </div>
 </template>
 
@@ -26,80 +45,103 @@ export default {
       .catch(error => {
         console.log(error);
       });
+  },
+  methods: {
+    mapEmployeeRank(employeeRankId) {
+      switch (parseInt(employeeRankId)) {
+        case 1:
+          return '사원';
+        case 2:
+          return '대리';
+        case 3:
+          return '과장';
+        case 4:
+          return '팀장';
+        case 5:
+          return '관리자';
+        default:
+          return '직급 미정';
+      }
+    },
+    mapTeamCode(teamCodeId) {
+      switch (parseInt(teamCodeId)) {
+        case 1:
+          return '영업 1팀';
+        case 2:
+          return '영업 2팀';
+        case 3:
+          return '영업 3팀';
+        case 4:
+          return '영업 4팀';
+        case 5:
+          return '영업 5팀';
+        case 6:
+          return '관리자';
+        default:
+          return '팀 미정';
+      }
+    }
   }
 }
 </script>
-<style scoped>
-.employee-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5개의 열로 그리드를 만듭니다. */
-  grid-gap: 10px; /* 열 사이의 간격을 조정합니다. */
-}
 
-.employee-item {
+<style>
+.table {
+  width: 100%;
+  min-width: 1000px;
+  max-width: 1000px;
+  border-collapse: separate;
   background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 10px;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.employee-item:hover {
-  background-color: #f1f1f1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.router-link-exact-active {
-  font-weight: bold;
-}
-
-.router-link-exact-active:hover {
-  background-color: #f1f1f1;
-}
-div {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-spacing: 0 10px;
 }
 
-h2 {
-  color: #333;
+.boardTitle {
+  font-size: 32px;
+  margin-top: 20px; 
   margin-bottom: 20px;
+  text-align: center; 
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+.thing {
+  text-align: right;
 }
 
-li {
-  background-color: #fff;
-  border: 1px solid #ddd;
+.header1 {
+  background-color: #b8c4e4;
+  height: 50px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.header1 .num {
+  width: 5%;
+}
+
+.allpost {
+  text-align: center;
+  padding: 10px 0;
+}
+
+.allpost .num {
+  width: 5%;
+}
+.writebutton {
+  background-color: #6c7aa1;
+  color: white;
+  padding: 10px 15px;
+  border: none;
   border-radius: 4px;
-  margin-bottom: 10px;
-  padding: 10px;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  font-size: 14px; 
+  font-weight: bold; 
+  margin-top: 20px;
+  margin-right: 20px;
+  float: right; /* 오른쪽으로 정렬 */
 }
 
-li:hover {
-  background-color: #f1f1f1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-a {
-  text-decoration: none;
-  color: #007bff;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-a:hover {
-  color: #0056b3;
-}
-
-a:active {
-  color: #004080;
+.writebutton:hover {
+  background-color: #b8c4e4;
 }
 </style>
