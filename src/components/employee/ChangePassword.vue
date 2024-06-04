@@ -1,8 +1,8 @@
 <template>
     <div class="change-password">
         <h1>비밀번호 변경</h1>
-        <label for="employee-id">Employee ID</label>
-        <input type="text" v-model="employeeCode" id="employee-id" name="employee-id" readonly>
+        <label for="employee-code">Employee Code</label>
+        <input type="text" v-model="employeeCode" id="employee-code" name="employee-code">
         <label for="new-password">새 비밀번호</label>
         <input type="password" v-model="newPassword" id="new-password" name="new-password">
         <button @click="changePassword">비밀번호 변경</button>
@@ -12,17 +12,14 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
-const employeeCode = ref(localStorage.getItem('userId') || '');
+const employeeCode = ref('');
 const newPassword = ref('');
 
 const changePassword = async () => {
     try {
-        const userId = localStorage.getItem('userId');
         const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
-            employeeId: userId,
+            employeeCode: employeeCode.value,
             employeePassword: newPassword.value
         }, {
             headers: {
@@ -33,7 +30,6 @@ const changePassword = async () => {
 
         if (response.status === 200) {
             alert('비밀번호 변경 성공!');
-            router.push('/');
         } else {
             alert('비밀번호 변경 실패: 서버 오류');
         }
@@ -43,7 +39,6 @@ const changePassword = async () => {
     }
 };
 </script>
-
 <style scoped>
 .change-password {
     max-width: 400px;

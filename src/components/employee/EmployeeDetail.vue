@@ -22,7 +22,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:7775/employees', 
+  baseURL: 'http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees', 
 });
 
 export default {

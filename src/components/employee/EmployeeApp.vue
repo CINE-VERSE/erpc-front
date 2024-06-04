@@ -55,7 +55,7 @@ const submitAccessRequest = async () => {
       }
     };
     console.log('Request Data:', requestAccess);
-    await axios.post('http://localhost:7775/access/access_request', requestAccess);
+    await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/access_request', requestAccess);
     alert('권한 신청이 완료되었습니다.');
     selectedAccess.value = [];
   } catch (error) {
