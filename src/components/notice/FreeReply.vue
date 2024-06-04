@@ -13,7 +13,7 @@
       </div>
       <div class="closebuttondiv">
         <form action="" name="deleteReply" method="post">
-          <button type="button" class="closebutton" @click="removeReply(reply.noticeCommentId)">삭제</button>
+          <button type="button" class="closebutton" @click="removeReply(reply.noticeCommentId)">X</button>
         </form>
       </div>
     </div>
@@ -118,6 +118,9 @@ const submitReply = async () => {
     // 등록된 댓글을 replies 배열에 추가
     replies.value.push(response.data);
     newComment.value = '';
+
+    // 댓글을 등록한 후 페이지를 새로고침합니다.
+    location.reload();
   } catch (error) {
     console.error('댓글 작성 중 에러 발생:', error);
   }

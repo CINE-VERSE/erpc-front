@@ -37,7 +37,6 @@ const submitPost = async () => {
   submitting.value = true;
 
   try {
-    // 로컬 스토리지에서 userId 가져오기
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('사용자 정보가 없습니다.');
@@ -53,17 +52,11 @@ const submitPost = async () => {
       team: { teamCodeId: 1 }
     }));
 
-    // 프록시 객체를 실제 배열로 변환하여 FormData에 추가
-    const actualImagesArray = Array.from(images.value);
-    if (actualImagesArray.length > 0) {
-      actualImagesArray.forEach(image => {
-        console.log(`Appending file: ${image.name}`);
-        formData.append('files', image);
-      });
-    } else {
-      // 이미지가 없을 경우 빈 파일 추가
-      formData.append('files', new Blob(), 'empty_image');
-    }
+    // 이미지를 Blob 형태로 변환하여 FormData에 추가
+    images.value.forEach(image => {
+      const blob = new Blob([image], { type: image.type });
+      formData.append('files', blob, image.name);
+    });
 
     await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/regist', formData, {
       headers: {

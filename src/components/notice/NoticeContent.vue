@@ -20,7 +20,7 @@
         <button type="button" @click="editPost" class="editbtn">수정</button>
       </div>
       <div class="delete">
-        <button type="button" @click="deletePost" class="deletebtn">삭제</button>
+        <button type="button" @click="confirmDelete" class="deletebtn">삭제</button>
       </div>
     </div>
     <hr class="titleLine">
@@ -75,7 +75,11 @@ async function deletePost() {
     console.error("Error deleting post:", error);
   }
 }
-
+function confirmDelete() {
+  if (confirm('게시물을 삭제하시겠습니까?')) {
+    deletePost();
+  }
+}
 function editPost() {
   router.push({ path: `/notice/modify/${route.params.noticeId}` });
 }
