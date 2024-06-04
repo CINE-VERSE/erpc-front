@@ -84,7 +84,7 @@ const accountData = ref({});
 onMounted(async () => {
     const accountId = route.params.accountId;
     try {
-        const response = await axios.get(`http://localhost:7775/account/${accountId}`);
+        const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/${accountId}`);
         accountData.value = response.data;
     } catch (error) {
         console.error('Error fetching account data:', error);
@@ -109,7 +109,7 @@ const updateAccount = async () => {
     accountData.value.employee = { employeeId: employeeId };
 
     try {
-        const response = await axios.patch(`http://localhost:7775/account/modify`, accountData.value);
+        const response = await axios.patch(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/modify`, accountData.value);
         alert('거래처 정보가 성공적으로 수정되었습니다.');
         router.push({ path: `/customer/${route.params.accountId}` });
     } catch (error) {
