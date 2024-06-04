@@ -52,7 +52,7 @@
           </div>
           <div class="form-group access-rights">
             <label for="accessRights">권한 목록:</label>
-            <div v-for="i in 21" :key="i" class="access-checkbox">
+            <div v-for="i in 22" :key="i" class="access-checkbox">
               <input type="checkbox" :value="i" v-model="selectedAccessRights">
               {{ accessRightsMap[i] }}
             </div>
@@ -137,7 +137,7 @@ const accessRightsMap = {
   19: "결재 읽기",
   20: "결재 처리",
   21: "품목 읽기",
-  // 나머지 권한들을 추가로 매핑
+  22: "관리자"
 };
 
   

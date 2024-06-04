@@ -267,7 +267,8 @@ router.beforeEach((to, from, next) => {
     if (requirePermission(22)) {
         next();
     } else {
-        next('/');
+        // 권한이 없는 경우에는 다음 단계로 이동합니다.
+        next();
     }
 });
 

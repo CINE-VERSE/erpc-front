@@ -10,7 +10,7 @@ export const getEmployeeAccess = async (userId) => {
         console.log('응답 데이터:', response.data); // 서버 응답 데이터 출력
         
         const accessIds = response.data
-            .filter(item => item.accessRight.accessId >= 1 && item.accessRight.accessId <= 21)
+            .filter(item => item.accessRight.accessId >= 1 && item.accessRight.accessId <= 22)
             .map(item => item.accessRight.accessId);
 
         if (accessIds.length > 0) {
