@@ -165,7 +165,7 @@ function createNewProduct() {
 const fetchProductData = async (index) => {
     const product = products.value[index];
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/product', { withCredentials: true });
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/product', { withCredentials: true });
         const productsData = response.data;
         const productData = productsData.find(p => p.productCode === product.itemCode);
         if (productData) {
@@ -186,7 +186,7 @@ const fetchProductData = async (index) => {
 
 const fetchWarehouses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/warehouse', { withCredentials: true });
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/warehouse', { withCredentials: true });
         warehouses.value = response.data;
     } catch (error) {
         console.error('창고 정보를 조회하는 중 오류가 발생했습니다.', error);
@@ -211,7 +211,7 @@ const updateWarehouseData = () => {
 
 const fetchCustomerData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/list', { withCredentials: true });
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/list', { withCredentials: true });
         const customers = response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
@@ -232,7 +232,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeId.value = employeeData.employeeId;
             employeeName.value = employeeData.employeeName;
@@ -313,7 +313,7 @@ const registerQuotation = async () => {
     });
 
     try {
-        const response = await axios.post('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/regist', formData, {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/regist', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });
