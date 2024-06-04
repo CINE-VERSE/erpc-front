@@ -68,11 +68,8 @@ const routes = [
     {
         path: '/customer/regist',
         component: CustomerRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(7)) {
-                next();}
-            }
-    },
+        beforeEnter: requirePermission(7)
+        },
     {
         path: '/customer',
         component: CustomerList
@@ -80,10 +77,7 @@ const routes = [
     {
         path: '/customer/:accountId',
         component: CustomerContents,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(6)) {
-                next();}
-            }
+        beforeEnter: requirePermission(6)
     },
     {
         path: '/customer/modify/:accountId',
@@ -92,10 +86,7 @@ const routes = [
     {
         path: '/estimate/regist',
         component: EstimateRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(10)) {
-                next();}
-            }
+        beforeEnter: requirePermission(10)
     },
     {
         path: '/estimate',
@@ -104,10 +95,7 @@ const routes = [
     {
         path: '/estimate/:quotationId',
         component: EstimateContents,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(9)) {
-                next();}
-            }
+        beforeEnter: requirePermission(9)
     },
     {
         path: '/estimate/modify/:quotationId',
@@ -116,10 +104,7 @@ const routes = [
     {
         path: '/contract/regist',
         component: ContractRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(13)) {
-                next();}
-            }
+        beforeEnter: requirePermission(13)
     },
     {
         path: '/contract',
@@ -129,10 +114,7 @@ const routes = [
     {
         path: '/contract/:contractId',
         component: ContractContents,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(12)) {
-                next();}
-            }
+        beforeEnter: requirePermission(12)
     },
     {
         path: '/contract/modify/:contractId',
@@ -141,10 +123,7 @@ const routes = [
     {
         path: '/order/regist',
         component: OrderRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(13)) {
-                next();}
-            }
+        beforeEnter: requirePermission(13)
     },
     {
         path: '/order',
@@ -153,10 +132,7 @@ const routes = [
     {
         path: '/order/:orderRegistrationId',
         component: OrderContents,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(14)) {
-                next();}
-            }
+        beforeEnter: requirePermission(14)
     },
     {
         path: '/order/modify/:orderRegistrationId',
@@ -197,10 +173,7 @@ const routes = [
     {
         path: '/salesopp/regist',
         component: SalesOppRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(4)) {
-                next();}
-            }
+        beforeEnter: requirePermission(4)
     },
     {
         path: '/salesopp/list',
@@ -210,10 +183,7 @@ const routes = [
     {
         path: '/salesopp/:salesOppId',
         component: SalesOppContent,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(3)) {
-                next();}
-            }
+        beforeEnter: requirePermission(3)
     },
     {
         path: '/salesopp/modify/:salesOppId',
@@ -222,26 +192,17 @@ const routes = [
     {
         path: '/item/list',
         component: ItemList,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(21)) {
-                next();}
-            }
+        beforeEnter: requirePermission(21)
     },
     {
         path: '/storage/list',
         component: StorageList,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(21)) {
-                next();}
-            }
+        beforeEnter: requirePermission(21)
     },
     {
         path: '/notice/regist',
         component: NoticeRegist,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(2)) {
-                next();}
-            }
+        beforeEnter: requirePermission(2)
     },
     {
         path: '/notice/list',
@@ -250,10 +211,7 @@ const routes = [
     {
         path: '/notice/:noticeId',
         component: NoticeContent,
-        beforeEnter: (to, from, next) => {
-            if (requirePermission(22) && requirePermission(1)) {
-                next();}
-            }
+        beforeEnter: requirePermission(1)
     },
     {
         path: '/notice/modify/:noticeId',

@@ -26,43 +26,26 @@ export const getEmployeeAccess = async (userId) => {
 };
 
 export const requirePermission = (requiredAccessId) => {
-    return async (to, from, next) => {
-        try {
-            const userId = getUserIdFromLocalStorage();
-            if (!userId) {
-                console.error('LocalStorage에서 userId를 가져올 수 없음');
-                alert('접근이 거부되었습니다.');
-                return next(false);
-            }
-
-            const accessIds = await getEmployeeAccess(userId);
-
-            if (accessIds.includes(requiredAccessId)) {
-                next();
-            } else {
-                alert('접근이 거부되었습니다.');
-                next(false);
-            }
-        } catch (error) {
-            console.error('사용자 권한 확인 중 오류:', error);
-            alert('접근이 거부되었습니다.');
-            next(false);
-        }
-    };
-};
-export const hasAccessId = async (accessId) => {
-    try {
+    return async (to, from, next) => { // 콜백 함수 반환
+      try {
         const userId = getUserIdFromLocalStorage();
         if (!userId) {
-            console.error('LocalStorage에서 userId를 가져올 수 없음');
-            return false;
+          console.error('LocalStorage에서 userId를 가져올 수 없음');
+          alert('접근이 거부되었습니다.');
+          return next(false);
         }
-
+  
         const accessIds = await getEmployeeAccess(userId);
-
-        return accessIds.includes(accessId);
-    } catch (error) {
+        if (accessIds.includes(22) || accessIds.includes(requiredAccessId)) {
+          next();
+        } else {
+          alert('접근 권한이 없습니다.');
+          next(false);
+        }
+      } catch (error) {
         console.error('사용자 권한 확인 중 오류:', error);
-        return false;
-    }
-};
+        alert('접근이 거부되었습니다.');
+        next(false);
+      }
+    };
+  };
