@@ -216,14 +216,46 @@ const routes = [
         path: '/notice/modify/:noticeId',
         component: NoticeEdit
     },
-    { path: '/employees', component: EmployeeList },
-    { path: '/employees/:employeeId', component: EmployeeDetail },
-    { path: '/employees/regist', component: RegisterEmployee },
-    { path: '/employees/modify', component: ModifyEmployee },
-    { path: '/employees/access', component: EmployeeAccess },
-    { path: '/employees/app', component: EmployeeApp },
-    { path: '/delete' , component: DeleteRequest },
-    { path: '/change-password', component: ChangePassword },
+    {
+        path: '/employees',
+        component: EmployeeList,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/:employeeId',
+        component: EmployeeDetail,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/regist',
+        component: RegisterEmployee,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/modify',
+        component: ModifyEmployee,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/access',
+        component: EmployeeAccess,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/app',
+        component: EmployeeApp,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/delete',
+        component: DeleteRequest,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/change-password',
+        component: ChangePassword,
+        beforeEnter: requirePermission(22)
+    },
 ];
 
 const router = createRouter({
@@ -232,12 +264,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    // requirePermission 함수로 사용자의 권한 레벨을 확인하고,
-    // 권한 레벨이 22인 경우에는 모든 경로에 대한 접근을 허용합니다.
     if (requirePermission(22)) {
         next();
     } else {
-        // 그 외의 경우에는 권한이 없는 페이지로 리디렉션합니다.
         next('/');
     }
 });
