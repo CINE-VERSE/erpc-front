@@ -231,4 +231,15 @@ const router = createRouter({
     routes
 });
 
+router.beforeEach((to, from, next) => {
+    // requirePermission 함수로 사용자의 권한 레벨을 확인하고,
+    // 권한 레벨이 22인 경우에는 모든 경로에 대한 접근을 허용합니다.
+    if (requirePermission(22)) {
+        next();
+    } else {
+        // 그 외의 경우에는 권한이 없는 페이지로 리디렉션합니다.
+        next('/');
+    }
+});
+
 export default router;
