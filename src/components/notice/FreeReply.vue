@@ -20,9 +20,9 @@
     <div class="noreply" v-if="!replies.length">
       <p>댓글이 없습니다.</p>
     </div>
-    <div class="registreplywriterdiv">
-      <span>{{ employeeName }}</span>
-    </div>
+    <!-- <div class="registreplywriterdiv">
+       <span>{{ reply.employee.employeeName }}</span> 
+    </div>  -->
     <div class="registreplydiv">
       <form id="comment" @submit.prevent="submitReply">
         <div class="commentbox">

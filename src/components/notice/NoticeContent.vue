@@ -25,8 +25,8 @@
     </div>
     <hr class="titleLine">
     <div class="maincontent">
-      <div v-if="notice.images && notice.images.length > 0" class="image-container">
-        <img v-for="(image, index) in notice.images" :key="index" :src="image.accessUrl" :alt="'Image ' + (index + 1)" class="notice-image">
+      <div v-if="notice.noticeFile && notice.noticeFile.length > 0" class="image-container">
+        <img v-for="(image, index) in notice.noticeFile" :key="index" :src="image.accessUrl" :alt="'Image ' + (index + 1)" class="notice-image">
       </div>
     </div>
     <div class="content">
@@ -220,5 +220,13 @@ button {
 .content {
     clear: both;        
     width: 1100px;
+}
+.image-container {
+  width: 100%;
+}
+
+.notice-image {
+  max-width: 100%;
+  height: auto;
 }
 </style>
