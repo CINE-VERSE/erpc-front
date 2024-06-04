@@ -23,8 +23,10 @@
                     <input type="text" v-model="employeeCode" id="employee-id" name="employee-id">
                     <label for="password">Password</label>
                     <input type="password" v-model="employeePassword" id="password" name="password">
+                    <div class="login-container2">
                     <button @click="login">로그인</button>
                     <button @click="changePassword">비밀번호 찾기</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -89,6 +91,7 @@ const login = async () => {
             localStorage.setItem('userId', userId);
             alert('로그인 성공!');
             fetchEmployeeData();
+            location.reload(); // 로그인 성공 후 새로고침
         } else {
             alert('로그인 실패: 토큰을 받지 못했습니다.');
         }
@@ -109,7 +112,6 @@ const changePassword = () => {
     router.push('/change-password');
 };
 </script>
-
 
 <style>
 .mainpage {
@@ -224,6 +226,13 @@ const changePassword = () => {
 
 .login-container {
     text-align: center;
+
+}
+.login-container2 {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 .logged-in-message {
@@ -278,4 +287,23 @@ const changePassword = () => {
 .login-container button:hover {
     background-color: #051A80;
 }
+
+.login-container button,
+.logged-in-message button {
+    width: 85%;
+    padding: 10px;
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px; /* 버튼 간의 간격을 조정합니다. */
+}
+
+.login-container button:hover,
+.logged-in-message button:hover {
+    background-color: #051A80;
+}
+
 </style>

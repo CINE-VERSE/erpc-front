@@ -210,7 +210,7 @@ const routes = [
     {
         path: '/notice/:noticeId',
         component: NoticeContent,
-        beforeEnter: requirePermission(1)
+        // beforeEnter: requirePermission(1)
     },
     {
         path: '/notice/modify/:noticeId',

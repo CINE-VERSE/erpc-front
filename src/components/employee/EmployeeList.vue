@@ -1,13 +1,11 @@
 <template>
   <div>
     <h2>직원 목록</h2>
-    <ul>
-      <li v-for="employee in employees" :key="employee.employeeId">
-        <router-link :to="'/employees/' + employee.employeeId">
-          {{ employee.employeeName }}
-        </router-link>
-      </li>
-    </ul>
+    <div class="employee-grid">
+      <router-link v-for="employee in employees" :key="employee.employeeId" :to="'/employees/' + employee.employeeId" class="employee-item">
+        {{ employee.employeeName }}
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -32,6 +30,32 @@ export default {
 }
 </script>
 <style scoped>
+.employee-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5개의 열로 그리드를 만듭니다. */
+  grid-gap: 10px; /* 열 사이의 간격을 조정합니다. */
+}
+
+.employee-item {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.employee-item:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.router-link-exact-active {
+  font-weight: bold;
+}
+
+.router-link-exact-active:hover {
+  background-color: #f1f1f1;
+}
 div {
   font-family: Arial, sans-serif;
   padding: 20px;
