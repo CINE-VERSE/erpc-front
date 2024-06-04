@@ -178,7 +178,7 @@ const formattedTotalCost = computed(() => formatNumber(quotation.value.quotation
 
 const fetchQuotationData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/code', {
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/code', {
             params: {
                 quotationCode: quotationCode.value
             }
@@ -315,7 +315,7 @@ const registerContract = async () => {
     });
 
     try {
-        const response = await axios.post('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/regist', formData, {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/regist', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             },

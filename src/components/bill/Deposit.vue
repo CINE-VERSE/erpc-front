@@ -50,7 +50,7 @@ const filteredDeposits = ref([]);
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/collection');
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/collection');
         deposits.value = response.data;
         filteredDeposits.value = deposits.value;
     } catch (error) {
