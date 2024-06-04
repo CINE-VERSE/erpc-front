@@ -302,10 +302,17 @@ const registerQuotation = async () => {
 
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
-    
-    files.value.forEach(file => {
-        formData.append('files', file);
-    });
+
+    // 첨부 파일이 있는 경우에만 파일 추가
+    if (files.value.length > 0) {
+        files.value.forEach(file => {
+            formData.append('files', file);
+        });
+    }
+
+    // 콘솔 로그에 전달하는 데이터 출력
+    console.log("Quotation Data to be sent:", quotation);
+    console.log("Files to be sent:", files.value);
 
     try {
         const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/regist', formData, {
@@ -316,9 +323,13 @@ const registerQuotation = async () => {
         router.push({ path: `/estimate` });
     } catch (error) {
         console.error('견적서를 등록하는 중 오류가 발생했습니다.', error);
+        console.error('에러 응답 데이터:', error.response ? error.response.data : '응답 없음');
+        console.error('에러 응답 상태:', error.response ? error.response.status : '응답 없음');
+        console.error('에러 요청 설정:', error.config);
         alert('견적서를 등록하는 중 오류가 발생했습니다.');
     }
 };
+
 
 
 
