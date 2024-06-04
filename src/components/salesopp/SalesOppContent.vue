@@ -79,9 +79,10 @@
         <div class="popup-content">
             <h3>상태변경</h3>
             <select v-model="newStatus">
-                <option value="기회 인지">기회 인지</option>
-                <option value="협상">협상</option>
-                <option value="종료">종료</option>
+                <option value="등록">등록</option>
+                <option value="진행중">진행중</option>
+                <option value="성사">성사</option>
+                <option value="불발">불발</option>
             </select>
             <button @click="confirmStatusChange">확인</button>
             <button class="close-btn" @click="closeStatusPopup">닫기</button>
@@ -194,9 +195,10 @@ const confirmStatusChange = async () => {
 // 상태 이름으로 상태 ID를 조회하는 함수 (예: 서버에서 가져온 상태 목록을 사용)
 const getStatusIdByName = (statusName) => {
     const statusMapping = {
-        '기회 인지': 1,
-        '협상': 2,
-        '종료': 3
+        '등록': 1,
+        '진행중': 2,
+        '성사': 3,
+        '불발': 4
     };
     return statusMapping[statusName];
 };

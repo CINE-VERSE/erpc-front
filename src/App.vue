@@ -3,7 +3,7 @@
   <main class="container">
     <div class="main1">
       <ul class="menu">
-        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
+        <li class="menu-item" v-for="(item, index) in filteredMenuItems" :key="index">
           <div class="menu-header">
             <span class="menu-button-text">{{ item.title }}</span>
             <button class="menu-button" @click="() => { toggleSubItems(index); }">
@@ -39,14 +39,16 @@ const menuItems = ref([
       { title: '게시글 작성', path: '/notice/regist' },
       { title: '게시글 목록', path: '/notice/list' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '결재 관리',
     subItems: [
       { title: '승인 요청 목록', path: '/approval' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '영업 기회',
@@ -54,7 +56,8 @@ const menuItems = ref([
       { title: '영업 기회 등록', path: '/salesopp/regist' },
       { title: '영업 기회 목록', path: '/salesopp/list' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '품목 관리',
@@ -62,7 +65,8 @@ const menuItems = ref([
       { title: '품목 목록', path: '/item/list' },
       { title: '창고 목록', path: '/storage/list' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '거래처 관리',
@@ -70,7 +74,8 @@ const menuItems = ref([
       { title: '거래처 등록', path: '/customer/regist' },
       { title: '거래처 목록', path: '/customer' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '견적서 관리',
@@ -78,7 +83,8 @@ const menuItems = ref([
       { title: '견적서 등록', path: '/estimate/regist' },
       { title: '견적서 목록', path: '/estimate' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '계약서 관리',
@@ -86,7 +92,8 @@ const menuItems = ref([
       { title: '계약서 등록', path: '/contract/regist' },
       { title: '계약서 목록', path: '/contract' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '수주 관리',
@@ -94,7 +101,8 @@ const menuItems = ref([
       { title: '수주 등록', path: '/order/regist' },
       { title: '수주 목록', path: '/order' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
   {
     title: '전표 관리',
@@ -102,9 +110,9 @@ const menuItems = ref([
       { title: '수금 조회', path: '/bill/deposit' },
       { title: 'CB 요청', path: '/bill/request' }
     ],
-    isOpen: false
+    isOpen: false,
+    isVisible: true // 항상 보이는 항목
   },
-  // 실적 관리는 22번 권한이 있을 때만 보이도록 설정
   {
     title: '실적 관리',
     subItems: [
@@ -112,8 +120,8 @@ const menuItems = ref([
       { title: 'Team 실적 조회', path: '/performance/team' }
     ],
     isOpen: false,
+    isVisible: true
   },
-  // 관리자 페이지는 22번 권한이 있을 때만 보이도록 설정
   {
     title: '관리자 페이지',
     subItems: [
@@ -122,7 +130,7 @@ const menuItems = ref([
       { title: '삭제 신청', path: '/delete' }
     ],
     isOpen: false,
-    isVisible: requirePermission(22) 
+    isVisible: computed(() => requirePermission(22))
   }
 ]);
 

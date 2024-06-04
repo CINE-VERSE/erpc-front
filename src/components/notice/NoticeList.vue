@@ -30,7 +30,7 @@
           </td>
         </tr>
         <tr class="header1">
-          <td class="num">No</td>
+          <td class="num">번호</td>
           <td>제목</td>
           <td>작성자</td>
           <td>작성부서</td>
@@ -38,7 +38,7 @@
         </tr>
         <tbody>
     <tr v-for="(item, index) in filteredfree" :key="item.noticeId" class="allpost" @click="changeRouter(item.noticeId)">
-      <td>{{ index + 1 }}</td>
+      <td>{{ filteredfree.length - index }}</td>
       <td class="boardname">{{ item.noticeTitle }}</td>
       <td>{{ item.employee.employeeName }}</td>
       <td>{{ item.team.teamCode }}</td>
