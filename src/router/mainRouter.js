@@ -49,6 +49,7 @@ import NoticeEdit from '@/components/notice/NoticeEdit.vue';
 
 
 import EmployeeList from '@/components/employee/EmployeeList.vue';
+import EmployeeMy from '@/components/employee/MyEmployeeDetail.vue';
 import EmployeeDetail from '@/components/employee/EmployeeDetail.vue';
 import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
 import ModifyEmployee from '@/components/employee/ModifyEmployee.vue';
@@ -286,7 +287,6 @@ const routes = [
     {
         path: '/employees/app',
         component: EmployeeApp,
-        beforeEnter: requirePermission(22)
     },
     {
         path: '/delete',
@@ -296,7 +296,11 @@ const routes = [
     {
         path: '/change-password',
         component: ChangePassword,
-        beforeEnter: requirePermission(22)
+    
+    },
+    {
+        path: '/employees/my/:employeeId',
+        component: EmployeeMy,
     },
 ];
 

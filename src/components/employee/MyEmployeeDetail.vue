@@ -11,8 +11,7 @@
     <p>팀: {{ mapTeamCode(employee.teamCode.teamCodeId) }}</p>
 
     <div class="button-container">
-      <router-link :to="{ path: '/employees/modify', query: { employeeId: employee.employeeId }}" class="edit-button">수정</router-link>
-      <router-link :to="{ path: '/employees/regist' }" class="register-button">등록</router-link>
+      <router-link :to="{ path: '/change-password', query: { employeeId: employee.employeeId }}" class="edit-button">비밀번호 변경</router-link>
     </div>
   </div>
 </template>

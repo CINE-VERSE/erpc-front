@@ -28,9 +28,9 @@
 <script setup>
 import Header from './components/main/Header.vue';
 import Footer from './components/main/Footer.vue';
-
 import { RouterView, RouterLink } from 'vue-router';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { requirePermission } from '@/components/auth';
 
 const menuItems = ref([
   {
@@ -104,19 +104,35 @@ const menuItems = ref([
     ],
     isOpen: false
   },
+  // 실적 관리는 22번 권한이 있을 때만 보이도록 설정
   {
     title: '실적 관리',
     subItems: [
       { title: '연간 실적 조회', path: '/performance/year' },
       { title: 'Team 실적 조회', path: '/performance/team' }
     ],
-    isOpen: false
+    isOpen: false,
+  },
+  // 관리자 페이지는 22번 권한이 있을 때만 보이도록 설정
+  {
+    title: '관리자 페이지',
+    subItems: [
+      { title: '사원 리스트', path: '/employees' },
+      { title: '접근 신청', path: '/employees/access' },
+      { title: '삭제 신청', path: '/delete' }
+    ],
+    isOpen: false,
+    isVisible: requirePermission(22) 
   }
 ]);
 
 const toggleSubItems = (index) => {
   menuItems.value[index].isOpen = !menuItems.value[index].isOpen;
 };
+
+const filteredMenuItems = computed(() => {
+  return menuItems.value.filter(item => item.isVisible !== false);
+});
 </script>
 
 <style>

@@ -49,7 +49,7 @@ function main() {
 function viewProfile() {
     const userId = localStorage.getItem('userId');
     if (userId) {
-        router.push(`/employees/${userId}`);
+        router.push(`/employees/my/${userId}`);
     } else {
         alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
     }
@@ -60,6 +60,7 @@ function logout() {
     localStorage.removeItem('userId'); // 사용자 ID 삭제
     employeeName.value = ''; // 로그인한 사용자 이름 초기화
     location.reload(); // 페이지 새로고침하여 상태 초기화
+    router.push("/");
 }
 </script>
 
