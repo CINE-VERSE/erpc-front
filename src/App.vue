@@ -3,14 +3,14 @@
   <main class="container">
     <div class="main1">
       <ul class="menu">
-        <li class="menu-item" v-for="(item, index) in filteredMenuItems" :key="index">
+        <li class="menu-item" v-for="(item, index) in menuItems" :key="index">
           <div class="menu-header">
             <span class="menu-button-text">{{ item.title }}</span>
             <button class="menu-button" @click="() => { toggleSubItems(index); }">
               <img src="@/assets/img/plus.png" class="menuimage">
             </button>
           </div>
-          <ul v-if="item.isOpen" class="sub-menu">
+          <ul v-if="item.isOpen && (item.title !== '관리자 페이지' || hasAdminAccess)" class="sub-menu">
             <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex">
               <RouterLink :to="subItem.path" class="sub-menu-link">{{ subItem.title }}</RouterLink>
             </li>
@@ -29,8 +29,11 @@
 import Header from './components/main/Header.vue';
 import Footer from './components/main/Footer.vue';
 import { RouterView, RouterLink } from 'vue-router';
-import { ref, computed } from 'vue';
-import { requirePermission } from '@/components/auth';
+import { ref, onMounted } from 'vue';
+import { hasAccessId } from '@/components/auth';
+
+const userId = ref(localStorage.getItem('userId'));
+const hasAdminAccess = ref(false);
 
 const menuItems = ref([
   {
@@ -40,7 +43,6 @@ const menuItems = ref([
       { title: '게시글 목록', path: '/notice/list' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '결재 관리',
@@ -48,7 +50,6 @@ const menuItems = ref([
       { title: '승인 요청 목록', path: '/approval' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '영업 기회',
@@ -57,7 +58,6 @@ const menuItems = ref([
       { title: '영업 기회 목록', path: '/salesopp/list' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '품목 관리',
@@ -66,7 +66,6 @@ const menuItems = ref([
       { title: '창고 목록', path: '/storage/list' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '거래처 관리',
@@ -75,7 +74,6 @@ const menuItems = ref([
       { title: '거래처 목록', path: '/customer' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '견적서 관리',
@@ -84,7 +82,6 @@ const menuItems = ref([
       { title: '견적서 목록', path: '/estimate' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '계약서 관리',
@@ -93,7 +90,6 @@ const menuItems = ref([
       { title: '계약서 목록', path: '/contract' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '수주 관리',
@@ -102,7 +98,6 @@ const menuItems = ref([
       { title: '수주 목록', path: '/order' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '전표 관리',
@@ -111,7 +106,6 @@ const menuItems = ref([
       { title: 'CB 요청', path: '/bill/request' }
     ],
     isOpen: false,
-    isVisible: true // 항상 보이는 항목
   },
   {
     title: '실적 관리',
@@ -120,7 +114,6 @@ const menuItems = ref([
       { title: 'Team 실적 조회', path: '/performance/team' }
     ],
     isOpen: false,
-    isVisible: true
   },
   {
     title: '관리자 페이지',
@@ -130,7 +123,6 @@ const menuItems = ref([
       { title: '삭제 신청', path: '/delete' }
     ],
     isOpen: false,
-    isVisible: computed(() => requirePermission(22))
   }
 ]);
 
@@ -138,10 +130,14 @@ const toggleSubItems = (index) => {
   menuItems.value[index].isOpen = !menuItems.value[index].isOpen;
 };
 
-const filteredMenuItems = computed(() => {
-  return menuItems.value.filter(item => item.isVisible !== false);
-});
+// hasAccessId 함수를 async/await로 변경
+const checkAdminAccess = async () => {
+  hasAdminAccess.value = await hasAccessId(22);
+};
+
+onMounted(checkAdminAccess); // 컴포넌트 마운트 시 관리자 권한 확인
 </script>
+
 
 <style>
 @font-face {

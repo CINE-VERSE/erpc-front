@@ -50,3 +50,19 @@ export const requirePermission = (requiredAccessId) => {
         }
     };
 };
+export const hasAccessId = async (accessId) => {
+    try {
+        const userId = getUserIdFromLocalStorage();
+        if (!userId) {
+            console.error('LocalStorage에서 userId를 가져올 수 없음');
+            return false;
+        }
+
+        const accessIds = await getEmployeeAccess(userId);
+
+        return accessIds.includes(accessId);
+    } catch (error) {
+        console.error('사용자 권한 확인 중 오류:', error);
+        return false;
+    }
+};

@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <!-- 삭제 팝업 창 -->
+ 
     <div class="popup" v-if="showDeletePopup">
         <div class="popup-content">
             <p>팝업 창에 표시될 내용</p>
@@ -76,7 +76,7 @@
 
     <!-- 상태변경 팝업 창 -->
     <div class="popup" v-if="showStatusPopup">
-        <div class="popup-content">
+        <div class="popup-content" style="position: fixed; top: 50%; left: 57%; transform: translate(-50%, -50%);">
             <h3>상태변경</h3>
             <select v-model="newStatus">
                 <option value="등록">등록</option>
@@ -262,4 +262,11 @@ const filteredSalesOppNoteData = computed(() => {
 
 <style>
 @import url('@/assets/css/order/OrderContents.css');
+.popup-content {
+  width: 500px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 </style>
