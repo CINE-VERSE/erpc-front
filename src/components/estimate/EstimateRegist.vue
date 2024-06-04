@@ -276,15 +276,9 @@ const registerQuotation = async () => {
     const isCustomerValid = customerCode.value && customerName.value;
     const isEmployeeValid = employeeId.value && employeeName.value;
     const isDueDateValid = dueDate.value;
-    const areFilesUploaded = files.value.length > 0;
 
     if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
         alert('모든 필수 입력란을 채워주세요.');
-        return;
-    }
-
-    if (!areFilesUploaded) {
-        alert('첨부파일을 등록해주세요.');
         return;
     }
 
@@ -308,6 +302,7 @@ const registerQuotation = async () => {
 
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
+    
     files.value.forEach(file => {
         formData.append('files', file);
     });
@@ -324,6 +319,9 @@ const registerQuotation = async () => {
         alert('견적서를 등록하는 중 오류가 발생했습니다.');
     }
 };
+
+
+
 
 const clearProductData = (index) => {
     const product = products.value[index];
