@@ -4,8 +4,8 @@
             <img src="@/assets/img/logo2.png" class="logoimage" @click="main">
         </div>
         <div class="nav-buttons" v-if="isLoggedIn">
-            <button @click="viewProfile">내 정보</button>
-            <button @click="logout">로그아웃</button>
+            <button class="profile-button" @click="viewProfile">내 정보</button>
+            <button class="logout-button" @click="logout">로그아웃</button>
         </div>
     </header>
 </template>
@@ -65,4 +65,33 @@ function logout() {
 
 <style>
     @import url('@/assets/css/main/Header.css');
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+    }
+
+    .nav-buttons {
+        display: flex;
+        align-items: center;
+    }
+
+    .profile-button,
+    .logout-button {
+        margin-left: 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #4CAF50;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-button:hover,
+    .logout-button:hover {
+        background-color: #45a049;
+    }
 </style>
