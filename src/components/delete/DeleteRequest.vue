@@ -15,18 +15,17 @@
     <div v-if="contractDeleteRequests.length">
       <h2>계약서 삭제 요청</h2>
       <ul>
-        <li v-for="(request, index) in contractDeleteRequests" :key="request.contractDeleteRequestId">
+        <li v-for="(request, index) in contractDeleteRequests" :key="request.contractDeleteRequestId" @click="openSingleView(request.contractDeleteRequestId, 'contract')">
           {{ index + 1 }} - {{ request.contractDeleteRequestReason }}
           <button @click="processContractDeleteRequest(request.contractDeleteRequestId)">삭제 처리</button>
         </li>
       </ul>
     </div>
 
-    <!-- 추가된 코드 -->
     <div v-if="quotationDeleteRequests.length">
       <h2>견적서 삭제 요청</h2>
       <ul>
-        <li v-for="(request, index) in quotationDeleteRequests" :key="request.quotationDeleteRequestId">
+        <li v-for="(request, index) in quotationDeleteRequests" :key="request.quotationDeleteRequestId" @click="openSingleView(request.quotationDeleteRequestId, 'quotation')">
           {{ index + 1 }} - {{ request.quotationDeleteRequestReason }}
           <button @click="processQuotationDeleteRequest(request.quotationDeleteRequestId)">삭제 처리</button>
         </li>
@@ -36,7 +35,7 @@
     <div v-if="accountDeleteRequests.length">
       <h2>거래처 삭제 요청</h2>
       <ul>
-        <li v-for="(request, index) in accountDeleteRequests" :key="request.accountDeleteRequestId">
+        <li v-for="(request, index) in accountDeleteRequests" :key="request.accountDeleteRequestId" @click="openSingleView(request.accountDeleteRequestId, 'account')">
           {{ index + 1 }} - {{ request.accountDeleteRequestReason }}
           <button @click="processAccountDeleteRequest(request.accountDeleteRequestId)">삭제 처리</button>
         </li>
@@ -46,7 +45,7 @@
     <div v-if="orderDeleteRequests.length">
       <h2>수주 삭제 요청</h2>
       <ul>
-        <li v-for="(request, index) in orderDeleteRequests" :key="request.orderDeleteRequestId">
+        <li v-for="(request, index) in orderDeleteRequests" :key="request.orderDeleteRequestId" @click="openSingleView(request.orderDeleteRequestId, 'order')">
           {{index + 1 }} - {{ request.orderDeleteRequestReason }}
           <button @click="processOrderDeleteRequest(request.orderDeleteRequestId)">삭제 처리</button>
         </li>
@@ -57,7 +56,6 @@
       삭제 요청이 없습니다.
     </div>
 
-    <!-- 팝업 부분 -->
     <div v-if="isModalOpen" class="modal">
       <div class="modal-content">
         {{ singleViewContent }}
@@ -106,79 +104,77 @@ export default {
       }
     },
     async processSalesOppDeleteRequest(salesOppDeleteRequestId) {
-  try {
-    const requestData = { 
-      salesOppDeleteRequestId: salesOppDeleteRequestId,
-    };
-    console.log('Request Data:', requestData); 
+      try {
+        const requestData = { 
+          salesOppDeleteRequestId: salesOppDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
 
-    await DeleteService.updateSalesOppDeleteRequestProcess(requestData);
-    alert('영업기회 삭제 요청이 성공적으로 처리되었습니다.');
-    this.fetchDeleteRequests();
-  } catch (error) {
-    console.error('영업기회 삭제 요청 처리 중 오류가 발생했습니다:', error);
-  }
-},
-async processContractDeleteRequest(contractDeleteRequestId) {
-  try {
-    const requestData = { 
-      contractDeleteRequestId: contractDeleteRequestId,
-    };
-    console.log('Request Data:', requestData); 
+        await DeleteService.updateSalesOppDeleteRequestProcess(requestData);
+        alert('영업기회 삭제 요청이 성공적으로 처리되었습니다.');
+        this.fetchDeleteRequests();
+      } catch (error) {
+        console.error('영업기회 삭제 요청 처리 중 오류가 발생했습니다:', error);
+      }
+    },
+    async processContractDeleteRequest(contractDeleteRequestId) {
+      try {
+        const requestData = { 
+          contractDeleteRequestId: contractDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
 
-    await DeleteService.updateContractDeleteRequestStatus(requestData);
-    alert('계약서 삭제 요청이 성공적으로 처리되었습니다.');
-    this.fetchDeleteRequests();
-  } catch (error) {
-    console.error('계약서 삭제 요청 처리 중 오류가 발생했습니다:', error);
-  }
-},
-async processQuotationDeleteRequest(QuotationDeleteRequestId) {
-  try {
-    const requestData = { 
-      QuotationDeleteRequestId: QuotationDeleteRequestId,
-    };
-    console.log('Request Data:', requestData); 
+        await DeleteService.updateContractDeleteRequestStatus(requestData);
+        alert('계약서 삭제 요청이 성공적으로 처리되었습니다.');
+        this.fetchDeleteRequests();
+      } catch (error) {
+        console.error('계약서 삭제 요청 처리 중 오류가 발생했습니다:', error);
+      }
+    },
+    async processQuotationDeleteRequest(QuotationDeleteRequestId) {
+      try {
+        const requestData = { 
+          QuotationDeleteRequestId: QuotationDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
 
-    await DeleteService.processQuotationDeleteRequest(requestData);
-    alert('견적서 삭제 요청이 성공적으로 처리되었습니다.');
-    this.fetchDeleteRequests();
-  } catch (error) {
-    console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
-  }
-},
-async processAccountDeleteRequest(accountDeleteRequestsId) {
-  try {
-    const requestData = { 
-      accountDeleteRequestsId: accountDeleteRequestsId,
-    };
-    console.log('Request Data:', requestData); 
+        await DeleteService.processQuotationDeleteRequest(requestData);
+        alert('견적서 삭제 요청이 성공적으로 처리되었습니다.');
+        this.fetchDeleteRequests();
+      } catch (error) {
+        console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
+      }
+    },
+    async processAccountDeleteRequest(accountDeleteRequestsId) {
+      try {
+        const requestData = { 
+          accountDeleteRequestsId: accountDeleteRequestsId,
+        };
+        console.log('Request Data:', requestData); 
 
-    await DeleteService.processAccountDeleteRequest(requestData);
-    alert('거래처 삭제 요청이 성공적으로 처리되었습니다.');
-    this.fetchDeleteRequests();
-  } catch (error) {
-    console.error('거래처 삭제 요청 처리 중 오류가 발생했습니다:', error);
-  }
-},
-async processOrderDeleteRequest(OrderDeleteRequestId) {
-  try {
-    const requestData = { 
-      OrderDeleteRequestId: OrderDeleteRequestId,
-    };
-    console.log('Request Data:', requestData); 
+        await DeleteService.processAccountDeleteRequest(requestData);
+        alert('거래처 삭제 요청이 성공적으로 처리되었습니다.');
+        this.fetchDeleteRequests();
+      } catch (error) {
+        console.error('거래처 삭제 요청 처리 중 오류가 발생했습니다:', error);
+      }
+    },
+    async processOrderDeleteRequest(OrderDeleteRequestId) {
+      try {
+        const requestData = { 
+          OrderDeleteRequestId: OrderDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
 
-    await DeleteService.processOrderDeleteRequest(requestData);
-    alert('수주 삭제 요청이 성공적으로 처리되었습니다.');
-    this.fetchDeleteRequests();
-  } catch (error) {
-    console.error('수주 삭제 요청 처리 중 오류가 발생했습니다:', error);
-  }
-},
+        await DeleteService.processOrderDeleteRequest(requestData);
+        alert('수주 삭제 요청이 성공적으로 처리되었습니다.');
+        this.fetchDeleteRequests();
+      } catch (error) {
+        console.error('수주 삭제 요청 처리 중 오류가 발생했습니다:', error);
+      }
+    },
     openSingleView(requestId, type) {
-      // 단일 조회 팝업을 열기 위한 메서드
       this.isModalOpen = true;
-      // 단일 조회 페이지의 내용을 가져오는 비동기 함수 호출
       this.fetchSingleViewContent(requestId, type);
     },
 
@@ -187,28 +183,62 @@ async processOrderDeleteRequest(OrderDeleteRequestId) {
         let response;
         if (type === 'salesOpp') {
           response = await DeleteService.findSalesOppDeleteRequestById(requestId);
+          const salesOpp = response.data.salesOpp;
+      this.singleViewContent = {
+        '거래처명': salesOpp.oppAccountName,
+        '거래처 담당자': salesOpp.oppAccountPic,
+        '연락처': salesOpp.oppAccountContact,
+        '거래처 주소': salesOpp.oppAccountLocation,
+        '이메일': salesOpp.oppAccountEmail,
+        '비고': salesOpp.oppAccountNote,
+        '작성일': salesOpp.oppDate,
+      };
         } else if (type === 'contract') {
           response = await DeleteService.findContractDeleteRequestById(requestId);
+          this.singleViewContent = {
+            '계약서 코드': contract.contractCode 
+
+          }; 
         } else if (type === 'quotation') {
           response = await DeleteService.findQuotationDeleteRequestById(requestId);
+          const quotation = response.data.quotation;
+    this.singleViewContent = {
+      '견적서 코드': quotation.quotationCode,
+      '견적서 일자': quotation.quotationDate,
+      '총 비용': quotation.quotationTotalCost,
+      '마감 일자': quotation.quotationDueDate,
+      '비고': quotation.quotationNote,
+    };
         } else if (type === 'account') {
-          response = await DeleteService.findAccountDeleteRequestById(requestId);
+      response = await DeleteService.findAccountDeleteRequestById(requestId);
+      const account = response.data.account;
+      this.singleViewContent = {
+      '사업자명': account.accountName,
+      '사업자 번호': account.corporationNum,
+      '대표자명': account.accountRepresentative,
+      '법인 여부': account.corporationStatus,
+      '소재지': account.accountLocation,
+      '전화번호': account.accountContact,
+      '이메일': account.accountEmail,
+      '비고': account.accountNote,
+      '업종': account.accountType,
+      '거래처 코드': account.accountCode,
+        };
         } else if (type === 'order') {
           response = await DeleteService.findOrderDeleteRequestById(requestId);
+          this.singleViewContent = response.data; 
         }
-        this.singleViewContent = response.data;
       } catch (error) {
-        console.error('단일 조회 페이지를 불러오는 중 오류가 발생했습니다:', error);
-      }
-    },
-
-    closeModal() {
-      // 모달을 닫는 메서드
-      this.isModalOpen = false;
-      // 단일 조회 페이지의 내용 초기화
-      this.singleViewContent = '';
-    }
-  }
+        console.error('단일 조회 페이지를불러오는 중 오류가 발생했습니다:', error);
+}
+},
+closeModal() {
+  // 모달을 닫는 메서드
+  this.isModalOpen = false;
+  // 단일 조회 페이지의 내용 초기화
+  this.singleViewContent = '';
+}
+}
 };
 </script>
 <style scoped>

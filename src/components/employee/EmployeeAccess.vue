@@ -1,22 +1,5 @@
 <template>
   <div class="access-request-container">
-    <!-- 권한 신청 섹션 -->
-    <!-- <div class="section access-form">
-      <h2>권한 신청</h2>
-      <form @submit.prevent="submitAccessRequest">
-        <div class="form-group">
-          <label for="employeeId">사원 ID:</label>
-          <input v-model="requestAccess.employee.employeeId" id="employeeId" required>
-        </div>
-        <div class="form-group">
-          <label for="accessId">권한 ID:</label>
-          <input v-model="requestAccess.accessRight.accessId" id="accessId" required>
-        </div>
-        <button type="submit">신청</button>
-      </form>
-    </div> -->
-
-    <!-- 권한 신청 상태 조회 섹션 -->
     <div class="section access-status">
       <h2>권한 신청 상태 조회</h2>
       <div class="form-group">
@@ -29,7 +12,7 @@
       </div>
     </div>
 
-    <!-- 모든 권한 신청 조회 섹션 -->
+  
     <div class="section all-requests">
       <h2>모든 권한 신청 조회</h2>
       <button @click="getAllAccessRequests">조회</button>
@@ -40,9 +23,7 @@
       </ul>
     </div>
 
-    <!-- 권한 관리 섹션 -->
     <div class="section access-management">
-      <!-- 추가 권한 등록 섹션 -->
       <div class="access-panel">
         <h2>추가 권한 등록</h2>
         <form @submit.prevent="submitAddAccess">
