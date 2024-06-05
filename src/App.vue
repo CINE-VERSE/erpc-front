@@ -116,8 +116,7 @@ const menuItems = ref([
   {
     title: '실적 관리',
     subItems: [
-      { title: '연간 실적 조회', path: '/performance/year' },
-      { title: 'Team 실적 조회', path: '/performance/team' }
+      { title: '연간 실적 조회', path: '/performance/year' }
     ],
     isOpen: false,
     isVisible: true

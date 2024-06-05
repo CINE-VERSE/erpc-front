@@ -27,7 +27,6 @@ import Deposit from '@/components/bill/Deposit.vue';
 import CBRequest from '@/components/bill/CBRequest.vue';
 
 import YearPerformance from '@/components/performance/YearPerformance.vue';
-import TeamPerformance from '@/components/performance/TeamPerformance.vue';
 
 import ApprovalList from '@/components/approval/ApprovalList.vue';
 import ApprovalEstimateContents from '@/components/approval/ApprovalEstimateContents.vue';
@@ -149,10 +148,6 @@ const routes = [
     {
         path: '/performance/year',
         component: YearPerformance
-    },
-    {
-        path: '/performance/team',
-        component: TeamPerformance
     },
     {
         path: '/approval',

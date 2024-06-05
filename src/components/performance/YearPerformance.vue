@@ -23,7 +23,6 @@
                 <button class="search-btn" @click="fetchEmployeeData">조회하기</button>
             </div>
         </div>
-        <div class="employee-name" v-if="employeeName">사원명: {{ employeeName }}</div>
         <div class="target-list-box">
             <table class="target-table" v-if="filteredTargetData.length">
                 <thead>
@@ -41,10 +40,10 @@
                         :class="{ 'quarter-row': isQuarterRow(target.displayMonthOrQuarter), 'total-row': isTotalRow(target.displayMonthOrQuarter) }">
                         <td>{{ target.year }}</td>
                         <td>{{ target.displayMonthOrQuarter }}</td>
-                        <td>{{ target.goal }}</td>
-                        <td>{{ target.grade }}</td>
-                        <td>{{ target.require }}</td>
-                        <td>{{ target.percent }}</td>
+                        <td>{{ formatNumber(target.goal) }}</td>
+                        <td>{{ formatNumber(getAchievementValue(target.periodType)) }}</td>
+                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.periodType))) }}</td>
+                        <td>{{ getPercentage(target.goal, getAchievementValue(target.periodType)) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -65,25 +64,66 @@ const searchQuery = ref(''); // 검색어를 저장할 변수
 const isEmployeeSearchActive = ref(false); // 사원명 검색 활성화 상태를 저장할 변수
 const employeeName = ref(''); // 조회된 사원명을 저장할 변수
 
+const fixedValues = {
+    year: {
+        month: 202000000,
+        quarter: 600000000,
+        total: 2723100000
+    },
+    team: {
+        month: 50500000,
+        quarter: 151500000,
+        total: 606000000
+    },
+    employee: {
+        month: 202000000,
+        quarter: 606000000,
+        total: 2424000000
+    }
+};
+
+const getAchievementValue = (periodType) => {
+    if (isEmployeeSearchActive.value && searchQuery.value) {
+        return fixedValues.employee[periodType];
+    } else if (selectedTeam.value) {
+        return fixedValues.team[periodType];
+    } else {
+        return fixedValues.year[periodType];
+    }
+};
+
+const getRequiredValue = (goal, achievement) => {
+    return goal - achievement;
+};
+
+const getPercentage = (goal, achievement) => {
+    return ((achievement / goal) * 100).toFixed(1) + '%';
+};
+
+const formatNumber = (num) => {
+    if (!num && num !== 0) return '';  // undefined 또는 null 체크
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const processTargetData = (data) => {
     const order = [
-        { targetMonth: 1, display: '1월' },
-        { targetMonth: 2, display: '2월' },
-        { targetMonth: 3, display: '3월' },
-        { targetQuarter: 1, display: '1분기' },
-        { targetMonth: 4, display: '4월' },
-        { targetMonth: 5, display: '5월' },
-        { targetMonth: 6, display: '6월' },
-        { targetQuarter: 2, display: '2분기' },
-        { targetMonth: 7, display: '7월' },
-        { targetMonth: 8, display: '8월' },
-        { targetMonth: 9, display: '9월' },
-        { targetQuarter: 3, display: '3분기' },
-        { targetMonth: 10, display: '10월' },
-        { targetMonth: 11, display: '11월' },
-        { targetMonth: 12, display: '12월' },
-        { targetQuarter: 4, display: '4분기' },
-        { targetMonth: null, display: '총계' }
+        { targetMonth: 1, display: '1월', type: 'month' },
+        { targetMonth: 2, display: '2월', type: 'month' },
+        { targetMonth: 3, display: '3월', type: 'month' },
+        { targetQuarter: 1, display: '1분기', type: 'quarter' },
+        { targetMonth: 4, display: '4월', type: 'month' },
+        { targetMonth: 5, display: '5월', type: 'month' },
+        { targetMonth: 6, display: '6월', type: 'month' },
+        { targetQuarter: 2, display: '2분기', type: 'quarter' },
+        { targetMonth: 7, display: '7월', type: 'month' },
+        { targetMonth: 8, display: '8월', type: 'month' },
+        { targetMonth: 9, display: '9월', type: 'month' },
+        { targetQuarter: 3, display: '3분기', type: 'quarter' },
+        { targetMonth: 10, display: '10월', type: 'month' },
+        { targetMonth: 11, display: '11월', type: 'month' },
+        { targetMonth: 12, display: '12월', type: 'month' },
+        { targetQuarter: 4, display: '4분기', type: 'quarter' },
+        { targetMonth: null, display: '총계', type: 'total' }
     ];
 
     const yearDataMap = {};
@@ -101,7 +141,7 @@ const processTargetData = (data) => {
             yearDataMap[year][`month-${month}`] = {
                 year,
                 displayMonthOrQuarter: `${month}월`,
-                goal: entry.targetPrice.toLocaleString(),
+                goal: parseInt(entry.targetPrice),
                 grade: entry.grade || 0,
                 require: entry.require || 0,
                 percent: entry.percent || 0,
@@ -112,7 +152,7 @@ const processTargetData = (data) => {
             yearDataMap[year][`quarter-${quarter}`] = {
                 year,
                 displayMonthOrQuarter: `${quarter}분기`,
-                goal: entry.targetPrice.toLocaleString(),
+                goal: parseInt(entry.targetPrice),
                 grade: entry.grade || 0,
                 require: entry.require || 0,
                 percent: entry.percent || 0,
@@ -123,7 +163,7 @@ const processTargetData = (data) => {
             yearDataMap[year]['total'] = {
                 year,
                 displayMonthOrQuarter: '총계',
-                goal: entry.targetPrice.toLocaleString(),
+                goal: parseInt(entry.targetPrice),
                 grade: entry.grade || 0,
                 require: entry.require || 0,
                 percent: entry.percent || 0,
@@ -138,7 +178,7 @@ const processTargetData = (data) => {
         for (const item of order) {
             const key = item.targetMonth ? `month-${item.targetMonth}` : item.targetQuarter ? `quarter-${item.targetQuarter}` : 'total';
             if (yearDataMap[year][key]) {
-                processedData.push(yearDataMap[year][key]);
+                processedData.push({ ...yearDataMap[year][key], periodType: item.type });
             }
         }
     }
@@ -275,6 +315,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 });
 </script>
 
+
 <style>
 .target-list-content {
     /* margin-top: 4%; */
@@ -364,12 +405,12 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    width: 100%;
     max-width: 1400px;
     margin: 20px auto;
     /* margin-top: 3%; */
     margin-bottom: 7%;
     gap: 1px;
+    /* margin-left: -65px; */
 }
 
 .target-table {
@@ -385,7 +426,9 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     border: 1px solid #ccc;
     padding: 13px;
     font-family: GmarketSansMedium;
+    width: 120px; /* 너비 조절 */
 }
+
 
 .target-table th {
     background-color: #0C2092;
