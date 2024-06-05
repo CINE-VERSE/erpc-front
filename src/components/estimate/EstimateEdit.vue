@@ -99,13 +99,18 @@
                 <div v-for="(file, index) in files" :key="index" class="file-list">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.name }}</span>
+                    <button @click="removeNewFile(index)" class="remove-file-btn">제거</button>
                 </div>
             </div>
-            <div v-else>
-                <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list">
+            <div v-else-if="filteredFiles.length > 0">
+                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.originName }}</span>
+                    <button @click="removeExistingFile(index)" class="remove-file-btn">제거</button>
                 </div>
+            </div>
+            <div v-else class="file-download no-file">
+                첨부파일 없음
             </div>
             <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
             <label for="file-upload" class="file-upload-label">파일 선택</label>
@@ -119,9 +124,8 @@
     </div>
 </template>
 
-
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -151,6 +155,11 @@ const accountNote = ref('');
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
 
+// 필터된 파일 목록을 계산하는 함수
+const filteredFiles = computed(() => {
+    return quotationData.value?.quotationFile.filter(file => file.originName !== 'blob') || [];
+});
+
 function createNewProduct() {
     return {
         itemCode: '',
@@ -166,7 +175,7 @@ function createNewProduct() {
 onMounted(async () => {
     const quotationId = route.params.quotationId;
     try {
-        const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/${quotationId}`, { withCredentials: true });
+        const response = await axios.get(`http://localhost:7775/quotation/${quotationId}`, { withCredentials: true });
         quotationData.value = response.data;
         populateFields(quotationData.value);
     } catch (error) {
@@ -207,7 +216,7 @@ const populateFields = (data) => {
 const fetchProductData = async (index) => {
     const product = products.value[index];
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/product', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/product', { withCredentials: true });
         const productsData = response.data;
         const productData = productsData.find(p => p.productCode === product.itemCode);
         if (productData) {
@@ -228,7 +237,7 @@ const fetchProductData = async (index) => {
 
 const fetchWarehouses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/warehouse', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
         warehouses.value = response.data;
     } catch (error) {
         console.error('창고 정보를 조회하는 중 오류가 발생했습니다.', error);
@@ -253,7 +262,7 @@ const updateWarehouseData = () => {
 
 const fetchCustomerData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/list', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/account/list', { withCredentials: true });
         const customers = response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
@@ -274,7 +283,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeId.value = employeeData.employeeId;
             employeeName.value = employeeData.employeeName;
@@ -293,6 +302,14 @@ const updateSupplyValue = (index) => {
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
     quotationData.value.quotationFile = []; // 파일 선택 시 기존 파일 목록 초기화
+};
+
+const removeNewFile = (index) => {
+    files.value.splice(index, 1);
+};
+
+const removeExistingFile = (index) => {
+    quotationData.value.quotationFile.splice(index, 1);
 };
 
 const addProductRow = () => {
@@ -316,15 +333,9 @@ const updateQuotation = async () => {
     const isCustomerValid = customerCode.value && customerName.value;
     const isEmployeeValid = employeeId.value && employeeName.value;
     const isDueDateValid = dueDate.value;
-    const areFilesUploaded = files.value.length > 0 || quotationData.value.quotationFile.length > 0;
 
     if (!areProductsValid || !isWarehouseValid || !isCustomerValid || !isEmployeeValid || !isDueDateValid) {
         alert('모든 필수 입력란을 채워주세요.');
-        return;
-    }
-
-    if (!areFilesUploaded) {
-        alert('첨부파일을 등록해주세요.');
         return;
     }
 
@@ -349,12 +360,19 @@ const updateQuotation = async () => {
 
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
-    files.value.forEach(file => {
-        formData.append('files', file);
-    });
+
+    // 첨부 파일이 있는 경우에만 파일 추가
+    if (files.value.length > 0) {
+        files.value.forEach(file => {
+            formData.append('files', file);
+        });
+    } else {
+        // 첨부 파일이 없는 경우 빈 배열로 초기화
+        formData.append('files', new Blob([]));
+    }
 
     try {
-        await axios.patch(`http://erpc-backend-env-1.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/modify`, formData, {
+        await axios.patch(`http://localhost:7775/quotation/modify`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });
@@ -401,6 +419,7 @@ watch(products, (newProducts) => {
     });
 }, { deep: true });
 </script>
+
 
 
 

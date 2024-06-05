@@ -61,7 +61,7 @@ const uniqueYears = ref([]);
 
 const fetchTargetData = async () => {
     try {
-        const response = await axios.get(`http://localhost:7775/target/integrate`);
+        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/target/integrate`);
         const data = response.data;
 
         console.log('Fetched target data:', data);
@@ -153,7 +153,7 @@ const fetchTargetData = async () => {
 const fetchTeamData = async (teamCodeId) => {
     try {
         console.log(`Fetching data for team: ${teamCodeId}`);
-        const response = await axios.get(`http://localhost:7775/target/team/${teamCodeId}`);
+        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
         const data = response.data;
 
         console.log(`Fetched team data for team ${teamCodeId}:`, data);
