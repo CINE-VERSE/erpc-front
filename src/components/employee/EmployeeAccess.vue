@@ -1,5 +1,6 @@
 <template>
   <div class="access-request-container">
+    <!-- 권한 신청 상태 조회 섹션 -->
     <div class="section access-status">
       <h2>권한 신청 상태 조회</h2>
       <div class="form-group">
@@ -11,19 +12,21 @@
         <p>권한내용: {{ accessRequest.accessRight.accessRight }}</p>
       </div>
     </div>
-
-  
+    
+    <!-- 모든 권한 신청 조회 섹션 -->
     <div class="section all-requests">
       <h2>모든 권한 신청 조회</h2>
       <button @click="getAllAccessRequests">조회</button>
-      <ul v-if="allAccessRequests.length" class="request-list">
+      <ul v-if="showAllAccessRequests" class="request-list">
         <li v-for="request in allAccessRequests" :key="request.accessRequestId">
           {{ request.accessRequestId }} - {{ request.employee.employeeName }} - {{ request.accessRight.accessRight }}
         </li>
       </ul>
     </div>
 
+    <!-- 권한 관리 섹션 -->
     <div class="section access-management">
+      <!-- 추가 권한 등록 섹션 -->
       <div class="access-panel">
         <h2>추가 권한 등록</h2>
         <form @submit.prevent="submitAddAccess">
@@ -63,39 +66,29 @@
   </div>
 </template>
 
-  <script setup>
-  import { ref, onMounted } from 'vue';
-  import axios from 'axios';
-  
-  const requestAccess = ref({
-    accessRight: {
-      accessId: ''
-    },
-    employee: {
-      employeeId: ''
-    }
-  });
-  
-  const accessRequestId = ref('');
-  const accessRequest = ref(null);
-  
-  const employeeId = ref('');
-  const employeeAccess = ref([]);
-  const employeeCheckedAccessRights = ref([]);
-  
-  const allAccessRights = ref([]);
-  const allAccessRequests = ref([]);
-  
-  const addAccess = ref({
-    employee: {
-      employeeId: ''
-    },
-    accessRight: []
-  });
-  const selectedAccessRights = ref([]);
-  const getAccessRight = (accessId) => {
-  return ` ${accessId}`;
-};
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
+
+const accessRequestId = ref('');
+const accessRequest = ref(null);
+
+const employeeId = ref('');
+const employeeAccess = ref([]);
+const employeeCheckedAccessRights = ref([]);
+
+const allAccessRights = ref([]);
+const allAccessRequests = ref([]);
+const showAllAccessRequests = ref(false);  // 조회 결과 표시 여부를 나타내는 변수
+
+const addAccess = ref({
+  employee: {
+    employeeId: ''
+  },
+  accessRight: []
+});
+const selectedAccessRights = ref([]);
+
 const accessRightsMap = {
   1: "자유게시판 읽기",
   2: "자유게시판 쓰기",
@@ -121,77 +114,57 @@ const accessRightsMap = {
   22: "관리자"
 };
 
-  
-  const aggregateAllAccessRights = (data) => {
-    const rightsSet = new Set();
-    data.forEach(item => rightsSet.add(JSON.stringify(item.accessRight)));
-    allAccessRights.value = Array.from(rightsSet).map(item => JSON.parse(item));
-  };
-  
-  const submitAccessRequest = async () => {
-    try {
-      await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/access_request', requestAccess.value);
-      alert('권한 신청이 완료되었습니다.');
-      requestAccess.value.accessRight.accessId = '';
-      requestAccess.value.employee.employeeId = '';
-    } catch (error) {
-      console.error('권한 신청 중 에러 발생:', error);
-    }
-  };
-  
-  const getAccessRequestById = async () => {
-    try {
-      const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/${accessRequestId.value}`);
-      accessRequest.value = response.data;
-      aggregateAllAccessRights([response.data]);
-    } catch (error) {
-      console.error('권한 신청 조회 중 에러 발생:', error);
-    }
-  };
-  
-  const getEmployeesAccess = async () => {
-    try {
-      const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/find_access/${employeeId.value}`);
-      employeeAccess.value = response.data;
-      aggregateAllAccessRights(response.data);
-  
-      // Populate the checked access rights
-      employeeCheckedAccessRights.value = employeeAccess.value.map(access => access.accessRight.accessId);
-    } catch (error) {
-      console.error('보유 권한 조회 중 에러 발생:', error);
-    }
-  };
-  
-  const getAllAccessRequests = async () => {
-    try {
-      const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/list');
-      allAccessRequests.value = response.data;
-      aggregateAllAccessRights(response.data);
-    } catch (error) {
-      console.error('모든 권한 신청 조회 중 에러 발생:', error);
-    }
-  };
-  
-  const submitAddAccess = async () => {
-    try {
-      addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
-      await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
-      alert('추가 권한이 성공적으로 등록되었습니다.');
-      addAccess.value.employee.employeeId = '';
-      selectedAccessRights.value = [];
-    } catch (error) {
-      console.error('추가 권한 등록 중 에러 발생:', error);
-    }
-  };
-  
- 
-  const fetchInitialAccessRights = async () => {
-    await getAllAccessRequests(); 
-  };
-  
-  onMounted(fetchInitialAccessRights);
-  
-  </script>
+const aggregateAllAccessRights = (data) => {
+  const rightsSet = new Set();
+  data.forEach(item => rightsSet.add(JSON.stringify(item.accessRight)));
+  allAccessRights.value = Array.from(rightsSet).map(item => JSON.parse(item));
+};
+
+const getAccessRequestById = async () => {
+  try {
+    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/${accessRequestId.value}`);
+    accessRequest.value = response.data;
+    aggregateAllAccessRights([response.data]);
+  } catch (error) {
+    console.error('권한 신청 조회 중 에러 발생:', error);
+  }
+};
+
+const getEmployeesAccess = async () => {
+  try {
+    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/find_access/${employeeId.value}`);
+    employeeAccess.value = response.data;
+    aggregateAllAccessRights(response.data);
+
+    // Populate the checked access rights
+    employeeCheckedAccessRights.value = employeeAccess.value.map(access => access.accessRight.accessId);
+  } catch (error) {
+    console.error('보유 권한 조회 중 에러 발생:', error);
+  }
+};
+
+const getAllAccessRequests = async () => {
+  try {
+    const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/list');
+    allAccessRequests.value = response.data;
+    showAllAccessRequests.value = true; // 조회 버튼을 눌렀을 때만 표시
+  } catch (error) {
+    console.error('모든 권한 신청 조회 중 에러 발생:', error);
+  }
+};
+
+const submitAddAccess = async () => {
+  try {
+    addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
+    await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
+    alert('추가 권한이 성공적으로 등록되었습니다.');
+    addAccess.value.employee.employeeId = '';
+    selectedAccessRights.value = [];
+  } catch (error) {
+    console.error('추가 권한 등록 중 에러 발생:', error);
+  }
+};
+</script>
   
   <style>
   .access-request-container {
