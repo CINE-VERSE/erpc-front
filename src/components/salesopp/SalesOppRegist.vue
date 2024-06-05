@@ -19,7 +19,7 @@
                         <td><input v-model="newOpp.oppAccountName" placeholder="거래처 명"></td>
                         <td><input v-model="newOpp.oppAccountPic" placeholder="거래처 담당자"></td>
                         <td><input v-model="newOpp.oppAccountLocation" placeholder="거래처 주소"></td>
-                        <td><input v-model="newOpp.oppAccountContact" placeholder="연락처"></td>
+                        <td><input v-model="newOpp.oppAccountContact" @input="validateContact" placeholder="연락처"></td>
                         <td><input v-model="newOpp.oppAccountEmail" placeholder="이메일"></td>
                     </tr>
                 </tbody>
@@ -58,11 +58,26 @@ const newOpp = ref({
     oppAccountEmail:'',
     salesOppStatus: { salesOppStatusId: 1 }, // 기본 상태 ID 설정
     employee: {
-            employeeId: 5
-        },
+        employeeId: 5
+    },
 });
 
+const validateContact = (event) => {
+    const value = event.target.value;
+    // 숫자 이외의 문자를 제거
+    newOpp.value.oppAccountContact = value.replace(/\D/g, '');
+};
+
+const validateEmailFormat = (email) => {
+    // 이메일에 '@'가 있는지 확인
+    return email.includes('@');
+};
+
 const registSalesOpp = async () => {
+    if (newOpp.value.oppAccountEmail && !validateEmailFormat(newOpp.value.oppAccountEmail)) {
+        alert('이메일 형식이 맞지 않습니다.');
+        return;
+    }
     try {
         const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/regist', newOpp.value);
         alert('영업기회가 성공적으로 등록되었습니다.');
