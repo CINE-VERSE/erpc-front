@@ -6,7 +6,7 @@
                 <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
                     <button class="estimate-request" @click="handleApprovalRequest">결재 요청</button>
                 </div>
-                <button class="estimate-edit" @click="goToQuotationPage">수정</button>
+                <button class="estimate-edit" @click="handleEditQuotation">수정</button>
                 <button class="estimate-delete" v-if="showDeleteButton" @click="deleteQuotation">삭제</button>
                 <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
@@ -35,7 +35,6 @@
                         <th>견적서 코드</th>
                         <th>견적 금액</th>
                         <th>작성 일자</th>
-                        <th>삭제 일자</th>
                         <th>마감 일자</th>
                     </tr>
                 </thead>
@@ -44,7 +43,6 @@
                         <td>{{ quotationData.quotationCode }}</td>
                         <td>{{ quotationData.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ quotationData.quotationDate }}</td>
-                        <td>{{ quotationData.quotationDeleteDate }}</td>
                         <td>{{ quotationData.quotationDueDate }}</td>
                     </tr>
                 </tbody>
@@ -230,6 +228,15 @@ const handleApprovalRequest = () => {
     }
 };
 
+// 견적서 수정 함수
+const handleEditQuotation = () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 견적서는 수정할 수 없습니다.');
+    } else {
+        goToQuotationPage();
+    }
+};
+
 const requestApproval = async () => {
     const quotationId = route.params.quotationId;
     try {
@@ -295,7 +302,8 @@ const confirmDelete = async () => {
         });
         console.log('Quotation delete request sent successfully:', response.data);
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/estimate'); // 삭제 요청 후 이동
+        location.reload();
+        // router.push('/estimate'); // 삭제 요청 후 이동
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
@@ -345,7 +353,6 @@ const deleteNote = async (quotationNoteId) => {
     }
 };
 </script>
-
 
 <style>
 .estimate-content11 {

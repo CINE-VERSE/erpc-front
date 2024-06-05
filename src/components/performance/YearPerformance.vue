@@ -66,19 +66,19 @@ const employeeName = ref(''); // 조회된 사원명을 저장할 변수
 
 const fixedValues = {
     year: {
-        month: 202000000,
-        quarter: 600000000,
-        total: 2723100000
+        month: 232000000,
+        quarter: 696000000,
+        total: 2784000000
     },
     team: {
-        month: 50500000,
-        quarter: 151500000,
-        total: 606000000
+        month: 60500000,
+        quarter: 181500000,
+        total: 726000000
     },
     employee: {
-        month: 202000000,
-        quarter: 606000000,
-        total: 2424000000
+        month: 55800000,
+        quarter: 167400000,
+        total: 669600000
     }
 };
 

@@ -52,7 +52,8 @@
                     <tbody>
                         <tr>
                             <td><input type="text" v-model="accountType" class="customer-test5"></td>
-                            <td><input type="text" v-model="accountContact" class="customer-test6"></td>
+                            <td><input type="text" v-model="accountContact" class="customer-test6"
+                                pattern="^[0-9]{2,3}-\d{3,4}-\d{4}$" title="전화번호를 입력해주세요. 예시: 010-1234-5678, 02-1234-5678"></td>
                             <td><input type="text" v-model="accountEmail" class="customer-test7"></td>
                         </tr>
                     </tbody>
@@ -177,7 +178,7 @@ const registerAccount = async () => {
     };
 
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/regist', postData);
+        const response = await axios.post('http://localhost:7775/account/regist', postData);
         console.log('등록 응답:', response.data);
         alert('거래처 등록이 완료되었습니다.');
         router.push({ path: `/customer` });

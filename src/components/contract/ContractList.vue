@@ -63,7 +63,7 @@ onMounted(async () => {
 
 const fetchContracts = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract');
+        const response = await axios.get('http://localhost:7775/contract');
         contracts.value = response.data.map(contract => ({
             contractId: contract.contractId,
             contractCode: contract.contractCode,
@@ -82,7 +82,7 @@ const fetchContracts = async () => {
 
 const fetchApprovalStatuses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract');
+        const response = await axios.get('http://localhost:7775/approval/contract');
         const approvals = response.data;
         approvals.forEach(approval => {
             const contract = contracts.value.find(con => con.contractId === approval.contract.contractId);
