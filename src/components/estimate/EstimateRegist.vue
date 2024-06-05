@@ -114,10 +114,6 @@
     </div>
 </template>
 
-
-
-
-
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
@@ -165,7 +161,7 @@ function createNewProduct() {
 const fetchProductData = async (index) => {
     const product = products.value[index];
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/product', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/product', { withCredentials: true });
         const productsData = response.data;
         const productData = productsData.find(p => p.productCode === product.itemCode);
         if (productData) {
@@ -186,7 +182,7 @@ const fetchProductData = async (index) => {
 
 const fetchWarehouses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/warehouse', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/warehouse', { withCredentials: true });
         warehouses.value = response.data;
     } catch (error) {
         console.error('창고 정보를 조회하는 중 오류가 발생했습니다.', error);
@@ -211,7 +207,7 @@ const updateWarehouseData = () => {
 
 const fetchCustomerData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/list', { withCredentials: true });
+        const response = await axios.get('http://localhost:7775/account/list', { withCredentials: true });
         const customers = response.data;
         const customer = customers.find(c => c.accountCode === customerCode.value);
         if (customer) {
@@ -232,7 +228,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://localhost:7775/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeId.value = employeeData.employeeId;
             employeeName.value = employeeData.employeeName;
@@ -255,6 +251,7 @@ const updateSupplyValue = (index) => {
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
+    console.log('Files selected:', files.value);
 };
 
 const addProductRow = () => {
@@ -308,6 +305,9 @@ const registerQuotation = async () => {
         files.value.forEach(file => {
             formData.append('files', file);
         });
+    } else {
+        // 첨부 파일이 없는 경우 빈 배열로 초기화
+        formData.append('files', new Blob([]));
     }
 
     // 콘솔 로그에 전달하는 데이터 출력
@@ -315,7 +315,7 @@ const registerQuotation = async () => {
     console.log("Files to be sent:", files.value);
 
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/regist', formData, {
+        const response = await axios.post('http://localhost:7775/quotation/regist', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });
@@ -329,10 +329,6 @@ const registerQuotation = async () => {
         alert('견적서를 등록하는 중 오류가 발생했습니다.');
     }
 };
-
-
-
-
 
 const clearProductData = (index) => {
     const product = products.value[index];
