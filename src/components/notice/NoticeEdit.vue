@@ -1,24 +1,36 @@
 <template>
-  <div class="regist-content" v-if="noticeId">
-    <h1>공지사항 수정</h1>
-    <div class="notice-section">
-      <label for="noticeTitle" class="notice-label">제목</label>
-      <input type="text" id="noticeTitle" v-model="noticeTitle" class="notice-input" placeholder="제목">
-    </div>
-    <div class="notice-section">
-      <label for="noticeContent" class="notice-label">내용</label>
-      <textarea id="noticeContent" v-model="noticeContent" class="notice-textarea" placeholder="내용"></textarea>
-    </div>
-    <div class="notice-section">
-      <label for="noticeFiles" class="notice-label">첨부파일</label>
-      <input type="file" id="noticeFiles" @change="handleFileChange" multiple class="notice-file-input">
-      <ul v-if="files.length > 0" class="file-list">
-        <li v-for="(file, index) in files" :key="index" class="file-item">{{ file.name }}</li>
-      </ul>
-    </div>
-    <div class="notice-button-section">
-      <button class="notice-submit-btn" @click="modifyNotice">수정</button>
-    </div>
+  <div class="post-form" v-if="noticeId">
+    <h2 class="title">공지사항 수정</h2>
+    <form @submit.prevent="modifyNotice" class="form">
+      <div class="form-group">
+        <label for="noticeTitle" class="label">제목</label>
+        <input type="text" id="noticeTitle" v-model="noticeTitle" class="input" placeholder="제목" required>
+      </div>
+      <div class="form-group">
+        <label for="noticeContent" class="label">내용</label>
+        <textarea id="noticeContent" v-model="noticeContent" class="textarea" placeholder="내용" required></textarea>
+      </div>
+      <div class="file-upload-area">
+        <label for="noticeFiles" class="file-upload-label">
+          <i class="fas fa-cloud-upload-alt"></i> 첨부 파일 추가
+        </label>
+        <input type="file" id="noticeFiles" @change="handleFileChange" multiple accept="image/*" hidden>
+        <div v-if="files.length > 0" class="file-list">
+          <div v-for="(file, index) in files" :key="index" class="file-item">
+            {{ file.name }}
+            <button @click="removeFile(index)" class="remove-btn">삭제</button>
+          </div>
+        </div>
+      </div>
+      <div v-if="existingFiles.length > 0" class="existing-file-list">
+        <h3>기존 첨부 파일</h3>
+        <div v-for="(file, index) in existingFiles" :key="index" class="file-item">
+          {{ file.name }}
+          <button @click="removeExistingFile(index)" class="remove-btn">삭제</button>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn" :disabled="submitting">수정</button>
+    </form>
   </div>
   <div v-else>
     <p>Loading...</p>
@@ -35,14 +47,24 @@ export default {
       noticeTitle: '',
       noticeContent: '',
       files: [],
-      existingFiles: [] // 서버에서 받아온 기존 파일 목록
+      existingFiles: [], // 서버에서 받아온 기존 파일 목록
+      submitting: false
     };
   },
   methods: {
     handleFileChange(event) {
       this.files = Array.from(event.target.files);
     },
+    removeFile(index) {
+      this.files.splice(index, 1);
+    },
+    removeExistingFile(index) {
+      this.existingFiles.splice(index, 1);
+    },
     async modifyNotice() {
+      if (this.submitting) return;
+      this.submitting = true;
+
       const formData = new FormData();
       formData.append('notice', JSON.stringify({
         noticeTitle: this.noticeTitle,
@@ -59,10 +81,11 @@ export default {
           }
         });
         console.log('Notice modified successfully:', response.data);
-        // 등록 성공 후 이동
         this.$router.push('/notice/list');
       } catch (error) {
-        console.error('Error modifying notice:', error.response.data);
+        console.error('Error modifying notice:', error.response ? error.response.data : error.message);
+      } finally {
+        this.submitting = false;
       }
     },
     async fetchNoticeDetails() {
@@ -78,56 +101,84 @@ export default {
     }
   },
   mounted() {
-    // URL 파라미터에서 noticeId 가져오기
     this.noticeId = this.$route.params.noticeId;
-    // 공지사항 정보 가져오기
     this.fetchNoticeDetails();
   }
 };
 </script>
 
-<style>
-.regist-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+<style scoped>
+.post-form {
+  width: 800px; 
+  margin: 40px auto; 
+  padding: 30px;
+  background-color: #e3e9f6; 
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
 }
 
-h1 {
+.title {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #333;
 }
 
-.notice-section {
-  width: 100%;
-  max-width: 600px;
-  margin-bottom: 20px;
+.form-group {
+  margin-bottom: 25px;
 }
 
-.notice-label {
+.label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
+  margin-bottom: 8px;
+  font-weight: 600; /* 폰트 굵기 조절 */
+  color: #444; /* 진한 회색 */
 }
 
-.notice-input,
-.notice-textarea,
-.notice-file-input {
+.input,
+.textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
+  box-sizing: border-box; /* 테두리 포함하여 너비 계산 */
   font-size: 16px;
-  box-sizing: border-box;
 }
 
-.notice-textarea {
+.textarea {
   height: 200px;
   resize: vertical;
 }
 
-.file-list {
+.file-upload-area {
+  border: 2px dashed #007bff; 
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 8px; 
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 15px 25px;
+  background-color: #007bff; /* 파란색 배경 */
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-upload-label:hover {
+  background-color: #0056b3; /* 어두운 파란색 */
+}
+
+.file-upload-label i {
+  margin-right: 10px; /* 아이콘과 텍스트 간격 */
+}
+
+.file-list,
+.existing-file-list {
   margin-top: 10px;
   list-style-type: none;
   padding: 0;
@@ -139,27 +190,40 @@ h1 {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 5px;
-}
-
-.notice-button-section {
   display: flex;
-  justify-content: center;
-  width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.notice-submit-btn {
-  padding: 10px 20px;
-  font-size: 16px;
-  text-align: center;
-  border: none;
-  border-radius: 5px;
-  background-color: #0C2092;
+.remove-btn {
+  background-color: #e74c3c; /* 빨간색 */
   color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.notice-submit-btn:hover {
+.remove-btn:hover {
+  background-color: #c0392b; /* 어두운 빨간색 */
+}
+
+.submit-btn {
+  display: block; /* 블록 요소로 변경 */
+  width: auto; 
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 12px 20px;
+  font-size: 18px;
+  background-color: #0C2092; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
   background-color: #007bff;
 }
 </style>
