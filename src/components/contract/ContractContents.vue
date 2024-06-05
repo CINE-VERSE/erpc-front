@@ -219,6 +219,7 @@ const requestApproval = async () => {
         alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
         approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
+        location.reload();
     } catch (error) {
         console.error('Error sending approval request:', error);
         alert('결재 요청 중 오류가 발생했습니다.');
