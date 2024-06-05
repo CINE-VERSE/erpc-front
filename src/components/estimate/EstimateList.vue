@@ -63,7 +63,7 @@ onMounted(async () => {
 
 const fetchEstimates = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation');
+        const response = await axios.get('http://localhost:7775/quotation');
         estimates.value = response.data.map(estimate => ({
             quotationId: estimate.quotationId,
             quotationCode: estimate.quotationCode,
@@ -82,7 +82,7 @@ const fetchEstimates = async () => {
 
 const fetchApprovalStatuses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation');
+        const response = await axios.get('http://localhost:7775/approval/quotation');
         const approvals = response.data;
         approvals.forEach(approval => {
             const estimate = estimates.value.find(est => est.quotationId === approval.quotation.quotationId);

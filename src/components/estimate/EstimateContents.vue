@@ -181,19 +181,19 @@ onMounted(async () => {
 
     try {
         // 견적서 데이터를 가져오는 API 호출
-        const quotationResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/${quotationId}`);
+        const quotationResponse = await axios.get(`http://localhost:7775/quotation/${quotationId}`);
         quotationData.value = quotationResponse.data;
 
         // 견적서 노트 데이터를 가져오는 API 호출
-        const noteResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation_note/${quotationId}`);
+        const noteResponse = await axios.get(`http://localhost:7775/quotation_note/${quotationId}`);
         quotationNoteData.value = noteResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
-        const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
         // 전체 승인 데이터를 가져오는 API 호출
-        const approvalResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation');
+        const approvalResponse = await axios.get('http://localhost:7775/approval/quotation');
         const approvalData = approvalResponse.data;
 
         // 현재 견적서에 해당하는 결재 상태를 찾기
@@ -212,7 +212,7 @@ onMounted(async () => {
 const requestApproval = async () => {
     const quotationId = route.params.quotationId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation/regist', {
+        const response = await axios.post('http://localhost:7775/approval/quotation/regist', {
             quotation: { quotationId: quotationId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
@@ -244,7 +244,7 @@ const downloadFile = (url) => {
 // 엑셀 다운로드 함수
 const downloadExcel = () => {
     const quotationId = route.params.quotationId;
-    const url = `http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/excel/quotation/${quotationId}`;
+    const url = `http://localhost:7775/excel/quotation/${quotationId}`;
     const link = document.createElement('a');
     link.href = url;
     link.download = `quotation_${quotationId}.xlsx`;
@@ -268,7 +268,7 @@ const closePopup = () => {
 const confirmDelete = async () => {
     const quotationId = route.params.quotationId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation/delete', {
+        const response = await axios.post('http://localhost:7775/quotation/delete', {
             quotationDeleteRequestReason: deleteReason.value,
             quotation: quotationData.value
         });
@@ -288,7 +288,7 @@ const addNote = async () => {
     const quotationId = route.params.quotationId;
     const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation_note/regist', {
+        const response = await axios.post('http://localhost:7775/quotation_note/regist', {
             quotationNote: newNote.value,
             quotation: { quotationId: quotationData.value.quotationId },
             employee: { employeeId: userId } // employeeId를 userId로 설정
@@ -307,7 +307,7 @@ const addNote = async () => {
 // 노트 삭제 함수
 const deleteNote = async (quotationNoteId) => {
     try {
-        const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/quotation_note/delete', null, {
+        const response = await axios.patch('http://localhost:7775/quotation_note/delete', null, {
             params: {
                 quotationNoteId
             }
