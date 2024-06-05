@@ -150,10 +150,6 @@ const routes = [
         component: YearPerformance
     },
     {
-        path: '/performance/team',
-        component: TeamPerformance
-    },
-    {
         path: '/approval',
         component: ApprovalList
     },

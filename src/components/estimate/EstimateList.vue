@@ -224,7 +224,6 @@ function goToEstimateContents(quotationId) {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    width: 100%;
     max-width: 1400px;
     margin: 20px auto;
     margin-bottom: 7%;

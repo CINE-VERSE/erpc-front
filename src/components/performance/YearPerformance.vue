@@ -426,7 +426,9 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     border: 1px solid #ccc;
     padding: 13px;
     font-family: GmarketSansMedium;
+    width: 120px; /* 너비 조절 */
 }
+
 
 .target-table th {
     background-color: #0C2092;
