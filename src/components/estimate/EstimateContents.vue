@@ -4,10 +4,10 @@
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
                 <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="estimate-request" @click="requestApproval">결재 요청</button>
+                    <button class="estimate-request" @click="handleApprovalRequest">결재 요청</button>
                 </div>
                 <button class="estimate-edit" @click="goToQuotationPage">수정</button>
-                <button class="estimate-delete" @click="deleteQuotation">삭제</button>
+                <button class="estimate-delete" v-if="showDeleteButton" @click="deleteQuotation">삭제</button>
                 <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="estimate-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && quotationData.approvalContent">
@@ -139,12 +139,12 @@
         <p>Loading...</p>
     </div>
     <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay11">
-        <div class="popup-content11">
+    <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
+            <button @click="confirmDelete" class="confirm-btn">확인</button>
+            <button @click="closePopup" class="cancel-btn">취소</button>
         </div>
     </div>
 </template>
@@ -163,6 +163,8 @@ const deleteReason = ref('');
 const newNote = ref('');
 const employeeName = ref('');
 const approvalStatus = ref('Pending'); // Default value as Pending
+const showDeleteButton = ref(true);
+const deleteRequested = ref(false); // 삭제 요청 상태를 저장
 
 // filteredQuotationNotes는 quotationDeleteDate가 null인 노트만 반환합니다.
 const filteredQuotationNotes = computed(() => {
@@ -192,6 +194,17 @@ onMounted(async () => {
         const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
+        // 전체 삭제 요청 데이터를 가져오는 API 호출
+        const deleteResponse = await axios.get('http://localhost:7775/delete/quotation');
+        const deleteData = deleteResponse.data;
+
+        // 현재 견적서에 해당하는 삭제 요청 상태를 찾기
+        const currentDeleteRequest = deleteData.find(deleteRequest => deleteRequest.quotation.quotationId === parseInt(quotationId));
+        if (currentDeleteRequest) {
+            showDeleteButton.value = false; // 삭제 요청이 있으면 삭제 버튼 숨기기
+            deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+        }
+
         // 전체 승인 데이터를 가져오는 API 호출
         const approvalResponse = await axios.get('http://localhost:7775/approval/quotation');
         const approvalData = approvalResponse.data;
@@ -209,6 +222,14 @@ onMounted(async () => {
 });
 
 // 결재 요청 함수
+const handleApprovalRequest = () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 견적서는 결재 요청할 수 없습니다.');
+    } else {
+        requestApproval();
+    }
+};
+
 const requestApproval = async () => {
     const quotationId = route.params.quotationId;
     try {
@@ -324,6 +345,7 @@ const deleteNote = async (quotationNoteId) => {
     }
 };
 </script>
+
 
 <style>
 .estimate-content11 {
@@ -659,6 +681,115 @@ const deleteNote = async (quotationNoteId) => {
 
 .file-download.no-file {
     cursor: default;
+}
+
+.estimate-approval-note1 {
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    color: black;
+    background-color: #F6E5FF;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.estimate-approval-note3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #0C2092;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 16px;
+    outline: none;
+    color: black;
+    font-weight: bold;
+    width: 300px;
+    margin-bottom: 25px;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #007BFF; /* Blue */
+}
+
+.cancel-btn {
+    background-color: #DC3545; /* Red */
+}
+
+.estimate-btn .estimate-approve {
+    background-color: #007BFF; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.estimate-btn .estimate-reject {
+    background-color: #DC3545; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.estimate-btn .estimate-approve:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.estimate-btn .estimate-reject:hover {
+    background-color: #c82333; /* Darker Red */
 }
 
 .estimate-approval-note1 {
