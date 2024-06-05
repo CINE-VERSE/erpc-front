@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import DeleteService from '@/components/delete/DeleteService';  // 경로는 실제 프로젝트 구조에 맞게 조정
+import DeleteService from '@/components/delete/DeleteService';  
 
 export default {
   data() {

@@ -104,7 +104,7 @@ const showStatusPopup = ref(false);
 const deleteReason = ref('');
 const newStatus = ref('');
 const newProcessDetail = ref('');
-const editProcessDetail = ref('');
+
 
 // localStorage에서 userId 가져오기
 const userId = localStorage.getItem('userId');
@@ -235,7 +235,7 @@ const registerProcess = async () => {
         // 등록 완료 후 알림 창 표시
         alert('참고사항이 등록되었습니다.');
 
-        location.reload();
+          location.reload();
 
     } catch (error) {
         console.error('Process 등록 중 오류 발생:', error);

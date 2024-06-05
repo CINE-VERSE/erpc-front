@@ -9,7 +9,7 @@ class DeleteService {
     });
   }
 
-  // Sales Opportunity Delete Requests
+
   getSalesOppDeleteRequests() {
     return this.api.get('/sales_opp');
   }
@@ -61,7 +61,7 @@ class DeleteService {
     return this.api.patch('/account/process', data);
   }
 
-  // Order Delete Requests
+
   getOrderDeleteRequests() {
     return this.api.get('/order');
   }
