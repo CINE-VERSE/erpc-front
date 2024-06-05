@@ -410,7 +410,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     /* margin-top: 3%; */
     margin-bottom: 7%;
     gap: 1px;
-    /* margin-left: -110px; */
+    /* margin-left: -65px; */
 }
 
 .target-table {
