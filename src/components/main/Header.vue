@@ -1,4 +1,5 @@
 <template>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <header class="header">
         <div class="logo">
             <img src="@/assets/img/logo2.png" class="logoimage" @click="main">
