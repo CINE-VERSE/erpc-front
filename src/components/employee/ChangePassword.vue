@@ -1,10 +1,10 @@
 <template>
     <div class="change-password">
         <h1>비밀번호 변경</h1>
-        <label for="employee-code">Employee Code</label>
-        <input type="text" v-model="employeeCode" id="employee-code" name="employee-code">
+        <label for="employee-id">Employee ID</label>
+        <input type="text" v-model="employee.employeeId" id="employee-id" name="employee-id">
         <label for="new-password">새 비밀번호</label>
-        <input type="password" v-model="newPassword" id="new-password" name="new-password">
+        <input type="password" v-model="employee.newPassword" id="new-password" name="new-password">
         <button @click="changePassword">비밀번호 변경</button>
     </div>
 </template>
@@ -13,14 +13,16 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-const employeeCode = ref('');
-const newPassword = ref('');
+const employee = ref({
+    employeeId: '',
+    newPassword: ''
+});
 
 const changePassword = async () => {
     try {
         const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
-            employeeCode: employeeCode.value,
-            employeePassword: newPassword.value
+            employeeId: employee.value.employeeId,
+            employeePassword: employee.value.newPassword,
         }, {
             headers: {
                 'Content-Type': 'application/json'

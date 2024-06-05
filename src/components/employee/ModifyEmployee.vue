@@ -19,7 +19,8 @@
           <input type="email" v-model="employee.employeeEmail">
         </div>
         <div class="form-group">
-          <label for="employeeHp">전화번호:</label  <input type="text" v-model="employee.employeeHp">
+          <label for="employeeHp">전화번호:</label>  
+          <input type="text" v-model="employee.employeeHp">
         </div>
         <div class="form-group">
           <label for="employeeNumber">내선번호:</label>
