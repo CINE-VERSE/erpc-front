@@ -1,30 +1,32 @@
 <template>
   <div>
     <div class="table-container">
-      <router-link :to="{ path: '/employees/regist' }" class="writebutton">직원 등록</router-link>
-    <table class="table">
-      <thead>
-        <tr class="header1">
-          <th class="num">No</th>
-          <th>이름</th>
-          <th>팀</th>
-          <th>직급</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(employee, index) in employees" :key="employee.employeeId" class="allpost">
-          <td>{{ index + 1 }}</td>
-          <td>
-            <router-link :to="'/employees/' + employee.employeeId" class="employee-item">
-              {{ employee.employeeName }}
-            </router-link>
-          </td>
-          <td>{{ mapTeamCode(employee.teamCode.teamCodeId) }}</td>
-          <td>{{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="header-container">
+        <router-link :to="{ path: '/employees/regist' }" class="writebutton">직원 등록</router-link>
+      </div>
+      <table class="table">
+        <thead>
+          <tr class="header1">
+            <th class="num">No</th>
+            <th>이름</th>
+            <th>팀</th>
+            <th>직급</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(employee, index) in employees" :key="employee.employeeId" class="allpost">
+            <td>{{ index + 1 }}</td>
+            <td>
+              <router-link :to="'/employees/' + employee.employeeId" class="employee-item">
+                {{ employee.employeeName }}
+              </router-link>
+            </td>
+            <td>{{ mapTeamCode(employee.teamCode.teamCodeId) }}</td>
+            <td>{{ mapEmployeeRank(employee.employeeRank.employeeRankId) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -95,7 +97,7 @@ export default {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-spacing: 0 10px;
-  margin-top: 60px;
+ 
 }
 
 .boardTitle {
@@ -128,6 +130,14 @@ export default {
 .allpost .num {
   width: 5%;
 }
+
+.header-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 60px;
+}
+
 .writebutton {
   background-color: #6c7aa1;
   color: white;
@@ -136,13 +146,10 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px; 
-  font-weight: bold; 
-  margin-top: 20px;
-  margin-right: 20px;
-  float: right; /* 오른쪽으로 정렬 */
+  font-weight: bold;
 }
 
 .writebutton:hover {
   background-color: #b8c4e4;
 }
-</style>
+</style>00
