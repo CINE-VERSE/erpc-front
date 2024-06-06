@@ -1,76 +1,94 @@
 <template>
-        <div class="customer-regist-content11">
-            <div class="customer-regist">
-                <h1>거래처 등록</h1>
-            </div>
-            <div class="customer-list-box33">
-                <table class="customer-table1">
-                    <thead>
-                        <tr>
-                            <th>사업자 번호</th>
-                            <th>사업자명</th>
-                            <th>대표자명</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="business-number-div33">
-                                    <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33" placeholder="사업자 번호를 입력해주세요."/>
-                                    <button @click="fetchBusinessData" class="business-number-btn33">확인</button>
-                                </div>
-                            </td>
-                            <td><input type="text" v-model="accountName" class="customer-test1"></td>
-                            <td><input type="text" v-model="accountRepresentative" class="customer-test2"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="customer-table2">
-                    <thead>
-                        <tr>
-                            <th>기업 상태</th>
-                            <th>법인 여부</th>
-                            <th>소재지</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ businessStatus }}</td>
-                            <td><input type="text" v-model="corporationStatus" class="customer-test3"></td>
-                            <td><input type="text" v-model="accountLocation" class="customer-test4"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="customer-table3">
-                    <thead>
-                        <tr>
-                            <th>업종</th>
-                            <th>전화번호</th>
-                            <th>이메일</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="text" v-model="accountType" class="customer-test5"></td>
-                            <td><input type="text" v-model="accountContact" class="customer-test6"
-                                pattern="^[0-9]{2,3}-\d{3,4}-\d{4}$" title="전화번호를 입력해주세요. 예시: 010-1234-5678, 02-1234-5678"></td>
-                            <td><input type="text" v-model="accountEmail" class="customer-test7"></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <table class="customer-table4">
-                    <thead>
-                        <tr>
-                            <th>비고</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="text" v-model="accountNote" class="customer-test9"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+    <div class="customer-regist-content11">
+        <div class="customer-regist">
+            <h1>거래처 등록</h1>
+        </div>
+        <div class="customer-list-box33">
+            <table class="customer-table1">
+                <thead>
+                    <tr>
+                        <th>사업자 번호</th>
+                        <th>사업자명</th>
+                        <th>대표자명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="business-number-div33">
+                                <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33" placeholder="사업자 번호를 입력해주세요."/>
+                                <button @click="fetchBusinessData" class="business-number-btn33">확인</button>
+                            </div>
+                        </td>
+                        <td><input type="text" v-model="accountName" class="customer-test1"></td>
+                        <td><input type="text" v-model="accountRepresentative" class="customer-test2"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="customer-table2">
+                <thead>
+                    <tr>
+                        <th>기업 상태</th>
+                        <th>법인 여부</th>
+                        <th>소재지</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ businessStatus }}</td>
+                        <td>
+                            <select v-model="corporationStatus" class="customer-test3">
+                                <option value="C">C</option>
+                                <option value="P">P</option>
+                            </select>
+                        </td>
+                        <td><input type="text" v-model="accountLocation" class="customer-test4"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="customer-table3">
+                <thead>
+                    <tr>
+                        <th>업종</th>
+                        <th>전화번호</th>
+                        <th>이메일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" v-model="accountType" class="customer-test5"></td>
+                        <td>
+                            <input 
+                                type="text" 
+                                v-model="accountContact" 
+                                class="customer-test6" 
+                                :class="{ 'error': !validPhoneNumber }" 
+                                @input="validatePhoneNumber">
+                        </td>
+                        <td>
+                            <input 
+                                type="text" 
+                                v-model="accountEmail" 
+                                class="customer-test7" 
+                                :class="{ 'error': !validEmail }" 
+                                @input="validateEmail">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="customer-table4">
+                <thead>
+                    <tr>
+                        <th>비고</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" v-model="accountNote" class="customer-test9"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <div class="customer-regist-btn-div33">
             <button @click="registerAccount" class="customer-regist-btn33">거래처 등록하기</button>
@@ -95,6 +113,8 @@ const accountContact = ref('');
 const accountEmail = ref('');
 const accountNote = ref('');
 const accountType = ref('');
+const validPhoneNumber = ref(true);
+const validEmail = ref(true);
 
 const fetchBusinessData = async () => {
     if (!brNo.value) {
@@ -144,10 +164,32 @@ const fetchBusinessData = async () => {
     }
 }
 
+const validatePhoneNumber = () => {
+    const phonePattern = /^[0-9]{2,3}-\d{3,4}-\d{4}$/;
+    validPhoneNumber.value = phonePattern.test(accountContact.value);
+}
+
+const validateEmail = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validEmail.value = emailPattern.test(accountEmail.value);
+}
+
 const registerAccount = async () => {
     // 필수 필드가 모두 채워졌는지 확인
     if (!brNo.value || !accountName.value || !accountRepresentative.value || !corporationStatus.value || !accountLocation.value || !accountContact.value || !accountEmail.value || !accountType.value) {
         alert('모든 필수 입력란을 채워주세요.');
+        return;
+    }
+
+    // 전화번호와 이메일 형식이 유효한지 확인
+    validatePhoneNumber();
+    validateEmail();
+    if (!validPhoneNumber.value) {
+        alert('전화번호 형식이 올바르지 않습니다. 예시: 010-1234-5678, 02-1234-5678');
+        return;
+    }
+    if (!validEmail.value) {
+        alert('이메일 형식이 올바르지 않습니다. 예시: example@example.com');
         return;
     }
 
@@ -189,9 +231,7 @@ const registerAccount = async () => {
 }
 </script>
 
-
 <style>
-
 .customer-regist-content11 {
     /* margin-top: 8%; */
     display: flex;
@@ -341,5 +381,9 @@ const registerAccount = async () => {
 
 .customer-regist-btn33:hover {
     background-color: #007bff;
+}
+
+.error {
+    border-color: red;
 }
 </style>
