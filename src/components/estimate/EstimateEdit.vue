@@ -361,14 +361,18 @@ const updateQuotation = async () => {
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
 
+    // 기존 파일 목록을 유지하도록 추가
+    if (quotationData.value.quotationFile.length > 0) {
+        quotationData.value.quotationFile.forEach(file => {
+            formData.append('existingFiles', JSON.stringify(file));
+        });
+    }
+
     // 첨부 파일이 있는 경우에만 파일 추가
     if (files.value.length > 0) {
         files.value.forEach(file => {
             formData.append('files', file);
         });
-    } else {
-        // 첨부 파일이 없는 경우 빈 배열로 초기화
-        formData.append('files', new Blob([]));
     }
 
     try {
@@ -419,7 +423,6 @@ watch(products, (newProducts) => {
     });
 }, { deep: true });
 </script>
-
 
 
 
