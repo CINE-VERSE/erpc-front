@@ -113,20 +113,14 @@
             </div>
         </div>
         <div class="order-attachment">
-            <div class="order-attachment-header">
-                <h2 class="order-file">첨부파일</h2>
+            <h2 class="order-file">첨부파일</h2>
+            <div v-for="(file, index) in files" :key="index" class="file-list">
+                <span class="file-icon">📄</span>
+                <span class="file-name">{{ file.name }}</span>
+                <button @click="removeFile(index)">삭제</button>
             </div>
-            <div class="order-attachment-content">
-                <div class="file-list" v-for="(file, index) in files" :key="index">
-                    <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.name }}</span>
-                    <button @click="removeFile(index)">삭제</button>
-                </div>
-            </div>
-            <label class="file-upload-label">
-                파일 선택
-                <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" />
-            </label>
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
+            <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
         <div class="order-regist-btn-div33">
             <button class="order-regist-btn33" @click="registerOrder">수주 등록하기</button>
@@ -272,17 +266,14 @@ const registerOrder = async () => {
 };
 </script>
 
-
 <style>
 .order-regist-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .order-regist11 {
@@ -336,7 +327,7 @@ const registerOrder = async () => {
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
-    width: 600px; /* 너비를 늘리기 위해 추가 */
+    width: 600px;
 }
 
 .order-table1 th,
@@ -442,7 +433,8 @@ const registerOrder = async () => {
     align-items: center;
     position: relative;
     width: 100%;
-    height: 250px;
+    max-width: 1400px;
+    height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -487,7 +479,7 @@ const registerOrder = async () => {
     position: absolute;
     bottom: 10px;
     right: 20px;
-    opacity: 0; 
+    opacity: 0;
     width: 0;
     height: 0;
 }
@@ -519,7 +511,6 @@ const registerOrder = async () => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 
