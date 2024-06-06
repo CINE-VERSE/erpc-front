@@ -151,19 +151,23 @@ const routes = [
     },
     {
         path: '/approval',
-        component: ApprovalList
+        component: ApprovalList,
+        beforeEnter: requirePermission(19)
     },
     {
         path: '/approval/quotation/:quotationId',
-        component: ApprovalEstimateContents
+        component: ApprovalEstimateContents,
+        beforeEnter: requirePermission(20)
     },
     {
         path: '/approval/contract/:contractId',
-        component: ApprovalContractContents
+        component: ApprovalContractContents,
+        beforeEnter: requirePermission(20)
     },
     {
         path: '/approval/order/:orderRegistrationId',
-        component: ApprovalOrderContents
+        component: ApprovalOrderContents,
+        beforeEnter: requirePermission(20)
     },
     {
         path: '/salesopp/regist',

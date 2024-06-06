@@ -78,12 +78,12 @@
     <div class="popup-overlay77" v-if="showStatusPopup">
         <div class="popup-content" style="position: fixed; top: 50%; left: 57%; transform: translate(-50%, -50%);">
             <h3>상태변경</h3>
-            <select v-model="newStatus">
-                <option value="등록">등록</option>
-                <option value="진행중">진행중</option>
-                <option value="성사">성사</option>
-                <option value="불발">불발</option>
-            </select>
+            <select v-model="newStatus" class="styled-select">
+            <option value="등록">등록</option>
+            <option value="진행중">진행중</option>
+            <option value="성사">성사</option>
+            <option value="불발">불발</option>
+        </select>
             <button @click="confirmStatusChange">확인</button>
             <button class="close-btn" @click="closeStatusPopup">닫기</button>
         </div>
@@ -299,5 +299,16 @@ const filteredSalesOppNoteData = computed(() => {
 
 .popup-content77 button {
     margin: 5px;
+}
+.styled-select {
+    width: 30%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    background-position-x: 95%;
+    background-position-y: 50%;
+    cursor: pointer;
 }
 </style>

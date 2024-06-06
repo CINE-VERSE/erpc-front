@@ -1,7 +1,7 @@
 <template>
     <div class="change-password">
         <h1>비밀번호 변경</h1>
-        <label for="employee-id">Employee ID</label>
+        <label for="employee-id">사번</label>
         <input type="text" v-model="employee.employeeId" id="employee-id" name="employee-id">
         <label for="new-password">새 비밀번호</label>
         <input type="password" v-model="employee.newPassword" id="new-password" name="new-password">

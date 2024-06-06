@@ -19,7 +19,7 @@
                 </div>
                 <div v-else class="login-container">
                     <h1>ERPC</h1>
-                    <label for="employee-id">Employee ID</label>
+                    <label for="employee-id">사번</label>
                     <input type="text" v-model="employeeCode" id="employee-id" name="employee-id">
                     <label for="password">Password</label>
                     <input type="password" v-model="employeePassword" id="password" name="password">
@@ -229,6 +229,8 @@ const changePassword = () => {
 
 }
 .login-container2 {
+    width: 300px;
+    height: 60px;
     text-align: center;
     display: flex;
     flex-direction: row;
