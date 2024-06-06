@@ -60,7 +60,7 @@ const filteredCustomers = ref([]);
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://localhost:7775/account/list');
+        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/list');
         customers.value = response.data.sort((a, b) => b.accountId - a.accountId); // Sort by accountId
         filteredCustomers.value = customers.value;
     } catch (error) {
