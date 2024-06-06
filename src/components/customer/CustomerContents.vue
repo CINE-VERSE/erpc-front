@@ -219,7 +219,11 @@ const addNote = async () => {
 
 const deleteNote = async (accountNoteId) => {
     try {
-        const response = await axios.patch(`http://localhost:7775/account_note/delete/${accountNoteId}`);
+        const response = await axios.patch('http://localhost:7775/account_note/delete', null, {
+            params: {
+                accountNoteId
+            }
+        });
         const updatedNote = response.data;
         const noteIndex = accountNoteData.value.findIndex(note => note.accountNoteId === accountNoteId);
         alert('process 삭제되었습니다.');
