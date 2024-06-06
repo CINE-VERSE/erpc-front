@@ -171,6 +171,7 @@ const submitAddAccess = async () => {
     display: flex;
     justify-content: space-between;
     flex-direction: row-direction;
+    margin-top: 60px;
   }
   
   .section {

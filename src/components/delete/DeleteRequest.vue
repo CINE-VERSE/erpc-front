@@ -131,10 +131,10 @@ export default {
         console.error('계약서 삭제 요청 처리 중 오류가 발생했습니다:', error);
       }
     },
-    async processQuotationDeleteRequest(QuotationDeleteRequestId) {
+    async processQuotationDeleteRequest(quotationDeleteRequestId) {
       try {
         const requestData = { 
-          QuotationDeleteRequestId: QuotationDeleteRequestId,
+          quotationDeleteRequestId: quotationDeleteRequestId,
         };
         console.log('Request Data:', requestData); 
 
@@ -145,10 +145,10 @@ export default {
         console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
       }
     },
-    async processAccountDeleteRequest(accountDeleteRequestsId) {
+    async processAccountDeleteRequest(accountDeleteRequestId) {
       try {
         const requestData = { 
-          accountDeleteRequestsId: accountDeleteRequestsId,
+          accountDeleteRequestId: accountDeleteRequestId,
         };
         console.log('Request Data:', requestData); 
 
@@ -159,10 +159,10 @@ export default {
         console.error('거래처 삭제 요청 처리 중 오류가 발생했습니다:', error);
       }
     },
-    async processOrderDeleteRequest(OrderDeleteRequestId) {
+    async processOrderDeleteRequest(orderDeleteRequestId) {
       try {
         const requestData = { 
-          OrderDeleteRequestId: OrderDeleteRequestId,
+          orderDeleteRequestId: orderDeleteRequestId,
         };
         console.log('Request Data:', requestData); 
 

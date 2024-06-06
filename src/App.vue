@@ -33,6 +33,7 @@ import { ref, computed } from 'vue';
 import { requirePermission } from '@/components/auth';
 const userId = ref(localStorage.getItem('userId'));
 
+
 const menuItems = ref([
   {
     title: '공지 사항',
@@ -129,8 +130,19 @@ const menuItems = ref([
       { title: '삭제 신청', path: '/delete' }
     ],
     isOpen: false,
+    async isVisible() {
+    try {
+        const accessIds = await requirePermission(22);
+        console.log('Access IDs:', accessIds);
+        return accessIds.includes(22);
+    } catch (error) {
+        console.error('Error checking permission:', error);
+        return false;
+    }
+}
 
-  }
+}
+
 ]);
 
 const toggleSubItems = (index) => {

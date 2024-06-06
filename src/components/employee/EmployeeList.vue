@@ -95,6 +95,7 @@ export default {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-spacing: 0 10px;
+  margin-top: 60px;
 }
 
 .boardTitle {
