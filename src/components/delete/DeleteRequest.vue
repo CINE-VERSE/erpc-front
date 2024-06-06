@@ -195,10 +195,17 @@ export default {
       };
         } else if (type === 'contract') {
           response = await DeleteService.findContractDeleteRequestById(requestId);
-          this.singleViewContent = {
-            '계약서 코드': contract.contractCode 
-
-          }; 
+          const contract = response.data.contract;
+        this.singleViewContent = {
+          '계약서 코드': contract.contractCode,
+          '계약서 일자': contract.contractDate,
+          '계약서 비고': contract.contractNote,
+          '총 금액': contract.contractTotalPrice,
+          '마감 일자': contract.contractDueDate,
+          '계약금': contract.downPayment,
+          '진행금': contract.progressPayment,
+          '잔금': contract.balance
+        };
         } else if (type === 'quotation') {
           response = await DeleteService.findQuotationDeleteRequestById(requestId);
           const quotation = response.data.quotation;
@@ -226,7 +233,26 @@ export default {
         };
         } else if (type === 'order') {
           response = await DeleteService.findOrderDeleteRequestById(requestId);
-          this.singleViewContent = response.data; 
+          const order = response.data.order;
+        this.singleViewContent = {
+          '수주 등록 ID': order.orderRegistrationId,
+          '접촉 일자': order.contactDate,
+          '추정 배송일': order.estimatedDeliveryDate,
+          '총 금액': order.orderTotalPrice,
+          '마감 일자': order.orderDueDate,
+          '추정 도착일': order.estimatedArriveDate,
+          '주문 일자': order.orderDate,
+          '주문 삭제일': order.orderDeleteDate,
+          '총 잔액': order.totalBalance,
+          '계약금': order.downPayment,
+          '진행금': order.progressPayment,
+          '잔금': order.balance,
+          '도착일': order.arriveDate,
+          '출고일': order.releaseDate,
+          '추정 출고일': order.estimatedReleaseDate,
+          '비고': order.orderNote,
+          '입금일': order.depositDate
+        };
         }
       } catch (error) {
         console.error('단일 조회 페이지를불러오는 중 오류가 발생했습니다:', error);
