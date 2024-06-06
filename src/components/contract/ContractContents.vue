@@ -4,10 +4,10 @@
             <h1 class="maintext">계약서 정보 조회 내역</h1>
             <div class="contract-btn">
                 <div class="contract-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="contract-request" @click="requestApproval">결재 요청</button>
+                    <button class="contract-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재 요청</button>
                 </div>
-                <button class="contract-edit" @click="goToEditPage">수정</button>
-                <button class="contract-delete" @click="deleteContract">삭제</button>
+                <button class="contract-edit" @click="handleEditContract" :disabled="deleteRequested">수정</button>
+                <button class="contract-delete" v-if="!deleteRequested" @click="deleteContract">삭제</button>
                 <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="contract-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && contractData.approvalContent">
@@ -156,18 +156,18 @@
         <p>Loading...</p>
     </div>
     <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay55">
-        <div class="popup-content55">
+    <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
+            <button @click="confirmDelete"  class="confirm-btn">확인</button>
+            <button @click="closePopup"  class="cancel-btn">취소</button>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -178,6 +178,7 @@ const showPopup = ref(false);
 const deleteReason = ref('');
 const employeeName = ref('');
 const approvalStatus = ref('Pending'); // Default value as Pending
+const deleteRequested = ref(false); // 삭제 요청 상태를 저장
 
 // 컴포넌트가 마운트될 때 실행되는 코드
 onMounted(async () => {
@@ -186,22 +187,36 @@ onMounted(async () => {
 
     try {
         // 계약서 데이터를 가져오는 API 호출
-        const contractResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/${contractId}`);
+        const contractResponse = await axios.get(`http://localhost:7775/contract/${contractId}`);
         contractData.value = contractResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
-        const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
         // 전체 승인 데이터를 가져오는 API 호출
-        const approvalResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract');
+        const approvalResponse = await axios.get('http://localhost:7775/approval/contract');
         const approvalData = approvalResponse.data;
 
-        // 현재 계약서에 해당하는 결재 상태를 찾기
-        const currentApproval = approvalData.find(approval => approval.contract.contractId === parseInt(contractId));
-        if (currentApproval) {
-            approvalStatus.value = currentApproval.approvalStatus.approvalStatus;
-            contractData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
+        if (approvalData && Array.isArray(approvalData)) {
+            // 현재 계약서에 해당하는 결재 상태를 찾기
+            const currentApproval = approvalData.find(approval => approval.contract && approval.contract.contractId === parseInt(contractId));
+            if (currentApproval) {
+                approvalStatus.value = currentApproval.approvalStatus.approvalStatus;
+                contractData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
+            }
+        }
+
+        // 전체 삭제 요청 데이터를 가져오는 API 호출
+        const deleteResponse = await axios.get('http://localhost:7775/delete/contract');
+        const deleteData = deleteResponse.data;
+
+        if (deleteData && Array.isArray(deleteData)) {
+            // 현재 계약서에 해당하는 삭제 요청 상태를 찾기
+            const currentDeleteRequest = deleteData.find(deleteRequest => deleteRequest.contract && deleteRequest.contract.contractId === parseInt(contractId));
+            if (currentDeleteRequest) {
+                deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+            }
         }
 
     } catch (error) {
@@ -210,10 +225,28 @@ onMounted(async () => {
 });
 
 // 결재 요청 함수
+const handleApprovalRequest = () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 계약서는 결재 요청할 수 없습니다.');
+    } else {
+        requestApproval();
+    }
+};
+
+// 계약서 수정 함수
+const handleEditContract = () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 계약서는 수정할 수 없습니다.');
+    } else {
+        goToEditPage();
+    }
+};
+
+// 결재 요청 함수
 const requestApproval = async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract/regist', {
+        const response = await axios.post('http://localhost:7775/approval/contract/regist', {
             contract: { contractId: contractId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
@@ -245,7 +278,7 @@ const downloadFile = (url) => {
 // 엑셀 다운로드 함수
 const downloadExcel = () => {
     const contractId = route.params.contractId;
-    const url = `http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/excel/contract/${contractId}`;
+    const url = `http://localhost:7775/excel/contract/${contractId}`;
     const link = document.createElement('a');
     link.href = url;
     link.download = `contract_${contractId}.xlsx`;
@@ -269,13 +302,13 @@ const closePopup = () => {
 const confirmDelete = async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/delete', {
+        const response = await axios.post('http://localhost:7775/contract/delete', {
             contractDeleteRequestReason: deleteReason.value,
             contract: contractData.value
         });
         console.log('Contract delete request sent successfully:', response.data);
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/contract'); // 삭제 요청 후 이동
+        location.reload(); // 삭제 요청 후 페이지 새로고침
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
@@ -668,4 +701,85 @@ const confirmDelete = async () => {
     width: 300px;
     margin-bottom: 25px;
 }
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.popup-content h2 {
+    margin-bottom: 15px;
+}
+
+.popup-content textarea {
+    width: 90%;
+    height: 100px;
+    margin-bottom: 15px;
+}
+
+.popup-content button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #007BFF; /* Blue */
+}
+
+.cancel-btn {
+    background-color: #DC3545; /* Red */
+}
+
+.contract-btn .contract-approve {
+    background-color: #007BFF; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.contract-btn .contract-reject {
+    background-color: #DC3545; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.contract-btn .contract-approve:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.contract-btn .contract-reject:hover {
+    background-color: #c82333; /* Darker Red */
+}
+
+
 </style>
