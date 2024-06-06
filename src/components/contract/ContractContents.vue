@@ -160,8 +160,8 @@
         <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete"  class="confirm-btn">확인</button>
-            <button @click="closePopup"  class="cancel-btn">취소</button>
+            <button @click="confirmDelete" class="confirm-btn">확인</button>
+            <button @click="closePopup" class="cancel-btn">취소</button>
         </div>
     </div>
 </template>

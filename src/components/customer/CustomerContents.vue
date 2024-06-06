@@ -3,7 +3,7 @@
         <div class="customer-search">
             <h1 class="maintext">거래처 정보 조회 내역</h1>
             <div class="customer-btn">
-                <button class="customer-edit" @click="handleEditAccount">수정</button>
+                <button class="customer-edit" @click="handleEditAccount" :disabled="deleteRequested">수정</button>
                 <button class="customer-delete" v-if="showDeleteButton" @click="deleteAccount">삭제</button>
             </div>
         </div>
@@ -107,6 +107,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -159,9 +160,7 @@ onMounted(async () => {
 });
 
 const handleEditAccount = () => {
-    if (deleteRequested.value) {
-        alert('삭제 요청한 거래처는 수정할 수 없습니다.');
-    } else {
+    if (!deleteRequested.value) {
         goToEditPage();
     }
 };
@@ -186,14 +185,12 @@ const confirmDelete = async () => {
             account: accountData.value
         });
         console.log('Account delete request sent successfully:', response.data);
-        alert('삭제 요청이 성공적으로 완료되었습니다.');
         showDeleteButton.value = false; // 삭제 요청 후 삭제 버튼 숨기기
-        router.push('/customer'); // 삭제 요청 후 이동
+        deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+        closePopup();
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
-    } finally {
-        closePopup();
     }
 };
 
@@ -206,7 +203,6 @@ const addNote = async () => {
             account: { accountId: accountData.value.accountId },
             employee: { employeeId: userId } // 수정: employeeId를 userId로 설정
         });
-        alert('process 등록되었습니다.');
         console.log('Account note added successfully:', response.data);
         accountNoteData.value.push(response.data);
         newNote.value = ''; 
@@ -226,7 +222,6 @@ const deleteNote = async (accountNoteId) => {
         });
         const updatedNote = response.data;
         const noteIndex = accountNoteData.value.findIndex(note => note.accountNoteId === accountNoteId);
-        alert('process 삭제되었습니다.');
         if (noteIndex !== -1) {
             accountNoteData.value[noteIndex] = updatedNote;
         }
@@ -236,6 +231,7 @@ const deleteNote = async (accountNoteId) => {
     }
 };
 </script>
+
 
 
 <style>

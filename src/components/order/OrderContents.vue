@@ -5,10 +5,10 @@
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
                 <div class="order-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="order-request" @click="requestApproval">결재 요청</button>
+                    <button class="order-request" @click="requestApproval" :disabled="deleteRequested">결재 요청</button>
                 </div>
-                <button class="order-edit" @click="goToOrderPage">수정</button>
-                <button class="order-delete" @click="deleteOrder">삭제</button>
+                <button class="order-edit" @click="goToOrderPage" :disabled="deleteRequested">수정</button>
+                <button class="order-delete" v-if="showDeleteButton" @click="deleteOrder">삭제</button>
                 <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="order-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && orderData.approvalContent">
@@ -226,15 +226,16 @@
         Loading...
     </div>
     <!-- 삭제 요청 팝업 -->
-    <div v-if="showPopup" class="popup-overlay77">
-        <div class="popup-content77">
+    <div v-if="showPopup" class="popup-overlay">
+        <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
+            <button @click="confirmDelete" class="confirm-btn">확인</button>
+            <button @click="closePopup" class="cancel-btn">취소</button>
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -252,6 +253,8 @@ const employeeName = ref('');
 const employeeId = ref('');
 const taxInvoiceRequestData = ref([]); // 세금계산서 요청 데이터를 저장하는 배열
 const approvalStatus = ref('Pending'); // Default value as Pending
+const showDeleteButton = ref(true); // 삭제 버튼 표시 여부
+const deleteRequested = ref(false); // 삭제 요청 상태를 저장
 
 // filteredOrderNotes는 orderDeleteDate가 null인 노트만 반환합니다.
 const filteredOrderNotes = computed(() => {
@@ -271,27 +274,27 @@ onMounted(async () => {
 
     try {
         // 수주 데이터를 가져오는 API 호출
-        const orderResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order/${orderRegistrationId}`);
+        const orderResponse = await axios.get(`http://localhost:7775/order/${orderRegistrationId}`);
         orderData.value = orderResponse.data;
 
         // 수주 노트 데이터를 가져오는 API 호출
-        const noteResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order_note/${orderRegistrationId}`);
+        const noteResponse = await axios.get(`http://localhost:7775/order_note/${orderRegistrationId}`);
         orderNoteData.value = noteResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
-        const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
+        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
         // 세금계산서 요청 데이터를 가져오는 API 호출
         if (orderData.value.taxInvoiceRequest && orderData.value.taxInvoiceRequest.length > 0) {
             for (const taxInvoice of orderData.value.taxInvoiceRequest) {
-                const taxInvoiceResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/tax_invoice/${taxInvoice.taxInvoiceRequestId}`);
+                const taxInvoiceResponse = await axios.get(`http://localhost:7775/tax_invoice/${taxInvoice.taxInvoiceRequestId}`);
                 taxInvoiceRequestData.value.push(taxInvoiceResponse.data);
             }
         }
 
         // 전체 승인 데이터를 가져오는 API 호출
-        const approvalResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment');
+        const approvalResponse = await axios.get('http://localhost:7775/approval/shipment');
         const approvalData = approvalResponse.data;
 
         // 현재 수주에 해당하는 결재 상태를 찾기
@@ -301,17 +304,31 @@ onMounted(async () => {
             orderData.value.approvalContent = currentApproval.approvalContent; // 비고란 내용 설정
         }
 
+        // 전체 삭제 요청 데이터를 가져오는 API 호출
+        const deleteResponse = await axios.get(`http://localhost:7775/delete/order/${orderRegistrationId}`);
+        const deleteData = deleteResponse.data;
+
+        // 현재 수주에 해당하는 삭제 요청 상태를 찾기
+        if (deleteData) {
+            showDeleteButton.value = false; // 삭제 요청이 있으면 삭제 버튼 숨기기
+            deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+        }
+
     } catch (error) {
         console.error('Error fetching order data:', error);
     }
 });
 
-
 // 결재 요청 함수
 const requestApproval = async () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 수주는 결재 요청할 수 없습니다.');
+        return;
+    }
+
     const orderRegistrationId = route.params.orderRegistrationId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment/regist', {
+        const response = await axios.post('http://localhost:7775/approval/shipment/regist', {
             order: { orderRegistrationId: orderRegistrationId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
@@ -326,6 +343,11 @@ const requestApproval = async () => {
 
 // 수주 수정 페이지로 이동하는 함수
 const goToOrderPage = () => {
+    if (deleteRequested.value) {
+        alert('삭제 요청한 수주는 수정할 수 없습니다.');
+        return;
+    }
+
     router.push({ path: `/order/modify/${route.params.orderRegistrationId}` });
 };
 
@@ -343,7 +365,7 @@ const downloadFile = (url) => {
 // 엑셀 다운로드 함수
 const downloadExcel = () => {
     const orderRegistrationId = route.params.orderRegistrationId;
-    const url = `http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/excel/order/${orderRegistrationId}`;
+    const url = `http://localhost:7775/excel/order/${orderRegistrationId}`;
     const link = document.createElement('a');
     link.href = url;
     link.download = `order_${orderRegistrationId}.xlsx`;
@@ -367,13 +389,14 @@ const closePopup = () => {
 const confirmDelete = async () => {
     const orderRegistrationId = route.params.orderRegistrationId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order/delete', {
+        const response = await axios.post('http://localhost:7775/order/delete', {
             orderDeleteRequestReason: deleteReason.value,
             order: orderData.value
         });
         console.log('Order delete request sent successfully:', response.data);
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/order');
+        location.reload();
+        // router.push('/order');
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
@@ -387,7 +410,7 @@ const addNote = async () => {
     const orderRegistrationId = route.params.orderRegistrationId;
     const userId = localStorage.getItem('userId'); // userId를 localStorage에서 가져오기
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order_note/regist', {
+        const response = await axios.post('http://localhost:7775/order_note/regist', {
             orderNote: newNote.value,
             order: { orderRegistrationId: orderRegistrationId },
             employee: { employeeId: userId } // employeeId를 userId로 설정
@@ -406,7 +429,7 @@ const addNote = async () => {
 // 노트 삭제 함수
 const deleteNote = async (orderNoteId) => {
     try {
-        const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order_note/delete', null, {
+        const response = await axios.patch('http://localhost:7775/order_note/delete', null, {
             params: {
                 orderNoteId
             }
@@ -423,6 +446,7 @@ const deleteNote = async (orderNoteId) => {
     }
 };
 </script>
+
 
 
 
@@ -766,7 +790,7 @@ const deleteNote = async (orderNoteId) => {
     font-weight: normal;
 }
 
-.popup-overlay77 {
+.popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -778,7 +802,7 @@ const deleteNote = async (orderNoteId) => {
     align-items: center;
 }
 
-.popup-content77 {
+.popup-content {
     background: white;
     padding: 20px;
     border-radius: 5px;
@@ -787,17 +811,61 @@ const deleteNote = async (orderNoteId) => {
     width: 100%;
 }
 
-.popup-content77 h2 {
+.popup-content h2 {
     margin-bottom: 15px;
 }
 
-.popup-content77 textarea {
+.popup-content textarea {
     width: 90%;
     height: 100px;
     margin-bottom: 15px;
 }
 
-.popup-content77 button {
+.popup-content button {
     margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #007BFF; /* Blue */
+}
+
+.cancel-btn {
+    background-color: #DC3545; /* Red */
+}
+
+.order-btn .order-approve {
+    background-color: #007BFF; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.order-btn .order-reject {
+    background-color: #DC3545; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.order-btn .order-approve:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.order-btn .order-reject:hover {
+    background-color: #c82333; /* Darker Red */
 }
 </style>

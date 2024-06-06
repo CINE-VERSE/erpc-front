@@ -4,9 +4,9 @@
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
                 <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="estimate-request" @click="handleApprovalRequest">결재 요청</button>
+                    <button class="estimate-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재 요청</button>
                 </div>
-                <button class="estimate-edit" @click="handleEditQuotation">수정</button>
+                <button class="estimate-edit" @click="handleEditQuotation" :disabled="deleteRequested">수정</button>
                 <button class="estimate-delete" v-if="showDeleteButton" @click="deleteQuotation">삭제</button>
                 <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
@@ -147,6 +147,7 @@
     </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -221,18 +222,14 @@ onMounted(async () => {
 
 // 결재 요청 함수
 const handleApprovalRequest = () => {
-    if (deleteRequested.value) {
-        alert('삭제 요청한 견적서는 결재 요청할 수 없습니다.');
-    } else {
+    if (!deleteRequested.value) {
         requestApproval();
     }
 };
 
 // 견적서 수정 함수
 const handleEditQuotation = () => {
-    if (deleteRequested.value) {
-        alert('삭제 요청한 견적서는 수정할 수 없습니다.');
-    } else {
+    if (!deleteRequested.value) {
         goToQuotationPage();
     }
 };
@@ -243,7 +240,6 @@ const requestApproval = async () => {
         const response = await axios.post('http://localhost:7775/approval/quotation/regist', {
             quotation: { quotationId: quotationId }
         });
-        alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
         approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
         location.reload();
@@ -301,14 +297,12 @@ const confirmDelete = async () => {
             quotation: quotationData.value
         });
         console.log('Quotation delete request sent successfully:', response.data);
-        alert('삭제 요청이 성공적으로 완료되었습니다.');
-        location.reload();
-        // router.push('/estimate'); // 삭제 요청 후 이동
+        showDeleteButton.value = false;
+        deleteRequested.value = true;
+        closePopup();
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
-    } finally {
-        closePopup();
     }
 };
 
@@ -322,7 +316,6 @@ const addNote = async () => {
             quotation: { quotationId: quotationData.value.quotationId },
             employee: { employeeId: userId } // employeeId를 userId로 설정
         });
-        alert('process 등록되었습니다.');
         console.log('Quotation note added successfully:', response.data);
         quotationNoteData.value.push(response.data);
         newNote.value = '';
@@ -343,7 +336,6 @@ const deleteNote = async (quotationNoteId) => {
         });
         const updatedNote = response.data;
         const noteIndex = quotationNoteData.value.findIndex(note => note.quotationNoteId === quotationNoteId);
-        alert('process 삭제되었습니다.');
         if (noteIndex !== -1) {
             quotationNoteData.value[noteIndex] = updatedNote;
         }
@@ -353,6 +345,7 @@ const deleteNote = async (quotationNoteId) => {
     }
 };
 </script>
+
 
 <style>
 .estimate-content11 {
