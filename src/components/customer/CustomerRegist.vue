@@ -16,7 +16,7 @@
                     <tr>
                         <td>
                             <div class="business-number-div33">
-                                <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33" placeholder="사업자 번호를 입력해주세요."/>
+                                <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33"/>
                                 <button @click="fetchBusinessData" class="business-number-btn33">확인</button>
                             </div>
                         </td>

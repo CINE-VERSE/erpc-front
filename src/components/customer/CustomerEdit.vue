@@ -31,7 +31,12 @@
                 <tbody>
                     <tr>
                         <td>{{ accountData.accountStatus?.accountStatus }}</td>
-                        <td><input type="text" v-model="accountData.corporationStatus" class="customer-test3" required></td>
+                        <td>
+                            <select v-model="accountData.corporationStatus" class="customer-test3" required>
+                                <option value="C">C</option>
+                                <option value="P">P</option>
+                            </select>
+                        </td>
                         <td><input type="text" v-model="accountData.accountLocation" class="customer-test4" required></td>
                     </tr>
                 </tbody>
@@ -47,8 +52,26 @@
                 <tbody>
                     <tr>
                         <td><input type="text" v-model="accountData.accountType" class="customer-test5" required></td>
-                        <td><input type="text" v-model="accountData.accountContact" class="customer-test6" required></td>
-                        <td><input type="text" v-model="accountData.accountEmail" class="customer-test7" required></td>
+                        <td>
+                            <input 
+                                type="text" 
+                                v-model="accountData.accountContact" 
+                                class="customer-test6" 
+                                :class="{ 'error': !validPhoneNumber }" 
+                                @input="validatePhoneNumber"
+                                required
+                            >
+                        </td>
+                        <td>
+                            <input 
+                                type="text" 
+                                v-model="accountData.accountEmail" 
+                                class="customer-test7" 
+                                :class="{ 'error': !validEmail }" 
+                                @input="validateEmail"
+                                required
+                            >
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -80,6 +103,8 @@ import axios from 'axios';
 const route = useRoute();
 const router = useRouter();
 const accountData = ref({});
+const validPhoneNumber = ref(true);
+const validEmail = ref(true);
 
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
@@ -112,6 +137,16 @@ onMounted(async () => {
     }
 });
 
+const validatePhoneNumber = () => {
+    const phonePattern = /^[0-9]{2,3}-\d{3,4}-\d{4}$/;
+    validPhoneNumber.value = phonePattern.test(accountData.value.accountContact);
+}
+
+const validateEmail = () => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    validEmail.value = emailPattern.test(accountData.value.accountEmail);
+}
+
 const updateAccount = async () => {
     if (
         !accountData.value.accountName ||
@@ -123,6 +158,18 @@ const updateAccount = async () => {
         !accountData.value.accountEmail
     ) {
         alert('모든 필수 입력란을 채워주세요.');
+        return;
+    }
+
+    // 전화번호와 이메일 형식이 유효한지 확인
+    validatePhoneNumber();
+    validateEmail();
+    if (!validPhoneNumber.value) {
+        alert('전화번호 형식이 올바르지 않습니다. 예시: 010-1234-5678, 02-1234-5678');
+        return;
+    }
+    if (!validEmail.value) {
+        alert('이메일 형식이 올바르지 않습니다. 예시: example@example.com');
         return;
     }
 

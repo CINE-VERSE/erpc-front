@@ -18,7 +18,7 @@
                     <tr>
                         <td class="contract-test333">
                             <div class="contract-number-div33">
-                                <input type="text" v-model="contractCode" class="contract-number-box33" placeholder="계약서 코드를 입력해주세요.">
+                                <input type="text" v-model="contractCode" class="contract-number-box33">
                                 <button @click="fetchContractData" class="contract-number-btn33">조회</button>
                             </div>
                         </td>

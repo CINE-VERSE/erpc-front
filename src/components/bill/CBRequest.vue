@@ -17,7 +17,7 @@
                     <tr>
                         <td class="order-test333">
                             <div class="order-number-div33">
-                                <input v-model="projectCode" type="text" id="order-number-box33" class="order-number-box33" placeholder="프로젝트 코드를 입력해주세요.">
+                                <input v-model="projectCode" type="text" id="order-number-box33" class="order-number-box33">
                                 <button @click="fetchOrderData" class="order-number-btn33">조회</button>
                             </div>
                         </td>
@@ -76,7 +76,7 @@
                     <tr>
                         <td class="order-test333">
                             <div class="deposit-code-div33">
-                                <input v-model="depositCode" type="text" id="deposit-code-box33" class="deposit-code-box33" placeholder="입금 코드를 입력해주세요.">
+                                <input v-model="depositCode" type="text" id="deposit-code-box33" class="deposit-code-box33">
                                 <button class="deposit-code-btn33" @click="fetchCollectionData">확인</button>
                             </div>
                         </td>
