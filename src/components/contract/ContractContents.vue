@@ -187,15 +187,15 @@ onMounted(async () => {
 
     try {
         // 계약서 데이터를 가져오는 API 호출
-        const contractResponse = await axios.get(`http://localhost:7775/contract/${contractId}`);
+        const contractResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/${contractId}`);
         contractData.value = contractResponse.data;
 
         // userId로 직원 이름을 가져오는 API 호출
-        const employeeResponse = await axios.get(`http://localhost:7775/employees/${userId}`);
+        const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
         // 전체 승인 데이터를 가져오는 API 호출
-        const approvalResponse = await axios.get('http://localhost:7775/approval/contract');
+        const approvalResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract');
         const approvalData = approvalResponse.data;
 
         if (approvalData && Array.isArray(approvalData)) {
@@ -208,7 +208,7 @@ onMounted(async () => {
         }
 
         // 전체 삭제 요청 데이터를 가져오는 API 호출
-        const deleteResponse = await axios.get('http://localhost:7775/delete/contract');
+        const deleteResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/delete/contract');
         const deleteData = deleteResponse.data;
 
         if (deleteData && Array.isArray(deleteData)) {
@@ -246,7 +246,7 @@ const handleEditContract = () => {
 const requestApproval = async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.post('http://localhost:7775/approval/contract/regist', {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract/regist', {
             contract: { contractId: contractId }
         });
         alert('결재 요청이 성공적으로 완료되었습니다.');
@@ -278,7 +278,7 @@ const downloadFile = (url) => {
 // 엑셀 다운로드 함수
 const downloadExcel = () => {
     const contractId = route.params.contractId;
-    const url = `http://localhost:7775/excel/contract/${contractId}`;
+    const url = `http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/excel/contract/${contractId}`;
     const link = document.createElement('a');
     link.href = url;
     link.download = `contract_${contractId}.xlsx`;
@@ -302,7 +302,7 @@ const closePopup = () => {
 const confirmDelete = async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.post('http://localhost:7775/contract/delete', {
+        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/delete', {
             contractDeleteRequestReason: deleteReason.value,
             contract: contractData.value
         });

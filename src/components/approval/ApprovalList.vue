@@ -180,7 +180,7 @@ const fetchContractApprovals = async () => {
 
 const fetchShipmentApprovals = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment');
+        const response = await axios.get('http://localhost:7775/approval/shipment');
         shipmentApprovals.value = response.data;
         filteredShipmentApprovals.value = shipmentApprovals.value;
     } catch (error) {
@@ -233,22 +233,22 @@ const applyFilter = () => {
         );
     }
 
-    // Sort filtered results by approvalRequestDate in descending order
-    filteredApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
-    filteredContractApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
-    filteredShipmentApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    // Sort filtered results by shipmentApprovalId in descending order
+    filteredApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
+    filteredContractApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
+    filteredShipmentApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
 };
 
 const sortedFilteredApprovals = computed(() => {
-    return filteredApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    return filteredApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
 });
 
 const sortedFilteredContractApprovals = computed(() => {
-    return filteredContractApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    return filteredContractApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
 });
 
 const sortedFilteredShipmentApprovals = computed(() => {
-    return filteredShipmentApprovals.value.sort((a, b) => new Date(b.approvalRequestDate) - new Date(a.approvalRequestDate));
+    return filteredShipmentApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
 });
 
 const goToApprovalContents = (quotationApprovalId) => {
