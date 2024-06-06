@@ -173,10 +173,15 @@
         </div>
         <div class="shipment-search">
             <h1 class="maintext3">출하 정보</h1>
-            <h3 class="maintext4">출하 처리</h3>
+            <h3 class="maintext4">{{ orderData.shipmentStatus.shipmentStatus }}</h3>
         </div>
         <div class="shipment-list-box">
-            <table class="shipment-table1">
+            <table class="shipment-table1"
+                   :class="{
+                       'shipment-status-in-progress': orderData.shipmentStatus.shipmentStatusId === 2,
+                       'shipment-status-completed': orderData.shipmentStatus.shipmentStatusId === 3
+                   }"
+                   v-if="orderData.shipmentStatus.shipmentStatusId">
                 <thead>
                     <tr>
                         <th>출고 예정일</th>
@@ -233,7 +238,6 @@
         </div>
     </div>
 </template>
-
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
@@ -445,24 +449,18 @@ const deleteNote = async (orderNoteId) => {
 };
 </script>
 
-
-
-
 <style>
 .order-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .order-search11 {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .maintext,
@@ -647,9 +645,17 @@ const deleteNote = async (orderNoteId) => {
     background-color: #d5e6ff;
 }
 
+.shipment-status-in-progress {
+    background-color: #FFFFE0;
+}
+
+.shipment-status-completed {
+    background-color: #D3F9E0;
+}
+
 .shipment-table1 th,
 .shipment-table1 td {
-    background-color: #D3F9E0;
+    background-color: inherit;
 }
 
 .shipment-table2 {
@@ -866,4 +872,5 @@ const deleteNote = async (orderNoteId) => {
 .order-btn .order-reject:hover {
     background-color: #c82333; /* Darker Red */
 }
+
 </style>
