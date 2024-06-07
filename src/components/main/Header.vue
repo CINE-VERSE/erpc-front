@@ -57,11 +57,13 @@ function viewProfile() {
 }
 
 function logout() {
+    alert("로그아웃 되었습니다!")
     localStorage.removeItem('token'); // 토큰 삭제
     localStorage.removeItem('userId'); // 사용자 ID 삭제
     employeeName.value = ''; // 로그인한 사용자 이름 초기화
-    location.reload(); // 페이지 새로고침하여 상태 초기화
-    router.push("/");
+    router.replace({ path: '/' }).then(() => {
+        router.go(0); // 페이지 새로고침 없이 상태 초기화
+    });
 }
 </script>
 
