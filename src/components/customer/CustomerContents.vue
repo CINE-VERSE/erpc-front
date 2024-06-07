@@ -133,18 +133,18 @@ onMounted(async () => {
     const userId = localStorage.getItem('userId'); // 추가: userId를 localStorage에서 가져오기
 
     try {
-        const accountResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/${accountId}`);
+        const accountResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/${accountId}`);
         accountData.value = accountResponse.data;
 
-        const noteResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account_note/${accountId}`);
+        const noteResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account_note/${accountId}`);
         accountNoteData.value = noteResponse.data;
 
         // 추가: userId로 employeeName 가져오기
-        const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
+        const employeeResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`);
         employeeName.value = employeeResponse.data.employeeName;
 
         // 전체 삭제 요청 데이터를 가져오는 API 호출
-        const deleteResponse = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/delete/account');
+        const deleteResponse = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/account');
         const deleteData = deleteResponse.data;
 
         // 현재 거래처에 해당하는 삭제 요청 상태를 찾기
@@ -180,7 +180,7 @@ const closePopup = () => {
 const confirmDelete = async () => {
     const accountId = route.params.accountId;
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/delete', {
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/delete', {
             accountDeleteRequestReason: deleteReason.value,
             account: accountData.value
         });
@@ -198,7 +198,7 @@ const addNote = async () => {
     const accountId = route.params.accountId;
     const userId = localStorage.getItem('userId'); // 추가: userId를 localStorage에서 가져오기
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account_note/regist', {
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account_note/regist', {
             accountNote: newNote.value,
             account: { accountId: accountData.value.accountId },
             employee: { employeeId: userId } // 수정: employeeId를 userId로 설정
@@ -215,7 +215,7 @@ const addNote = async () => {
 
 const deleteNote = async (accountNoteId) => {
     try {
-        const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account_note/delete', null, {
+        const response = await axios.patch('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account_note/delete', null, {
             params: {
                 accountNoteId
             }

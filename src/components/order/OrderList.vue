@@ -62,7 +62,7 @@ onMounted(async () => {
 
 const fetchOrders = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order');
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order');
         orders.value = response.data.map(order => ({
             orderRegistrationId: order.orderRegistrationId,
             transaction: order.transaction,
@@ -78,7 +78,7 @@ const fetchOrders = async () => {
 
 const fetchApprovalStatuses = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/shipment');
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/shipment');
         const approvals = response.data;
         approvals.forEach(approval => {
             const order = orders.value.find(ord => ord.orderRegistrationId === approval.order.orderRegistrationId);

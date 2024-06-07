@@ -183,7 +183,7 @@ const files = ref([]);
 
 const fetchContractData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/contract/code', {
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/contract/code', {
             params: {
                 contractCode: contractCode.value
             }
@@ -252,7 +252,7 @@ const registerOrder = async () => {
     });
 
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/order/regist', formData, {
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order/regist', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

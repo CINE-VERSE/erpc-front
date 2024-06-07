@@ -79,7 +79,7 @@ const registSalesOpp = async () => {
         return;
     }
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/regist', newOpp.value);
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/regist', newOpp.value);
         alert('영업기회가 성공적으로 등록되었습니다.');
         router.push('/salesOpp/list');
         console.log('등록된 영업기회:', response.data);

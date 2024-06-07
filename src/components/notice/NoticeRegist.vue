@@ -73,7 +73,7 @@ const submitPost = async () => {
       formData.append('files', new Blob(), 'empty_image');
     }
 
-    await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_board/regist', formData, {
+    await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/regist', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

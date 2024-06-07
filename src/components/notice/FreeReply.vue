@@ -107,7 +107,7 @@ const submitReply = async () => {
     console.log(newComment.value)
 
     // API로 댓글 등록 요청
-    const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_comment/regist', {
+    const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_comment/regist', {
       commentContent: newComment.value,
       employee: {
         employeeId: employeeId.value,
@@ -141,7 +141,7 @@ const getEmployeeId = async () => {
 const removeReply = async (commentId) => {
   try {
     if (confirm('댓글을 삭제하시겠습니까?')) {
-      await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_comment/delete/${commentId}`);
+      await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_comment/delete/${commentId}`);
       // 삭제된 댓글을 화면에서 제거
       replies.value = replies.value.filter(reply => reply.noticeCommentId !== commentId);
     }
@@ -155,7 +155,7 @@ onMounted(async () => {
   try {
     const noticeId = router.currentRoute.value.params.noticeId;
     // 해당 공지에 대한 댓글 가져오기
-    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/notice_comment`);
+    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_comment`);
     // 가져온 댓글을 화면에 표시
     replies.value = response.data.filter(comment => parseInt(comment.noticeId) === parseInt(noticeId));
     console.log('서버로부터 받은 정보:', replies.value);

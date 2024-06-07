@@ -122,7 +122,7 @@ const aggregateAllAccessRights = (data) => {
 
 const getAccessRequestById = async () => {
   try {
-    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/${accessRequestId.value}`);
+    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/${accessRequestId.value}`);
     accessRequest.value = response.data;
     aggregateAllAccessRights([response.data]);
   } catch (error) {
@@ -132,7 +132,7 @@ const getAccessRequestById = async () => {
 
 const getEmployeesAccess = async () => {
   try {
-    const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/find_access/${employeeId.value}`);
+    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access/${employeeId.value}`);
     employeeAccess.value = response.data;
     aggregateAllAccessRights(response.data);
 
@@ -145,7 +145,7 @@ const getEmployeesAccess = async () => {
 
 const getAllAccessRequests = async () => {
   try {
-    const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/list');
+    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/list');
     allAccessRequests.value = response.data;
     showAllAccessRequests.value = true; // 조회 버튼을 눌렀을 때만 표시
   } catch (error) {
@@ -156,7 +156,7 @@ const getAllAccessRequests = async () => {
 const submitAddAccess = async () => {
   try {
     addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
-    await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
+    await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
     alert('추가 권한이 성공적으로 등록되었습니다.');
     addAccess.value.employee.employeeId = '';
     selectedAccessRights.value = [];

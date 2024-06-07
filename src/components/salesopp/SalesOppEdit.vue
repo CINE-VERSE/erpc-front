@@ -64,7 +64,7 @@ const editedSalesOppData = ref({
 onMounted(async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`, { withCredentials: true });
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`, { withCredentials: true });
         salesOppData.value = response.data;
         // 클라이언트에 가져온 데이터를 수정용 데이터에 반영
         Object.assign(editedSalesOppData.value, response.data);
@@ -88,7 +88,7 @@ const updatesalesOpp = async () => {
 
         console.log('Request Data:', requestData); // 데이터를 콘솔에 출력
 
-        await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/modify/${salesOppId}`, requestData, {
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/modify/${salesOppId}`, requestData, {
             withCredentials: true
         });
         

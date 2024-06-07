@@ -1,344 +1,266 @@
 <template>
-  <div class="delete-requests">
-    <h1>삭제 요청 관리</h1>
-
-    <div v-if="salesOppDeleteRequests.length">
-      <h2>영업기회 삭제 요청</h2>
-      <ul>
-        <li v-for="(request, index) in salesOppDeleteRequests" :key="request.salesOppDeleteRequestId" @click="openSingleView(request.salesOppDeleteRequestId, 'salesOpp')">
-          {{ index + 1 }} - {{ request.salesOppDeleteRequestReason }}
-          <button @click="processSalesOppDeleteRequest(request.salesOppDeleteRequestId)">삭제 처리</button>
-        </li>
-      </ul>
+  <div class="delete-request-content">
+    <div class="delete-request-search">
+      <h1 class="delete-request-title">삭제요청관리</h1>
     </div>
-
-    <div v-if="contractDeleteRequests.length">
-      <h2>계약서 삭제 요청</h2>
-      <ul>
-        <li v-for="(request, index) in contractDeleteRequests" :key="request.contractDeleteRequestId" @click="openSingleView(request.contractDeleteRequestId, 'contract')">
-          {{ index + 1 }} - {{ request.contractDeleteRequestReason }}
-          <button @click="processContractDeleteRequest(request.contractDeleteRequestId)">삭제 처리</button>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="quotationDeleteRequests.length">
-      <h2>견적서 삭제 요청</h2>
-      <ul>
-        <li v-for="(request, index) in quotationDeleteRequests" :key="request.quotationDeleteRequestId" @click="openSingleView(request.quotationDeleteRequestId, 'quotation')">
-          {{ index + 1 }} - {{ request.quotationDeleteRequestReason }}
-          <button @click="processQuotationDeleteRequest(request.quotationDeleteRequestId)">삭제 처리</button>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="accountDeleteRequests.length">
-      <h2>거래처 삭제 요청</h2>
-      <ul>
-        <li v-for="(request, index) in accountDeleteRequests" :key="request.accountDeleteRequestId" @click="openSingleView(request.accountDeleteRequestId, 'account')">
-          {{ index + 1 }} - {{ request.accountDeleteRequestReason }}
-          <button @click="processAccountDeleteRequest(request.accountDeleteRequestId)">삭제 처리</button>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="orderDeleteRequests.length">
-      <h2>수주 삭제 요청</h2>
-      <ul>
-        <li v-for="(request, index) in orderDeleteRequests" :key="request.orderDeleteRequestId" @click="openSingleView(request.orderDeleteRequestId, 'order')">
-          {{index + 1 }} - {{ request.orderDeleteRequestReason }}
-          <button @click="processOrderDeleteRequest(request.orderDeleteRequestId)">삭제 처리</button>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="!salesOppDeleteRequests.length && !contractDeleteRequests.length && !quotationDeleteRequests.length && !accountDeleteRequests.length && !orderDeleteRequests.length">
-      삭제 요청이 없습니다.
-    </div>
-
-    <div v-if="isModalOpen" class="modal">
-      <div class="modal-content">
-        {{ singleViewContent }}
-        <button @click="closeModal">닫기</button>
+    <div class="filter-box">
+      <div class="filter-controls">
+        <select v-model="selectedDeleteRequestType" @change="applyFilter" class="delete-type-select">
+          <option value="opportunity">영업기회 삭제</option>
+          <option value="shipment">수주 삭제</option>
+          <option value="contract">계약서 삭제</option>
+        </select>
+        <input type="text" class="delete-request-search-input" v-model="searchQuery" :placeholder="placeholderText" @input="toUpperCase">
+        <button class="delete-request-search-btn" @click="applyFilter">조회하기</button>
       </div>
+    </div>
+
+    <div class="delete-request-list">
+      <!-- 영업기회 삭제 -->
+      <template v-if="selectedDeleteRequestType === 'opportunity'">
+        <h2>영업기회 삭제 요청</h2>
+        <table class="delete-request-table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>영업기회 코드</th>
+              <th>거래처명</th>
+              <th>요청일자</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(request, index) in filteredOpportunityDeleteRequests" :key="request.opportunityDeleteRequestId">
+              <td>{{ filteredOpportunityDeleteRequests.length - index }}</td>
+              <td>{{ request.opportunity.opportunityCode }}</td>
+              <td>{{ request.opportunity.account.accountName }}</td>
+              <td>{{ request.requestDate }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
+
+      <!-- 수주 삭제 -->
+      <template v-if="selectedDeleteRequestType === 'shipment'">
+        <h2>수주 삭제 요청</h2>
+        <table class="delete-request-table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>수주 코드</th>
+              <th>거래처명</th>
+              <th>요청일자</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(request, index) in filteredShipmentDeleteRequests" :key="request.shipmentDeleteRequestId">
+              <td>{{ filteredShipmentDeleteRequests.length - index }}</td>
+              <td>{{ request.shipment.shipmentCode }}</td>
+              <td>{{ request.shipment.account.accountName }}</td>
+              <td>{{ request.requestDate }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
+
+      <!-- 계약서 삭제 -->
+      <template v-if="selectedDeleteRequestType === 'contract'">
+        <h2>계약서 삭제 요청</h2>
+        <table class="delete-request-table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>계약서 코드</th>
+              <th>거래처명</th>
+              <th>요청일자</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(request, index) in filteredContractDeleteRequests" :key="request.contractDeleteRequestId">
+              <td>{{ filteredContractDeleteRequests.length - index }}</td>
+              <td>{{ request.contract.contractCode }}</td>
+              <td>{{ request.contract.account.accountName }}</td>
+              <td>{{ request.requestDate }}</td>
+              <td>{{ request.status }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
     </div>
   </div>
 </template>
 
-<script>
-import DeleteService from '@/components/delete/DeleteService';  
+<script setup>
+import { ref, onMounted, computed, watch } from 'vue';
+import axios from 'axios';
 
-export default {
-  data() {
-    return {
-      salesOppDeleteRequests: [],
-      contractDeleteRequests: [],
-      quotationDeleteRequests: [],
-      accountDeleteRequests: [],
-      orderDeleteRequests: [],
-      isModalOpen: false,
-      singleViewContent: ''
-    };
-  },
-  created() {
-    this.fetchDeleteRequests();
-  },
-  methods: {
-    async fetchDeleteRequests() {
-      try {
-        const [salesOppResponse, contractResponse, quotationResponse, accountResponse, orderResponse] = await Promise.all([
-          DeleteService.getSalesOppDeleteRequests(),
-          DeleteService.getContractDeleteRequests(),
-          DeleteService.getQuotationDeleteRequests(),
-          DeleteService.getAccountDeleteRequests(),
-          DeleteService.getOrderDeleteRequests()
-        ]);
+// 데이터 및 변수 선언
+const opportunityDeleteRequests = ref([]); // 영업기회 삭제 데이터
+const shipmentDeleteRequests = ref([]); // 수주 삭제 데이터
+const contractDeleteRequests = ref([]); // 계약서 삭제 데이터
+const searchQuery = ref(''); // 검색어
+const selectedDeleteRequestType = ref('opportunity'); // 선택된 삭제 요청 유형
+const filteredOpportunityDeleteRequests = ref([]); // 필터링된 영업기회 삭제 데이터
+const filteredShipmentDeleteRequests = ref([]); // 필터링된 수주 삭제 데이터
+const filteredContractDeleteRequests = ref([]); // 필터링된 계약서 삭제 데이터
 
-        this.salesOppDeleteRequests = salesOppResponse.data.filter(request => request.salesOppDeleteRequestStatus !== 'Y');
-        this.contractDeleteRequests = contractResponse.data.filter(request => request.contractDeleteRequestStatus !== 'Y');
-        this.quotationDeleteRequests = quotationResponse.data.filter(request => request.quotationDeleteRequestStatus !== 'Y');
-        this.accountDeleteRequests = accountResponse.data.filter(request => request.accountDeleteRequestStatus !== 'Y');
-        this.orderDeleteRequests = orderResponse.data.filter(request => request.orderDeleteRequestStatus !== 'Y');
-      } catch (error) {
-        console.error('삭제 요청을 불러오는 중 오류가 발생했습니다:', error);
-      }
-    },
-    async processSalesOppDeleteRequest(salesOppDeleteRequestId) {
-      try {
-        const requestData = { 
-          salesOppDeleteRequestId: salesOppDeleteRequestId,
-        };
-        console.log('Request Data:', requestData); 
+// 플레이스홀더 텍스트를 동적으로 설정
+const placeholderText = computed(() => {
+  switch (selectedDeleteRequestType.value) {
+    case 'opportunity':
+      return '영업기회 코드로 조회';
+    case 'shipment':
+      return '수주 코드로 조회';
+    case 'contract':
+      return '계약서 코드로 조회';
+    default:
+      return '코드로 조회';
+  }
+});
 
-        await DeleteService.updateSalesOppDeleteRequestProcess(requestData);
-        alert('영업기회 삭제 요청이 성공적으로 처리되었습니다.');
-        this.fetchDeleteRequests();
-      } catch (error) {
-        console.error('영업기회 삭제 요청 처리 중 오류가 발생했습니다:', error);
-      }
-    },
-    async processContractDeleteRequest(contractDeleteRequestId) {
-      try {
-        const requestData = { 
-          contractDeleteRequestId: contractDeleteRequestId,
-        };
-        console.log('Request Data:', requestData); 
+// 검색어를 대문자로 변환
+const toUpperCase = () => {
+  searchQuery.value = searchQuery.value.toUpperCase();
+};
 
-        await DeleteService.updateContractDeleteRequestStatus(requestData);
-        alert('계약서 삭제 요청이 성공적으로 처리되었습니다.');
-        this.fetchDeleteRequests();
-      } catch (error) {
-        console.error('계약서 삭제 요청 처리 중 오류가 발생했습니다:', error);
-      }
-    },
-    async processQuotationDeleteRequest(quotationDeleteRequestId) {
-      try {
-        const requestData = { 
-          quotationDeleteRequestId: quotationDeleteRequestId,
-        };
-        console.log('Request Data:', requestData); 
+// 컴포넌트가 마운트될 때 데이터를 가져옴
+onMounted(async () => {
+  await fetchOpportunityDeleteRequests(); // 영업기회 삭제 데이터 가져오기
+  await fetchShipmentDeleteRequests(); // 수주 삭제 데이터 가져오기
+  await fetchContractDeleteRequests(); // 계약서 삭제 데이터 가져오기
+  applyFilter(); // 필터 적용
+});
 
-        await DeleteService.processQuotationDeleteRequest(requestData);
-        alert('견적서 삭제 요청이 성공적으로 처리되었습니다.');
-        this.fetchDeleteRequests();
-      } catch (error) {
-        console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
-      }
-    },
-    async processAccountDeleteRequest(accountDeleteRequestId) {
-      try {
-        const requestData = { 
-          accountDeleteRequestId: accountDeleteRequestId,
-        };
-        console.log('Request Data:', requestData); 
+// 선택된 삭제 요청 유형이 변경될 때 필터 적용
+watch([selectedDeleteRequestType], () => {
+  applyFilter();
+});
 
-        await DeleteService.processAccountDeleteRequest(requestData);
-        alert('거래처 삭제 요청이 성공적으로 처리되었습니다.');
-        this.fetchDeleteRequests();
-      } catch (error) {
-        console.error('거래처 삭제 요청 처리 중 오류가 발생했습니다:', error);
-      }
-    },
-    async processOrderDeleteRequest(orderDeleteRequestId) {
-      try {
-        const requestData = { 
-          orderDeleteRequestId: orderDeleteRequestId,
-        };
-        console.log('Request Data:', requestData); 
+// 영업기회 삭제 데이터 가져오기
+const fetchOpportunityDeleteRequests = async () => {
+  try {
+    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete-request/opportunity');
+    opportunityDeleteRequests.value = response.data;
+    filteredOpportunityDeleteRequests.value = opportunityDeleteRequests.value;
+  } catch (error) {
+    console.error('Error fetching opportunity delete requests:', error);
+  }
+};
 
-        await DeleteService.processOrderDeleteRequest(requestData);
-        alert('수주 삭제 요청이 성공적으로 처리되었습니다.');
-        this.fetchDeleteRequests();
-      } catch (error) {
-        console.error('수주 삭제 요청 처리 중 오류가 발생했습니다:', error);
-      }
-    },
-    openSingleView(requestId, type) {
-      this.isModalOpen = true;
-      this.fetchSingleViewContent(requestId, type);
-    },
+// 수주 삭제 데이터 가져오기
+const fetchShipmentDeleteRequests = async () => {
+  try {
+    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete-request/shipment');
+    shipmentDeleteRequests.value = response.data;
+    filteredShipmentDeleteRequests.value = shipmentDeleteRequests.value;
+  } catch (error) {
+    console.error('Error fetching shipment delete requests:', error);
+  }
+};
 
-    async fetchSingleViewContent(requestId, type) {
-      try {
-        let response;
-        if (type === 'salesOpp') {
-          response = await DeleteService.findSalesOppDeleteRequestById(requestId);
-          const salesOpp = response.data.salesOpp;
-      this.singleViewContent = {
-        '거래처명': salesOpp.oppAccountName,
-        '거래처 담당자': salesOpp.oppAccountPic,
-        '연락처': salesOpp.oppAccountContact,
-        '거래처 주소': salesOpp.oppAccountLocation,
-        '이메일': salesOpp.oppAccountEmail,
-        '비고': salesOpp.oppAccountNote,
-        '작성일': salesOpp.oppDate,
-      };
-        } else if (type === 'contract') {
-          response = await DeleteService.findContractDeleteRequestById(requestId);
-          const contract = response.data.contract;
-        this.singleViewContent = {
-          '계약서 코드': contract.contractCode,
-          '계약서 일자': contract.contractDate,
-          '계약서 비고': contract.contractNote,
-          '총 금액': contract.contractTotalPrice,
-          '마감 일자': contract.contractDueDate,
-          '계약금': contract.downPayment,
-          '진행금': contract.progressPayment,
-          '잔금': contract.balance
-        };
-        } else if (type === 'quotation') {
-          response = await DeleteService.findQuotationDeleteRequestById(requestId);
-          const quotation = response.data.quotation;
-    this.singleViewContent = {
-      '견적서 코드': quotation.quotationCode,
-      '견적서 일자': quotation.quotationDate,
-      '총 비용': quotation.quotationTotalCost,
-      '마감 일자': quotation.quotationDueDate,
-      '비고': quotation.quotationNote,
-    };
-        } else if (type === 'account') {
-      response = await DeleteService.findAccountDeleteRequestById(requestId);
-      const account = response.data.account;
-      this.singleViewContent = {
-      '사업자명': account.accountName,
-      '사업자 번호': account.corporationNum,
-      '대표자명': account.accountRepresentative,
-      '법인 여부': account.corporationStatus,
-      '소재지': account.accountLocation,
-      '전화번호': account.accountContact,
-      '이메일': account.accountEmail,
-      '비고': account.accountNote,
-      '업종': account.accountType,
-      '거래처 코드': account.accountCode,
-        };
-        } else if (type === 'order') {
-          response = await DeleteService.findOrderDeleteRequestById(requestId);
-          const order = response.data.order;
-        this.singleViewContent = {
-          '수주 등록 ID': order.orderRegistrationId,
-          '접촉 일자': order.contactDate,
-          '추정 배송일': order.estimatedDeliveryDate,
-          '총 금액': order.orderTotalPrice,
-          '마감 일자': order.orderDueDate,
-          '추정 도착일': order.estimatedArriveDate,
-          '주문 일자': order.orderDate,
-          '주문 삭제일': order.orderDeleteDate,
-          '총 잔액': order.totalBalance,
-          '계약금': order.downPayment,
-          '진행금': order.progressPayment,
-          '잔금': order.balance,
-          '도착일': order.arriveDate,
-          '출고일': order.releaseDate,
-          '추정 출고일': order.estimatedReleaseDate,
-          '비고': order.orderNote,
-          '입금일': order.depositDate
-        };
-        }
-      } catch (error) {
-        console.error('단일 조회 페이지를불러오는 중 오류가 발생했습니다:', error);
-}
-},
-closeModal() {
-  // 모달을 닫는 메서드
-  this.isModalOpen = false;
-  // 단일 조회 페이지의 내용 초기화
-  this.singleViewContent = '';
-}
-}
+// 계약서 삭제 데이터 가져오기
+const fetchContractDeleteRequests = async () => {
+  try {
+    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete-request/contract');
+    contractDeleteRequests.value = response.data;
+    filteredContractDeleteRequests.value = contractDeleteRequests.value;
+  } catch (error) {
+    console.error('Error fetching contract delete requests:', error);
+  }
+};
+
+// 필터링 로직
+const applyFilter = () => {
+  // 기본 필터링 로직
+  let filteredOpportunity = opportunityDeleteRequests.value.filter(request => {
+    const matchesQuery = !searchQuery.value || request.opportunity.opportunityCode.includes(searchQuery.value);
+    return matchesQuery;
+  });
+
+  let filteredShipment = shipmentDeleteRequests.value.filter(request => {
+    const matchesQuery = !searchQuery.value || request.shipment.shipmentCode.includes(searchQuery.value);
+    return matchesQuery;
+  });
+
+  let filteredContract = contractDeleteRequests.value.filter(request => {
+    const matchesQuery = !searchQuery.value || request.contract.contractCode.includes(searchQuery.value);
+    return matchesQuery;
+  });
+
+  // 필터링된 결과를 저장
+  filteredOpportunityDeleteRequests.value = filteredOpportunity;
+  filteredShipmentDeleteRequests.value = filteredShipment;
+  filteredContractDeleteRequests.value = filteredContract;
 };
 </script>
+
 <style scoped>
-.delete-requests {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.delete-requests h1 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.delete-requests h2 {
-  color: #555;
-  margin-top: 20px;
-}
-
-.delete-requests ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.delete-requests li {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  padding: 10px;
+/* 전체 스타일 */
+.delete-request-content {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  margin: 20px;
 }
 
-.delete-requests button {
-  background-color: #007bff;
-  border: none;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.delete-requests button:hover {
-  background-color: #0056b3;
-}
-
-.delete-requests button:active {
-  background-color: #004080;
-}
-
-.delete-requests div {
+.delete-request-title {
+  font-size: 24px;
   margin-bottom: 20px;
 }
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* 배경을 어둡게 하여 모달 효과를 줌 */
+
+.filter-box {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 }
 
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* 그림자 효과 추가 */
+.filter-controls {
+  display: flex;
+  align-items: center;
+}
+
+.delete-type-select,
+.delete-request-search-input {
+  margin: 0 10px;
+  padding: 5px;
+}
+
+.delete-request-search-btn {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-request-list {
+  width: 80%;
+  margin: 20px 0;
+}
+
+.delete-request-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.delete-request-table th,
+.delete-request-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.delete-request-table th {
+  background-color: #f2f2f2;
+}
+
+.delete-request-table tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
 }
 </style>

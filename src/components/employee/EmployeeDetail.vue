@@ -21,7 +21,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees', 
+  baseURL: 'http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees', 
 });
 
 export default {

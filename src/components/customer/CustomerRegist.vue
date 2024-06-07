@@ -220,7 +220,7 @@ const registerAccount = async () => {
     };
 
     try {
-        const response = await axios.post('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/regist', postData);
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/regist', postData);
         console.log('등록 응답:', response.data);
         alert('거래처 등록이 완료되었습니다.');
         router.push({ path: `/customer` });

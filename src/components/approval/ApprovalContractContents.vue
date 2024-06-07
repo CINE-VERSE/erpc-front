@@ -152,7 +152,7 @@ const actionCompleted = ref(false);
 const fetchApproveContractData = async () => {
     const contractId = route.params.contractId;
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract/${contractId}`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/contract/${contractId}`);
         approveContractData.value = response.data;
     } catch (error) {
         console.error("Error fetching approval contract data:", error);
@@ -183,7 +183,7 @@ const submitApproval = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract/process`, payload);
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/contract/process`, payload);
         actionCompleted.value = true;
         showApprovalPopup.value = false;
         fetchApproveContractData();
@@ -210,7 +210,7 @@ const submitRejection = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/contract/process`, payload);
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/contract/process`, payload);
         actionCompleted.value = true;
         showRejectPopup.value = false;
         fetchApproveContractData();

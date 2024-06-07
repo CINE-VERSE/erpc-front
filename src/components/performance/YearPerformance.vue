@@ -187,7 +187,7 @@ const processTargetData = (data) => {
 
 const fetchTargetData = async () => {
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/target/integrate`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/integrate`);
         const data = response.data;
         targetData.value = processTargetData(data);
 
@@ -202,7 +202,7 @@ const fetchTargetData = async () => {
 
 const fetchTeamData = async (teamCodeId) => {
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
         const data = response.data;
         targetData.value = processTargetData(data);
 
@@ -215,7 +215,7 @@ const fetchTeamData = async (teamCodeId) => {
 
 const fetchEmployeeData = async () => {
     try {
-        const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees');
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees');
         const employees = response.data;
 
         const matchingEmployee = employees.find(employee => employee.employeeName === searchQuery.value);
@@ -224,7 +224,7 @@ const fetchEmployeeData = async () => {
             employeeName.value = matchingEmployee.employeeName; // 사원명을 저장
             isEmployeeSearchActive.value = true; // 사원명 검색 활성화
             selectedTeam.value = ''; // 팀 필터 초기화
-            const employeeResponse = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
+            const employeeResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
             targetData.value = processTargetData(employeeResponse.data);
             filterData();
         } else {

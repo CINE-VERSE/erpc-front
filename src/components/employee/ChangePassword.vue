@@ -20,7 +20,7 @@ const employee = ref({
 
 const changePassword = async () => {
     try {
-        const response = await axios.patch('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
+        const response = await axios.patch('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
             employeeId: employee.value.employeeId,
             employeePassword: employee.value.newPassword,
         }, {

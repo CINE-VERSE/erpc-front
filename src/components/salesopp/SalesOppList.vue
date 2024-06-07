@@ -72,7 +72,7 @@ function goTosalesOppContents(salesOppId) {
 
 onMounted(async () => {
   try {
-    const response = await axios.get('http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/sales_opportunity');
+    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity');
     approvals.value = response.data;
     filteredapprovals.value = approvals.value;
   } catch (error) {

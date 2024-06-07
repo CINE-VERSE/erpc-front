@@ -153,7 +153,7 @@ const actionCompleted = ref(false);
 const fetchApproveQuotationData = async () => {
     const quotationId = route.params.quotationId;
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation/${quotationId}`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/quotation/${quotationId}`);
         approveQuotationData.value = response.data;
     } catch (error) {
         console.error("Error fetching approval quotation data:", error);
@@ -184,7 +184,7 @@ const submitApproval = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation/process`, payload);
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/quotation/process`, payload);
         actionCompleted.value = true;
         showApprovalPopup.value = false;
         fetchApproveQuotationData();
@@ -211,7 +211,7 @@ const submitRejection = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/approval/quotation/process`, payload);
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/quotation/process`, payload);
         actionCompleted.value = true;
         showRejectPopup.value = false;
         fetchApproveQuotationData();

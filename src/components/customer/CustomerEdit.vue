@@ -113,7 +113,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeId.value = employeeData.employeeId;
             employeeName.value = employeeData.employeeName;
@@ -129,7 +129,7 @@ onMounted(async () => {
 
     const accountId = route.params.accountId;
     try {
-        const response = await axios.get(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/${accountId}`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/${accountId}`);
         accountData.value = response.data;
     } catch (error) {
         console.error('Error fetching account data:', error);
@@ -181,7 +181,7 @@ const updateAccount = async () => {
     accountData.value.employee = { employeeId: employeeId.value };
 
     try {
-        const response = await axios.patch(`http://erpc-backend-env.eba-thvemdnp.ap-northeast-2.elasticbeanstalk.com/account/modify`, accountData.value);
+        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/modify`, accountData.value);
         alert('거래처 정보가 성공적으로 수정되었습니다.');
         router.push({ path: `/customer/${route.params.accountId}` });
     } catch (error) {
