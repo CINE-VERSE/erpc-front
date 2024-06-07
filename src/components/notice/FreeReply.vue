@@ -178,11 +178,11 @@ textarea {
 }
 
 .box {
-    width: 900px; 
-    max-width: 900px; 
+    width: 1000px; 
+    max-width: 1000px; 
     height: 100px;
     max-height: 100px;
-    margin-left: 250px;
+    /* margin-left: 250px; */
 }
 
 .closebutton {
@@ -298,7 +298,7 @@ textarea::placeholder {
     font-size: 12px;
 }
 
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .btn, .box, .allreply div {
         width: 90%;
         margin: 10px auto;
@@ -307,5 +307,5 @@ textarea::placeholder {
     .replywriterdiv, .replycontentdiv, .replydatediv, .closebuttondiv {
         flex-direction: column; 
     }
-}
+} */
 </style >
