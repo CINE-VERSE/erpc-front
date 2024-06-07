@@ -16,7 +16,7 @@
                     <tr>
                         <td>
                             <div class="business-number-div33">
-                                <input type="text" v-model="brNo" @input="brNo = brNo.toUpperCase()" class="business-number-box33"/>
+                                <input type="text" v-model="brNo" @input="formatBusinessNumber" class="business-number-box33"/>
                                 <button @click="fetchBusinessData" class="business-number-btn33">확인</button>
                             </div>
                         </td>
@@ -116,16 +116,41 @@ const accountType = ref('');
 const validPhoneNumber = ref(true);
 const validEmail = ref(true);
 
+const formatBusinessNumber = () => {
+    let value = brNo.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+
+    if (value.length > 10) {
+        value = value.slice(0, 10); // 10자리 초과 입력 방지
+    }
+
+    const parts = [];
+    if (value.length > 3) {
+        parts.push(value.slice(0, 3));
+        value = value.slice(3);
+    }
+    if (value.length > 2) {
+        parts.push(value.slice(0, 2));
+        value = value.slice(2);
+    }
+    if (value.length > 0) {
+        parts.push(value);
+    }
+    brNo.value = parts.join('-');
+}
+
 const fetchBusinessData = async () => {
     if (!brNo.value) {
         alert("사업자 번호를 입력해주세요.");
         return;
     }
 
+    const cleanBrNo = brNo.value.replace(/-/g, ''); // 하이픈 제거
+
     try {
         console.log('사업자 번호:', brNo.value);
+        cleanBrNo
         const response = await axios.post('https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=IU5nhZBdwX%2FQMWdk0H0JTyf%2BUeqSzFG7Q6JNh%2Fvwuj%2BIt4%2F1wIy2ikm65nd5EisKla2Z3w1InmzW8MMEhu%2BRNA%3D%3D', {
-            b_no: [brNo.value]
+            b_no: [cleanBrNo]
         });
         console.log('API 응답:', response.data);
         if (response.data.data && response.data.data.length > 0) {
@@ -202,7 +227,7 @@ const registerAccount = async () => {
 
     const postData = {
         accountName: accountName.value,
-        corporationNum: businessNumber.value,
+        corporationNum: brNo.value,
         accountDeleteDate: null,
         accountRepresentative: accountRepresentative.value,
         corporationStatus: corporationStatus.value,
