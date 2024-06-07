@@ -16,11 +16,11 @@
       </div>
       <div class="form-group">
         <label for="employeeEmail">이메일:</label>
-        <input type="email" v-model="employee.employeeEmail" id="employeeEmail" required>
+        <input type="email" v-model="employee.employeeEmail" id="employeeEmail" required placeholder="example@erpc.com">
       </div>
       <div class="form-group">
         <label for="employeeHp">전화번호:</label>
-        <input type="text" v-model="employee.employeeHp" id="employeeHp" required>
+        <input type="text" v-model="employee.employeeHp" id="employeeHp" required placeholder="010-1234-1234">
       </div>
       <div class="form-group">
         <label for="employeeNumber">내선번호:</label>

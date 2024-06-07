@@ -16,11 +16,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input v-model="newOpp.oppAccountName" placeholder="거래처 명"></td>
-                        <td><input v-model="newOpp.oppAccountPic" placeholder="거래처 담당자"></td>
-                        <td><input v-model="newOpp.oppAccountLocation" placeholder="거래처 주소"></td>
-                        <td><input v-model="newOpp.oppAccountContact" @input="validateContact" placeholder="연락처"></td>
-                        <td><input v-model="newOpp.oppAccountEmail" placeholder="이메일"></td>
+                        <td><input v-model="newOpp.oppAccountName"></td>
+                        <td><input v-model="newOpp.oppAccountPic"></td>
+                        <td><input v-model="newOpp.oppAccountLocation"></td>
+                        <td><input v-model="newOpp.oppAccountContact" @input="validateContact" placeholder="02-123-1234 or 010-1234-1234"></td>
+                        <td><input v-model="newOpp.oppAccountEmail" placeholder="example@erpc.com"></td>
                     </tr>
                 </tbody>
             </table>
@@ -32,7 +32,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input v-model="newOpp.oppAccountNote" placeholder="비고"></td>
+                        <td><input v-model="newOpp.oppAccountNote"></td>
                     </tr>
                 </tbody>
             </table>
@@ -90,7 +90,11 @@ const registSalesOpp = async () => {
 };
 </script>
 
-<style>
+<style scoped>
+::placeholder {
+    font-size: 10.5px;
+}
+
 .order-regist h1 {
     margin: 0;
     font-size: 24px;

@@ -63,7 +63,8 @@
                                 v-model="accountContact" 
                                 class="customer-test6" 
                                 :class="{ 'error': !validPhoneNumber }" 
-                                @input="validatePhoneNumber">
+                                @input="validatePhoneNumber"
+                                placeholder="02-123-1234 or 010-1234-1234">
                         </td>
                         <td>
                             <input 
@@ -71,7 +72,8 @@
                                 v-model="accountEmail" 
                                 class="customer-test7" 
                                 :class="{ 'error': !validEmail }" 
-                                @input="validateEmail">
+                                @input="validateEmail"
+                                placeholder="example@erpc.com">
                         </td>
                     </tr>
                 </tbody>
