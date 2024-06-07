@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div class="noticevboard">
       <div class="clickdiv" @click="mainBoard()">
-        <h1 class="boardname">영업 게시판</h1> 
+        <h1 class="boardname">공지사항</h1> 
       </div>
     </div>
     <hr class="boardtitleLine">
