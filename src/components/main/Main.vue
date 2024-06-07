@@ -15,17 +15,17 @@
                 <div v-if="isLoggedIn" class="logged-in-message">
                     <h1>ERPC</h1>
                     <p>{{ loggedInMessage }}</p>
-                    <button @click="logout">로그아웃</button>
+                    <button @click="logout" class="logout-btn">로그아웃</button>
                 </div>
                 <div v-else class="login-container">
                     <h1>ERPC</h1>
                     <label for="employee-id">사번</label>
-                    <input type="text" v-model="employeeCode" id="employee-id" name="employee-id">
+                    <input type="text" v-model="employeeCode" id="employee-id" name="employee-id" oninput="this.value = this.value.toUpperCase()">
                     <label for="password">Password</label>
                     <input type="password" v-model="employeePassword" id="password" name="password">
                     <div class="login-container2">
                     <button @click="login">로그인</button>
-                    <button @click="changePassword">비밀번호 찾기</button>
+                    <button class="password-btn" @click="changePassword">비밀번호 찾기</button>
                     </div>
                 </div>
             </div>
@@ -114,6 +114,15 @@ const changePassword = () => {
 </script>
 
 <style>
+.logout-btn {
+    border: white 1px solid !important;
+    width: 120px !important;
+}
+
+.password-btn{
+    margin-left: 5px;
+}
+
 .mainpage {
     display: flex;
     flex-direction: column;
@@ -229,8 +238,8 @@ const changePassword = () => {
 
 }
 .login-container2 {
-    width: 300px;
-    height: 60px;
+    width: 240px;
+    height: 55px;
     text-align: center;
     display: flex;
     flex-direction: row;
@@ -298,7 +307,7 @@ const changePassword = () => {
     color: white;
     border: none;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     margin-top: 10px; /* 버튼 간의 간격을 조정합니다. */
 }
