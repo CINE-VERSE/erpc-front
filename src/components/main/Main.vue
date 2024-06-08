@@ -21,7 +21,7 @@
                     <h1>ERPC</h1>
                     <label for="employee-id">사번</label>
                     <input type="text" v-model="employeeCode" id="employee-id" name="employee-id">
-                    <label for="password">Password</label>
+                    <label for="password">비밀번호</label>
                     <input type="password" v-model="employeePassword" id="password" name="password">
                     <div class="login-container2">
                     <button @click="login">로그인</button>

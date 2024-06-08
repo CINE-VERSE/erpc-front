@@ -57,6 +57,12 @@ import EmployeeApp from '@/components/employee/EmployeeApp.vue';
 import ChangePassword from '@/components/employee/ChangePassword.vue'
 
 import DeleteRequest from '@/components/delete/DeleteRequest.vue'; 
+import Delete from '@/components/delete/Delete.vue';
+import DeleteSalesOppContents from '@/components/delete/Delete.salesopp.vue';
+import DeleteEstimateContents from '@/components/delete/Delete.quotation.vue';
+import DeleteContractContents from '@/components/delete/Delete.contract.vue';
+import DeleteAccountContents from '@/components/delete/Delete.account.vue';
+import DeleteOrderContents from '@/components/delete/Delete.order.vue';
 
 
 const routes = [
@@ -249,6 +255,36 @@ const routes = [
         path: '/delete',
         component: DeleteRequest,
         beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/delete1',
+        component: Delete,
+        
+    },
+    {
+        path: '/delete/quotation/:quotationDeleteRequestsId',
+        component: DeleteEstimateContents,
+
+    },
+    {
+        path: '/delete/order/:orderDeleteRequestsId',
+        component: DeleteOrderContents,
+
+    },
+    {
+        path: '/delete/salesOpp/:salesOppDeleteRequestId',
+        component: DeleteSalesOppContents,
+
+    },
+    {
+        path: '/delete/account/:accountDeleteRequestId',
+        component: DeleteAccountContents,
+
+    },
+    {
+        path: '/delete/contract/:contractDeleteRequestsId',
+        component: DeleteContractContents,
+
     },
     {
         path: '/change-password',

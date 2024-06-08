@@ -53,8 +53,8 @@ class DeleteService {
     return this.api.get('/account');
   }
 
-  findAccountDeleteRequestById(accountDeleteRequestsId) {
-    return this.api.get(`/account/${accountDeleteRequestsId}`);
+  findAccountDeleteRequestById(accountDeleteRequestId) {
+    return this.api.get(`/account/${accountDeleteRequestId}`);
   }
 
   processAccountDeleteRequest(data) {

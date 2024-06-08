@@ -56,7 +56,7 @@ export default {
     return {
       productList: [],
       currentPage: 1,
-      pageSize: 15,
+      pageSize: 10,
       searchKeyword: ''
     };
   },
