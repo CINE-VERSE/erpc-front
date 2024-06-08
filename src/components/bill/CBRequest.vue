@@ -82,7 +82,7 @@
                         </td>
                         <td>{{ collectionData.depositDate }}</td>
                         <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : '' }}</td>
-                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력 필수"></td>
+                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력"></td>
                     </tr>
                 </tbody>
             </table>
@@ -195,21 +195,9 @@ const registerRequest = async () => {
     const isOrderValid = orderData.value.transaction.transactionCode;
     const isAccountValid = orderData.value.account.accountCode && orderData.value.account.corporationStatus && orderData.value.account.corporationNum && orderData.value.account.accountName && orderData.value.account.accountRepresentative && orderData.value.account.accountType && orderData.value.account.accountNote && orderData.value.account.accountLocation && orderData.value.account.accountContact && orderData.value.account.accountEmail;
     const isCollectionValid = collectionData.value.depositDate && collectionData.value.depositPrice;
-    const isTaxInvoiceNoteValid = taxInvoiceNote.value.trim();
-    const areFilesUploaded = files.value.length > 0;
 
     if (!isOrderValid || !isAccountValid || !isCollectionValid) {
         alert('모든 필수 입력란을 채워주세요.');
-        return;
-    }
-
-    if (!isTaxInvoiceNoteValid) {
-        alert('비고란에 계약금/중도금/잔금/일시납부 여부를 입력해주세요.');
-        return;
-    }
-
-    if (!areFilesUploaded) {
-        alert('첨부파일을 등록해주세요.');
         return;
     }
 
@@ -250,22 +238,15 @@ const registerRequest = async () => {
 };
 </script>
 
-
-
-
 <style>
-
 .cb-search-content33 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
-
 
 .cb-search33 {
     text-align: center;
@@ -391,9 +372,7 @@ const registerRequest = async () => {
     align-items: center;
     position: relative;
     width: 100%;
-    /* 너비를 90%로 설정 */
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
     height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
@@ -471,7 +450,6 @@ const registerRequest = async () => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 

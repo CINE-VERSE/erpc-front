@@ -655,7 +655,7 @@ const deleteNote = async (orderNoteId) => {
 }
 
 .shipment-status-requested {
-    background-color: whitesmoke; /* 회색 */
+    background-color: whitesmoke; /* 연회색 */
 }
 
 .shipment-status-in-progress {
