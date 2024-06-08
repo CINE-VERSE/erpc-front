@@ -31,7 +31,10 @@
                         <th>월/분기</th>
                         <th>목표 금액</th>
                         <th>달성 금액</th>
-                        <th>달성 필요금액</th>
+                        <th class="filter-header">
+                            <span>달성 필요금액</span>
+                            <button class="filter-btn" @click="toggleFilter">{{ showAll ? '전체' : '달성초과' }}</button>
+                        </th>
                         <th>달성률</th>
                     </tr>
                 </thead>
@@ -41,9 +44,9 @@
                         <td>{{ target.year }}</td>
                         <td>{{ target.displayMonthOrQuarter }}</td>
                         <td>{{ formatNumber(target.goal) }}</td>
-                        <td>{{ formatNumber(getAchievementValue(target.periodType)) }}</td>
-                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.periodType))) }}</td>
-                        <td>{{ getPercentage(target.goal, getAchievementValue(target.periodType)) }}</td>
+                        <td>{{ formatNumber(getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
+                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter))) }}</td>
+                        <td>{{ getPercentage(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -63,33 +66,75 @@ const uniqueYears = ref([]);
 const searchQuery = ref(''); // 검색어를 저장할 변수
 const isEmployeeSearchActive = ref(false); // 사원명 검색 활성화 상태를 저장할 변수
 const employeeName = ref(''); // 조회된 사원명을 저장할 변수
+const salesData = ref({}); // 실적 데이터를 저장할 변수
+const teamSalesData = ref({}); // 팀 실적 데이터를 저장할 변수
+const employeeSalesData = ref({}); // 사원 실적 데이터를 저장할 변수
+const showAll = ref(true); // 전체/달성초과 토글 상태
 
-const fixedValues = {
-    year: {
-        month: 232000000,
-        quarter: 696000000,
-        total: 2784000000
-    },
-    team: {
-        month: 60500000,
-        quarter: 181500000,
-        total: 726000000
-    },
-    employee: {
-        month: 55800000,
-        quarter: 167400000,
-        total: 669600000
+const fetchSalesData = async () => {
+    try {
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales');
+        salesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        alert('실적 데이터를 조회하는 중 오류가 발생했습니다.');
     }
 };
 
-const getAchievementValue = (periodType) => {
-    if (isEmployeeSearchActive.value && searchQuery.value) {
-        return fixedValues.employee[periodType];
-    } else if (selectedTeam.value) {
-        return fixedValues.team[periodType];
-    } else {
-        return fixedValues.year[periodType];
+const fetchTeamSalesData = async (teamCodeId) => {
+    try {
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/team/${teamCodeId}`);
+        teamSalesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching team sales data:', error);
+        alert('팀 실적 데이터를 조회하는 중 오류가 발생했습니다.');
     }
+};
+
+const fetchEmployeeSalesData = async (employeeId) => {
+    try {
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/employee/${employeeId}`);
+        employeeSalesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching employee sales data:', error);
+        alert('사원 실적 데이터를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const getAchievementValue = (year, displayMonthOrQuarter) => {
+    let yearData;
+
+    if (isEmployeeSearchActive.value && searchQuery.value) {
+        yearData = employeeSalesData.value[year];
+    } else if (selectedTeam.value) {
+        yearData = teamSalesData.value[year];
+    } else {
+        yearData = salesData.value[year];
+    }
+
+    if (!yearData) return 0;
+
+    if (displayMonthOrQuarter.includes('월')) {
+        const month = displayMonthOrQuarter.replace('월', '').trim().padStart(2, '0');
+        return yearData[month] || 0;
+    }
+
+    if (displayMonthOrQuarter.includes('분기')) {
+        const quarter = displayMonthOrQuarter.replace('분기', '').trim();
+        const months = {
+            '1': ['01', '02', '03'],
+            '2': ['04', '05', '06'],
+            '3': ['07', '08', '09'],
+            '4': ['10', '11', '12']
+        };
+        return months[quarter].reduce((sum, month) => sum + (yearData[month] || 0), 0);
+    }
+
+    if (displayMonthOrQuarter === '총계') {
+        return yearData.total || 0;
+    }
+
+    return 0;
 };
 
 const getRequiredValue = (goal, achievement) => {
@@ -202,6 +247,7 @@ const fetchTargetData = async () => {
 
 const fetchTeamData = async (teamCodeId) => {
     try {
+        await fetchTeamSalesData(teamCodeId);
         const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
         const data = response.data;
         targetData.value = processTargetData(data);
@@ -224,6 +270,7 @@ const fetchEmployeeData = async () => {
             employeeName.value = matchingEmployee.employeeName; // 사원명을 저장
             isEmployeeSearchActive.value = true; // 사원명 검색 활성화
             selectedTeam.value = ''; // 팀 필터 초기화
+            await fetchEmployeeSalesData(matchingEmployee.employeeId);
             const employeeResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
             targetData.value = processTargetData(employeeResponse.data);
             filterData();
@@ -271,6 +318,9 @@ const filterData = () => {
     if (searchQuery.value) {
         filteredData = filteredData.filter(target => target.employeeName && target.employeeName.includes(searchQuery.value));
     }
+    if (!showAll.value) {
+        filteredData = filteredData.filter(target => getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) < 0);
+    }
     console.log('Filtered target data:', filteredData);
     filteredTargetData.value = filteredData;
 };
@@ -306,7 +356,13 @@ const fetchTeams = async () => {
     }
 };
 
+const toggleFilter = () => {
+    showAll.value = !showAll.value;
+    filterData();
+};
+
 onMounted(async () => {
+    await fetchSalesData();
     await fetchTargetData();
 });
 
@@ -315,10 +371,8 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 });
 </script>
 
-
 <style>
 .target-list-content {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -330,15 +384,13 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     align-items: center;
     justify-content: center;
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .filters {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    /* margin-bottom: 20px; */
-    gap: 10px; /* 추가 */
+    gap: 10px;
 }
 
 .year-filter,
@@ -364,7 +416,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 .search-box {
     display: flex;
     align-items: center;
-    gap: 10px; /* 추가 */
+    gap: 10px;
 }
 
 .search-input {
@@ -396,6 +448,27 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     background-color: #007bff;
 }
 
+.filter-toggle {
+    margin-top: 20px;
+}
+
+.filter-btn {
+    height: 30px; 
+    padding: 5px 10px; 
+    border: none;
+    border-radius: 5px;
+    background-color: #DC3545; 
+    color: white;
+    font-size: 12px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* 버튼과 텍스트 간격 조절 */
+}
+
+.filter-btn:hover {
+    background-color: #c82333;
+}
+
 .target-list-box {
     width: 100%;
     display: flex;
@@ -405,12 +478,10 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    max-width: 1400px;
+    max-width: 1600px; /* 전체 너비를 더 넓게 설정 */
     margin: 20px auto;
-    /* margin-top: 3%; */
     margin-bottom: 7%;
     gap: 1px;
-    /* margin-left: -65px; */
 }
 
 .target-table {
@@ -422,19 +493,43 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 
 .target-table th,
 .target-table td {
-    text-align: center;
+    text-align: center; /* 기본 중앙 정렬 */
     border: 1px solid #ccc;
     padding: 13px;
     font-family: GmarketSansMedium;
-    width: 120px; /* 너비 조절 */
+    width: 180px; /* 기본 열 너비를 더 넓게 설정 */
 }
-
 
 .target-table th {
     background-color: #0C2092;
     color: white;
     font-size: 18px;
     padding: 10px;
+    position: relative; 
+}
+
+/* 달성 필요금액 칸 좌측 정렬 */
+.target-table th:nth-child(5) {
+    text-align: left; 
+}
+
+.target-table th:nth-child(5) .filter-btn {
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+}
+
+.target-table th:nth-child(1),
+.target-table th:nth-child(2),
+.target-table td:nth-child(1),
+.target-table td:nth-child(2) {
+    width: 80px; 
+}
+
+.target-table th:nth-child(6),
+.target-table td:nth-child(6) {
+    width: 100px; 
 }
 
 .quarter-row {
@@ -457,4 +552,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     outline: none;
     width: 200px;
 }
+
+
+
 </style>

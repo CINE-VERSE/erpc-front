@@ -33,8 +33,7 @@
                         <th>사업자 번호</th>
                         <th>사업자명</th>
                         <th>대표자명</th>
-                        <th>업태</th>
-                        <th>종목</th>
+                        <th>업종</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,7 +42,6 @@
                         <td>{{ orderData.account.accountName }}</td>
                         <td>{{ orderData.account.accountRepresentative }}</td>
                         <td>{{ orderData.account.accountType }}</td>
-                        <td>{{ orderData.account.accountNote }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -82,7 +80,7 @@
                         </td>
                         <td>{{ collectionData.depositDate }}</td>
                         <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : '' }}</td>
-                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력 필수"></td>
+                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력"></td>
                     </tr>
                 </tbody>
             </table>
@@ -92,6 +90,7 @@
             <div v-for="(file, index) in files" :key="index" class="file-list">
                 <span class="file-icon">📄</span>
                 <span class="file-name">{{ file.name }}</span>
+                <button @click="removeFile(index)" class="remove-file-btn">삭제</button>
             </div>
             <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
             <label for="file-upload" class="file-upload-label">파일 선택</label>
@@ -119,7 +118,6 @@ const orderData = ref({
         accountName: '',
         accountRepresentative: '',
         accountType: '',
-        accountNote: '',
         accountLocation: '',
         accountContact: '',
         accountEmail: ''
@@ -193,22 +191,16 @@ const removeFile = (index) => {
 const registerRequest = async () => {
     // 모든 필수 필드가 채워졌는지 확인
     const isOrderValid = orderData.value.transaction.transactionCode;
-    const isAccountValid = orderData.value.account.accountCode && orderData.value.account.corporationStatus && orderData.value.account.corporationNum && orderData.value.account.accountName && orderData.value.account.accountRepresentative && orderData.value.account.accountType && orderData.value.account.accountNote && orderData.value.account.accountLocation && orderData.value.account.accountContact && orderData.value.account.accountEmail;
+    const isAccountValid = orderData.value.account.accountCode && orderData.value.account.corporationStatus && orderData.value.account.corporationNum && orderData.value.account.accountName && orderData.value.account.accountRepresentative && orderData.value.account.accountType && orderData.value.account.accountLocation && orderData.value.account.accountContact && orderData.value.account.accountEmail;
     const isCollectionValid = collectionData.value.depositDate && collectionData.value.depositPrice;
-    const isTaxInvoiceNoteValid = taxInvoiceNote.value.trim();
-    const areFilesUploaded = files.value.length > 0;
 
     if (!isOrderValid || !isAccountValid || !isCollectionValid) {
         alert('모든 필수 입력란을 채워주세요.');
         return;
     }
 
-    if (!isTaxInvoiceNoteValid) {
-        alert('비고란에 계약금/중도금/잔금/일시납부 여부를 입력해주세요.');
-        return;
-    }
-
-    if (!areFilesUploaded) {
+    // 첨부파일 확인
+    if (files.value.length === 0) {
         alert('첨부파일을 등록해주세요.');
         return;
     }
@@ -250,22 +242,15 @@ const registerRequest = async () => {
 };
 </script>
 
-
-
-
 <style>
-
 .cb-search-content33 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
-
 
 .cb-search33 {
     text-align: center;
@@ -391,9 +376,7 @@ const registerRequest = async () => {
     align-items: center;
     position: relative;
     width: 100%;
-    /* 너비를 90%로 설정 */
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
     height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
@@ -471,7 +454,6 @@ const registerRequest = async () => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 

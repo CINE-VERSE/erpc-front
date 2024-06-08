@@ -4,11 +4,11 @@
             <h1 class="maintext">견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
                 <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="estimate-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재 요청</button>
+                    <button class="estimate-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재요청</button>
                 </div>
                 <button class="estimate-edit" @click="handleEditQuotation" :disabled="deleteRequested">수정</button>
-                <button class="estimate-delete" v-if="showDeleteButton" @click="deleteQuotation">삭제</button>
-                <button class="estimate-excel" @click="downloadExcel">엑셀 다운</button>
+                <button class="estimate-delete" v-if="showDeleteButton" @click="deleteQuotation">삭제요청</button>
+                <button class="estimate-excel" @click="downloadExcel">엑셀다운</button>
             </div>
             <div class="estimate-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && quotationData.approvalContent">
                 <h3 class="estimate-approval-note2">결재 비고란</h3>
