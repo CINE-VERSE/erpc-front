@@ -1,6 +1,7 @@
 <template>
     <div class="delete-request-content" v-if="deleteRequestData">
-        <h1 class="maintext">계약서 삭제 요청 내역</h1>
+        <h1 class="maintext">계약서 삭제 내역</h1>
+        <button @click="processContractDeleteRequest(deleteRequestData.contractDeleteRequestId)">계약서 삭제</button>
 
         <div class="contract-details">
             <table class="details-table">
@@ -49,25 +50,37 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'; 
 import axios from 'axios';
+import DeleteService from '@/components/delete/DeleteService';
 
-// Vue Router에서 `contractDeleteRequestId`를 가져옴
+
 const route = useRoute();
+const router = useRouter();
 const deleteRequestData = ref(null);
-const showApprovalPopup = ref(false);
-const showRejectPopup = ref(false);
-const approvalContent = ref('');
-const rejectContent = ref('');
 
 const fetchDeleteRequestData = async () => {
-    const contractDeleteRequestsId = route.params.contractDeleteRequestsId;
+    const contractDeleteRequestId = route.params.contractDeleteRequestId;
     try {
-        // 삭제 요청 데이터를 가져옴
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/contract/${contractDeleteRequestsId}`);
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/contract/${contractDeleteRequestId}`);
         deleteRequestData.value = response.data;
     } catch (error) {
         console.error("Error fetching delete request data:", error);
+    }
+};
+
+const processContractDeleteRequest = async (contractDeleteRequestId) => {
+    try {
+        const requestData = { 
+            contractDeleteRequestId: contractDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
+        await DeleteService.updateContractDeleteRequestStatus(requestData);
+        alert('계약서 삭제 요청이 성공적으로 처리되었습니다.');
+        fetchDeleteRequestData(); 
+        router.push('/delete');
+    } catch (error) {
+        console.error('계약서 삭제 요청 처리 중 오류가 발생했습니다:', error);
     }
 };
 

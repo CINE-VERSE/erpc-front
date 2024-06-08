@@ -262,7 +262,7 @@ const routes = [
         
     },
     {
-        path: '/delete/quotation/:quotationDeleteRequestsId',
+        path: '/delete/quotation/:quotationDeleteRequestId',
         component: DeleteEstimateContents,
 
     },
@@ -282,7 +282,7 @@ const routes = [
 
     },
     {
-        path: '/delete/contract/:contractDeleteRequestsId',
+        path: '/delete/contract/:contractDeleteRequestId',
         component: DeleteContractContents,
 
     },

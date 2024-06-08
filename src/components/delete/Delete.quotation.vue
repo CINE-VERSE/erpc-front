@@ -6,6 +6,7 @@
             <div class="estimate-approval-note1" >
                 <h3 class="estimate-approval-note2">삭제 사유</h3>
                 <div class="estimate-approval-note3">{{ deleteQuotationData.quotationDeleteRequestReason }}</div>
+                <button @click="processContractDeleteRequest(deleteQuotationData.quotationDeleteRequestId)">견적서 삭제</button>
             </div>
 
             <div class="estimate-approval-attachment">
@@ -111,21 +112,37 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'; 
 import axios from 'axios';
 import DeleteService from '@/components/delete/DeleteService';
 
 const route = useRoute();
+const router = useRouter();
 const deleteQuotationData = ref(null);
 
 const fetchDeleteQuotationData = async () => {
-  const quotationDeleteRequestsId = route.params.quotationDeleteRequestsId;
+  const quotationDeleteRequestId = route.params.quotationDeleteRequestId;
   try {
-    const response = await DeleteService.findQuotationDeleteRequestById(quotationDeleteRequestsId);
+    const response = await DeleteService.findQuotationDeleteRequestById(quotationDeleteRequestId);
     deleteQuotationData.value = response.data;
   } catch (error) {
     console.error("Error fetching deleted quotation data:", error);
   }
+};
+
+const processContractDeleteRequest = async (quotationDeleteRequestId) => {
+    try {
+        const requestData = { 
+            quotationDeleteRequestId: quotationDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
+        await DeleteService.processQuotationDeleteRequest(requestData);
+        alert('견적서 삭제 요청이 성공적으로 처리되었습니다.');
+        fetchDeleteQuotationData(); 
+        router.push('/delete');
+    } catch (error) {
+        console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
+    }
 };
 
 onMounted(fetchDeleteQuotationData);

@@ -7,6 +7,7 @@
         <div v-else>
             <div class="delete-search">
                 <h1 class="maintext">거래처 삭제 내역</h1>
+                <button @click="processContractDeleteRequest(deleteAccountData.accountDeleteRequestId)">거래처 삭제</button>
                 <div class="delete-approval-note">
                     <h3 class="delete-approval-note2">삭제 사유</h3>
                     <div class="delete-approval-note3">{{ deleteAccountData.accountDeleteRequestReason }}</div>
@@ -94,11 +95,13 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'; 
 import axios from 'axios';
 import DeleteService from '@/components/delete/DeleteService';
 
+
 const route = useRoute();
+const router = useRouter();
 const deleteAccountData = ref(null);
 
 const fetchDeleteAccountData = async () => {
@@ -111,6 +114,20 @@ const fetchDeleteAccountData = async () => {
     }
 };
 
+const processContractDeleteRequest = async (accountDeleteRequestId) => {
+    try {
+        const requestData = { 
+            accountDeleteRequestId: accountDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
+        await DeleteService.processAccountDeleteRequest(requestData);
+        alert('거래처 삭제 요청이 성공적으로 처리되었습니다.');
+        fetchDeleteAccountData(); 
+        router.push('/delete');
+    } catch (error) {
+        console.error('거래처 삭제 요청 처리 중 오류가 발생했습니다:', error);
+    }
+};
 onMounted(fetchDeleteAccountData);
 </script>
 

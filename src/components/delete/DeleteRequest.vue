@@ -224,27 +224,27 @@ const applyFilter = () => {
   const filterQuery = searchQuery.value;
 
   filteredsalesOppDeleteRequests.value = salesOppDeleteRequests.value.filter(request =>
-    !filterQuery || request.salesOpp.salesOppCode.includes(filterQuery)
+    (!filterQuery || request.salesOpp.salesOppCode.includes(filterQuery)) && request.salesOppDeleteRequestStatus === 'N'
   );
 
   filteredContractDeleteRequests.value = contractDeleteRequests.value.filter(request =>
-    !filterQuery || request.contract.contractCode.includes(filterQuery)
+    (!filterQuery || request.contract.contractCode.includes(filterQuery)) && request.contractDeleteRequestStatus === 'N'
   );
 
   filteredQuotationDeleteRequests.value = quotationDeleteRequests.value.filter(request =>
-    !filterQuery || request.quotation.quotationCode.includes(filterQuery)
+    (!filterQuery || request.quotation.quotationCode.includes(filterQuery)) && request.quotationDeleteRequestStatus === 'N'
   );
 
   filteredAccountDeleteRequests.value = accountDeleteRequests.value.filter(request =>
-    !filterQuery || request.account.accountCode.includes(filterQuery)
+    (!filterQuery || request.account.accountCode.includes(filterQuery)) && request.accountDeleteRequestStatus === 'N'
   );
 
   filteredOrderDeleteRequests.value = orderDeleteRequests.value.filter(request =>
-    !filterQuery || request.order.orderCode.includes(filterQuery)
+    (!filterQuery || request.order.orderCode.includes(filterQuery)) && request.orderDeleteRequestStatus === 'N'
   );
 };
-const goToQuotationDetail = (quotationDeleteRequestsId) => {
-  router.push({ path: `/delete/quotation/${quotationDeleteRequestsId}` });
+const goToQuotationDetail = (quotationDeleteRequestId) => {
+  router.push({ path: `/delete/quotation/${quotationDeleteRequestId}` });
 };
 const goToOrderDetail = (orderDeleteRequestsId) => {
   router.push({ path: `/delete/order/${orderDeleteRequestsId}` });
@@ -255,8 +255,8 @@ const goToSalesOppDetail = (salesOppDeleteRequestId) => {
 const goToAccountDetail = (accountDeleteRequestId) => {
   router.push({ path: `/delete/account/${accountDeleteRequestId}` });
 };
-const goToContractDetail = (contractDeleteRequestsId) => {
-  router.push({ path: `/delete/contract/${contractDeleteRequestsId}` });
+const goToContractDetail = (contractDeleteRequestId) => {
+  router.push({ path: `/delete/contract/${contractDeleteRequestId}` });
 };
 </script>
 

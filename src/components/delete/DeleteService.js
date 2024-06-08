@@ -27,8 +27,8 @@ class DeleteService {
     return this.api.get('/contract');
   }
 
-  findContractDeleteRequestById(contractDeleteRequestsId) {
-    return this.api.get(`/contract/${contractDeleteRequestsId}`);
+  findContractDeleteRequestById(contractDeleteRequestId) {
+    return this.api.get(`/contract/${contractDeleteRequestId}`);
   }
 
   updateContractDeleteRequestStatus( data) {
@@ -40,8 +40,8 @@ class DeleteService {
     return this.api.get('/quotation');
   }
 
-  findQuotationDeleteRequestById(quotationDeleteRequestsId) {
-    return this.api.get(`/quotation/${quotationDeleteRequestsId}`);
+  findQuotationDeleteRequestById(quotationDeleteRequestId) {
+    return this.api.get(`/quotation/${quotationDeleteRequestId}`);
   }
 
   processQuotationDeleteRequest( data) {

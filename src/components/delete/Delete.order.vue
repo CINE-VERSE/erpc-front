@@ -2,6 +2,7 @@
     <div class="delete-content7" v-if="deleteOrderData">
         <div class="order-search">
             <h1 class="maintext">수주 삭제 내역</h1>
+            <button @click="processContractDeleteRequest(deleteOrderData.orderDeleteRequestId)">견적서 삭제</button>
 
             <div class="estimate-approval-note1" >
                 <h3 class="estimate-approval-note2">삭제 사유</h3>
@@ -119,11 +120,12 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'; 
 import axios from 'axios';
 import DeleteService from '@/components/delete/DeleteService';
 
 const route = useRoute();
+const router = useRouter();
 const deleteOrderData = ref(null);
 
 const fetchDeleteOrderData = async () => {
@@ -134,6 +136,21 @@ const fetchDeleteOrderData = async () => {
   } catch (error) {
     console.error("Error fetching deleted order data:", error);
   }
+};
+
+const processContractDeleteRequest = async (orderDeleteRequestId) => {
+    try {
+        const requestData = { 
+            orderDeleteRequestId: orderDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
+        await DeleteService.processOrderDeleteRequest(requestData);
+        alert('견적서 삭제 요청이 성공적으로 처리되었습니다.');
+        fetchDeleteOrderData(); 
+        router.push('/delete');
+    } catch (error) {
+        console.error('견적서 삭제 요청 처리 중 오류가 발생했습니다:', error);
+    }
 };
 
 onMounted(fetchDeleteOrderData);

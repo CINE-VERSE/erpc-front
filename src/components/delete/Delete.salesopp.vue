@@ -1,15 +1,13 @@
 <template>
     <div class="delete-content7">
-        <!-- 데이터 로딩 중일 때 로딩 메시지 표시 -->
         <div v-if="!deleteSalesOppData">로딩 중...</div>
-
-        <!-- 데이터가 로드된 후에만 상세 정보 렌더링 -->
         <div v-else>
             <div class="order-search">
                 <h1 class="maintext">영업기회 삭제 내역</h1>
                 <div class="estimate-approval-note1">
                     <h3 class="estimate-approval-note2">삭제 사유</h3>
                     <div class="estimate-approval-note3">{{ deleteSalesOppData.salesOppDeleteRequestReason }}</div>
+                    <button @click="processSalesOppDeleteRequest(deleteSalesOppData.salesOppDeleteRequestId)">영업기회 삭제</button>
                 </div>
             </div>
             <div class="estimate-list-box">
@@ -52,10 +50,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router'; 
 import DeleteService from '@/components/delete/DeleteService';
 
 const route = useRoute();
+const router = useRouter();
 const deleteSalesOppData = ref(null);
 
 const fetchDeleteSalesOppData = async () => {
@@ -65,6 +64,20 @@ const fetchDeleteSalesOppData = async () => {
         deleteSalesOppData.value = response.data;
     } catch (error) {
         console.error("Error fetching deleted sales opportunity data:", error);
+    }
+};
+const processSalesOppDeleteRequest = async (salesOppDeleteRequestId) => {
+    try {
+        const requestData = { 
+            salesOppDeleteRequestId: salesOppDeleteRequestId,
+        };
+        console.log('Request Data:', requestData); 
+        await DeleteService.updateSalesOppDeleteRequestProcess(requestData);
+        alert('영업기회 삭제 요청이 성공적으로 처리되었습니다.');
+        fetchDeleteSalesOppData(); 
+        router.push('/delete');
+    } catch (error) {
+        console.error('영업기회 삭제 요청 처리 중 오류가 발생했습니다:', error);
     }
 };
 
