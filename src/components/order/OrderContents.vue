@@ -176,12 +176,7 @@
             <h3 class="maintext4">{{ orderData.shipmentStatus.shipmentStatus }}</h3>
         </div>
         <div class="shipment-list-box">
-            <table class="shipment-table1"
-                   :class="{
-                       'shipment-status-in-progress': orderData.shipmentStatus.shipmentStatusId === 2,
-                       'shipment-status-completed': orderData.shipmentStatus.shipmentStatusId === 3
-                   }"
-                   v-if="orderData.shipmentStatus.shipmentStatusId">
+            <table :class="['shipment-table333', shipmentStatusClass]">
                 <thead>
                     <tr>
                         <th>출고 예정일</th>
@@ -262,6 +257,19 @@ const deleteRequested = ref(false); // 삭제 요청 상태를 저장
 const filteredOrderNotes = computed(() => {
     return orderNoteData.value.filter(note => note.orderDeleteDate === null);
 });
+
+const shipmentStatusClass = computed(() => {
+    if (orderData.value?.shipmentStatus?.shipmentStatusId === 1) {
+        return 'shipment-status-requested'; // 회색
+    } else if (orderData.value?.shipmentStatus?.shipmentStatusId === 2) {
+        return 'shipment-status-in-progress'; // 노란색
+    } else if (orderData.value?.shipmentStatus?.shipmentStatusId === 3) {
+        return 'shipment-status-completed'; // 녹색
+    } else {
+        return 'shipment-status-requested'; // 기본값 회색
+    }
+});
+
 
 onMounted(async () => {
     const orderRegistrationId = route.params.orderRegistrationId;
@@ -449,6 +457,7 @@ const deleteNote = async (orderNoteId) => {
 };
 </script>
 
+
 <style>
 .order-content11 {
     display: flex;
@@ -581,7 +590,7 @@ const deleteNote = async (orderNoteId) => {
 .order2-table5,
 .order2-table6,
 .order2-table7,
-.shipment-table1,
+.shipment-table333,
 .shipment-table2 {
     width: 100%;
     border-collapse: collapse;
@@ -603,8 +612,8 @@ const deleteNote = async (orderNoteId) => {
 .order2-table6 td,
 .order2-table7 th,
 .order2-table7 td,
-.shipment-table1 th,
-.shipment-table1 td,
+.shipment-table333 th,
+.shipment-table333 td,
 .shipment-table2 th,
 .shipment-table2 td {
     text-align: center;
@@ -620,7 +629,7 @@ const deleteNote = async (orderNoteId) => {
 .order2-table5 th,
 .order2-table6 th,
 .order2-table7 th,
-.shipment-table1 th,
+.shipment-table333 th,
 .shipment-table2 th {
     background-color: whitesmoke;
     color: black;
@@ -636,7 +645,7 @@ const deleteNote = async (orderNoteId) => {
 .order2-table5 td,
 .order2-table6 td,
 .order2-table7 td,
-.shipment-table1 td,
+.shipment-table333 td,
 .shipment-table2 td {
     height: 40px;
 }
@@ -645,18 +654,23 @@ const deleteNote = async (orderNoteId) => {
     background-color: #d5e6ff;
 }
 
+.shipment-status-requested {
+    background-color: whitesmoke; /* 회색 */
+}
+
 .shipment-status-in-progress {
-    background-color: #FFFFE0;
+    background-color: #FFFACD; /* 진한 파스텔 노란색 */
 }
 
 .shipment-status-completed {
-    background-color: #D3F9E0;
+    background-color: #D3F9E0; /* 연한 녹색 */
 }
 
-.shipment-table1 th,
-.shipment-table1 td {
+.shipment-table333 th,
+.shipment-table333 td {
     background-color: inherit;
 }
+
 
 .shipment-table2 {
     margin-bottom: 7%;
