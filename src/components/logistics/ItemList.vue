@@ -30,7 +30,7 @@
             <td>{{ product.productCode }}</td>
             <td>{{ product.productName }}</td>
             <td>{{ product.productUnit }}</td>
-            <td>{{ product.productPrice }}</td>
+            <td>{{ product.productPrice.toLocaleString() }}</td>
             <td>{{ product.productStatus }}</td>
             <td>{{ product.productInventory }}</td>
           </tr>

@@ -41,9 +41,9 @@
                         <td>{{ target.year }}</td>
                         <td>{{ target.displayMonthOrQuarter }}</td>
                         <td>{{ formatNumber(target.goal) }}</td>
-                        <td>{{ formatNumber(getAchievementValue(target.periodType)) }}</td>
-                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.periodType))) }}</td>
-                        <td>{{ getPercentage(target.goal, getAchievementValue(target.periodType)) }}</td>
+                        <td>{{ formatNumber(getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
+                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter))) }}</td>
+                        <td>{{ getPercentage(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -63,33 +63,74 @@ const uniqueYears = ref([]);
 const searchQuery = ref(''); // 검색어를 저장할 변수
 const isEmployeeSearchActive = ref(false); // 사원명 검색 활성화 상태를 저장할 변수
 const employeeName = ref(''); // 조회된 사원명을 저장할 변수
+const salesData = ref({}); // 실적 데이터를 저장할 변수
+const teamSalesData = ref({}); // 팀 실적 데이터를 저장할 변수
+const employeeSalesData = ref({}); // 사원 실적 데이터를 저장할 변수
 
-const fixedValues = {
-    year: {
-        month: 232000000,
-        quarter: 696000000,
-        total: 2784000000
-    },
-    team: {
-        month: 60500000,
-        quarter: 181500000,
-        total: 726000000
-    },
-    employee: {
-        month: 55800000,
-        quarter: 167400000,
-        total: 669600000
+const fetchSalesData = async () => {
+    try {
+        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales');
+        salesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        alert('실적 데이터를 조회하는 중 오류가 발생했습니다.');
     }
 };
 
-const getAchievementValue = (periodType) => {
-    if (isEmployeeSearchActive.value && searchQuery.value) {
-        return fixedValues.employee[periodType];
-    } else if (selectedTeam.value) {
-        return fixedValues.team[periodType];
-    } else {
-        return fixedValues.year[periodType];
+const fetchTeamSalesData = async (teamCodeId) => {
+    try {
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/team/${teamCodeId}`);
+        teamSalesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching team sales data:', error);
+        alert('팀 실적 데이터를 조회하는 중 오류가 발생했습니다.');
     }
+};
+
+const fetchEmployeeSalesData = async (employeeId) => {
+    try {
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/employee/${employeeId}`);
+        employeeSalesData.value = response.data.sales;
+    } catch (error) {
+        console.error('Error fetching employee sales data:', error);
+        alert('사원 실적 데이터를 조회하는 중 오류가 발생했습니다.');
+    }
+};
+
+const getAchievementValue = (year, displayMonthOrQuarter) => {
+    let yearData;
+
+    if (isEmployeeSearchActive.value && searchQuery.value) {
+        yearData = employeeSalesData.value[year];
+    } else if (selectedTeam.value) {
+        yearData = teamSalesData.value[year];
+    } else {
+        yearData = salesData.value[year];
+    }
+
+    if (!yearData) return 0;
+
+    if (displayMonthOrQuarter.includes('월')) {
+        const month = displayMonthOrQuarter.replace('월', '').trim().padStart(2, '0');
+        return yearData[month] || 0;
+    }
+
+    if (displayMonthOrQuarter.includes('분기')) {
+        const quarter = displayMonthOrQuarter.replace('분기', '').trim();
+        const months = {
+            '1': ['01', '02', '03'],
+            '2': ['04', '05', '06'],
+            '3': ['07', '08', '09'],
+            '4': ['10', '11', '12']
+        };
+        return months[quarter].reduce((sum, month) => sum + (yearData[month] || 0), 0);
+    }
+
+    if (displayMonthOrQuarter === '총계') {
+        return yearData.total || 0;
+    }
+
+    return 0;
 };
 
 const getRequiredValue = (goal, achievement) => {
@@ -202,6 +243,7 @@ const fetchTargetData = async () => {
 
 const fetchTeamData = async (teamCodeId) => {
     try {
+        await fetchTeamSalesData(teamCodeId);
         const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
         const data = response.data;
         targetData.value = processTargetData(data);
@@ -224,6 +266,7 @@ const fetchEmployeeData = async () => {
             employeeName.value = matchingEmployee.employeeName; // 사원명을 저장
             isEmployeeSearchActive.value = true; // 사원명 검색 활성화
             selectedTeam.value = ''; // 팀 필터 초기화
+            await fetchEmployeeSalesData(matchingEmployee.employeeId);
             const employeeResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
             targetData.value = processTargetData(employeeResponse.data);
             filterData();
@@ -307,6 +350,7 @@ const fetchTeams = async () => {
 };
 
 onMounted(async () => {
+    await fetchSalesData();
     await fetchTargetData();
 });
 
@@ -314,7 +358,6 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     filterData();
 });
 </script>
-
 
 <style>
 .target-list-content {
