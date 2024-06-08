@@ -1,10 +1,15 @@
 <template>
-    <div class="delete-request-content" v-if="deleteRequestData">
+    <div class="delete-content7" v-if="deleteRequestData">
+        <div class="order-search">
         <h1 class="maintext">계약서 삭제 내역</h1>
+        <div class="estimate-approval-note1" >
+                <h3 class="estimate-approval-note2">삭제 사유</h3>
+                <div class="estimate-approval-note3">{{ deleteRequestData.contractDeleteRequestReason }}</div>
         <button @click="processContractDeleteRequest(deleteRequestData.contractDeleteRequestId)">계약서 삭제</button>
-
-        <div class="contract-details">
-            <table class="details-table">
+</div>
+</div>
+        <div class="estimate-list-box">
+            <table class="estimate2-table1">
                 <thead>
                     <tr>
                         <th>계약서 코드</th>
@@ -25,19 +30,17 @@
                 </tbody>
             </table>
 
-            <table class="details-table">
+            <table class="estimate2-table2">
                 <thead>
                     <tr>
                         <th>담당자</th>
                         <th>거래처명</th>
-                        <th>삭제 요청 사유</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>{{ deleteRequestData.contract.employee.employeeName }}</td>
                         <td>{{ deleteRequestData.contract.account.accountName }}</td>
-                        <td>{{ deleteRequestData.deleteRequestReason }}</td>
                     </tr>
                 </tbody>
             </table>

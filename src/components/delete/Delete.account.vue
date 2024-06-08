@@ -1,11 +1,8 @@
 <template>
     <div class="delete-content">
-        <!-- 데이터 로딩 중일 때 로딩 메시지 표시 -->
         <div v-if="!deleteAccountData">로딩 중...</div>
-
-        <!-- 데이터가 로드된 후에만 상세 정보 렌더링 -->
         <div v-else>
-            <div class="delete-search">
+            <div class="delete-content7">
                 <h1 class="maintext">거래처 삭제 내역</h1>
                 <button @click="processContractDeleteRequest(deleteAccountData.accountDeleteRequestId)">거래처 삭제</button>
                 <div class="delete-approval-note">

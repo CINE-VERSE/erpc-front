@@ -19,125 +19,134 @@
 
     <div class="delete-request-list">
       <template v-if="selectedDeleteRequestType === 'salesOpp'">
-        <h2>영업기회 삭제 요청</h2>
-        <table class="delete-request-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>거래처명</th>
-              <th>거래처 담당자</th>
-              <th>작성 일자</th>
-              <th>요청 사유</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(request, index) in filteredsalesOppDeleteRequests" :key="request.salesOppDeleteRequestId" @click="goToSalesOppDetail(request.salesOppDeleteRequestId)">
-              <td>{{ filteredsalesOppDeleteRequests.length - index }}</td>
-              <td>{{ request.salesOpp.oppAccountName }}</td>
-              <td>{{ request.salesOpp.oppAccountPic }}</td>
-              <td>{{ request.salesOpp.oppDate }}</td>
-              <td>{{ request.salesOppDeleteRequestReason }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="delete-request-table-wrapper">
+          <h2 class="delete-request-subtitle">영업기회 삭제 요청</h2>
+          <table class="delete-request-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>거래처명</th>
+                <th>거래처 담당자</th>
+                <th>작성 일자</th>
+                <th>요청 사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(request, index) in filteredsalesOppDeleteRequests" :key="request.salesOppDeleteRequestId" @click="goToSalesOppDetail(request.salesOppDeleteRequestId)">
+                <td>{{ filteredsalesOppDeleteRequests.length - index }}</td>
+                <td>{{ request.salesOpp.oppAccountName }}</td>
+                <td>{{ request.salesOpp.oppAccountPic }}</td>
+                <td>{{ request.salesOpp.oppDate }}</td>
+                <td>{{ request.salesOppDeleteRequestReason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
 
-
       <template v-if="selectedDeleteRequestType === 'contract'">
-        <h2>계약서 삭제 요청</h2>
-        <table class="delete-request-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>계약서 코드</th>
-              <th>거래처명</th>
-              <th>요청일자</th>
-              <th>요청 사유</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(request, index) in filteredContractDeleteRequests" :key="request.contractDeleteRequestId" @click="goToContractDetail(request.contractDeleteRequestId)">
-              <td>{{ filteredContractDeleteRequests.length - index }}</td>
-              <td>{{ request.contract.contractCode }}</td>
-              <td>{{ request.contract.account.accountName }}</td>
-              <td>{{ request.contract.contractDueDate }}</td>
-              <td>{{ request.contractDeleteRequestReason }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="delete-request-table-wrapper">
+          <h2 class="delete-request-subtitle">계약서 삭제 요청</h2>
+          <table class="delete-request-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>계약서 코드</th>
+                <th>거래처명</th>
+                <th>요청일자</th>
+                <th>요청 사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(request, index) in filteredContractDeleteRequests" :key="request.contractDeleteRequestId" @click="goToContractDetail(request.contractDeleteRequestId)">
+                <td>{{ filteredContractDeleteRequests.length - index }}</td>
+                <td>{{ request.contract.contractCode }}</td>
+                <td>{{ request.contract.account.accountName }}</td>
+                <td>{{ request.contract.contractDueDate }}</td>
+                <td>{{ request.contractDeleteRequestReason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
 
       <!-- 추가된 삭제 요청 유형들 -->
       <template v-if="selectedDeleteRequestType === 'quotation'">
-        <h2>견적서 삭제 요청</h2>
-        <table class="delete-request-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>견적서 코드</th>
-              <th>거래처명</th>
-              <th>요청일자</th>
-              <th>요청 사유</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(request, index) in filteredQuotationDeleteRequests" :key="request.quotationDeleteRequestId" @click="goToQuotationDetail(request.quotationDeleteRequestId)">
-        <td>{{ filteredQuotationDeleteRequests.length - index }}</td>
-        <td>{{ request.quotation.quotationCode }}</td>
-        <td>{{ request.quotation.account.accountName }}</td>
-        <td>{{ request.requestDate }}</td>
-        <td>{{ request.quotationDeleteRequestReason }}</td>
-      </tr>
-          </tbody>
-        </table>
+        <div class="delete-request-table-wrapper">
+          <h2 class="delete-request-subtitle">견적서 삭제 요청</h2>
+          <table class="delete-request-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>견적서 코드</th>
+                <th>거래처명</th>
+                <th>요청일자</th>
+                <th>요청 사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(request, index) in filteredQuotationDeleteRequests" :key="request.quotationDeleteRequestId" @click="goToQuotationDetail(request.quotationDeleteRequestId)">
+                <td>{{ filteredQuotationDeleteRequests.length - index }}</td>
+                <td>{{ request.quotation.quotationCode }}</td>
+                <td>{{ request.quotation.account.accountName }}</td>
+                <td>{{ request.requestDate }}</td>
+                <td>{{ request.quotationDeleteRequestReason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
 
       <template v-if="selectedDeleteRequestType === 'account'">
-        <h2>거래처 삭제 요청</h2>
-        <table class="delete-request-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>거래처 코드</th>
-              <th>거래처명</th>
-              <th>대표자명</th>
-              <th>요청 사유</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(request, index) in filteredAccountDeleteRequests" :key="request.accountDeleteRequestId"  @click="goToAccountDetail(request.accountDeleteRequestId)">
-              <td>{{ filteredAccountDeleteRequests.length - index }}</td>
-              <td>{{ request.account.accountCode }}</td>
-              <td>{{ request.account.accountName }}</td>
-              <td>{{ request.account.accountRepresentative }}</td>
-              <td>{{ request.accountDeleteRequestReason }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="delete-request-table-wrapper">
+          <h2 class="delete-request-subtitle">거래처 삭제 요청</h2>
+          <table class="delete-request-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>거래처 코드</th>
+                <th>거래처명</th>
+                <th>대표자명</th>
+                <th>요청 사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(request, index) in filteredAccountDeleteRequests" :key="request.accountDeleteRequestId"  @click="goToAccountDetail(request.accountDeleteRequestId)">
+                <td>{{ filteredAccountDeleteRequests.length - index }}</td>
+                <td>{{ request.account.accountCode }}</td>
+                <td>{{ request.account.accountName }}</td>
+                <td>{{ request.account.accountRepresentative }}</td>
+                <td>{{ request.accountDeleteRequestReason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
 
       <template v-if="selectedDeleteRequestType === 'order'">
-        <h2>수주 삭제 요청</h2>
-        <table class="delete-request-table">
-          <thead>
-            <tr>
-              <th>번호</th>
-              <th>프로젝트 코드</th>
-              <th>거래처명</th>
-              <th>마감 일자</th>
-              <th>요청 사유</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(request, index) in filteredOrderDeleteRequests" :key="request.orderDeleteRequestId" @click="goToOrderDetail(request.orderDeleteRequestId)">
-              <td>{{ filteredOrderDeleteRequests.length - index }}</td>
-              <td>{{ request.order.transaction.transactionCode  }}</td>
-              <td>{{ request.order.account.accountName }}</td>
-              <td>{{ request.order.orderDueDate }}</td>
-              <td>{{ request.orderDeleteRequestReason }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="delete-request-table-wrapper">
+          <h2 class="delete-request-subtitle">수주 삭제 요청</h2>
+          <table class="delete-request-table">
+            <thead>
+              <tr>
+                <th>번호</th>
+                <th>프로젝트 코드</th>
+                <th>거래처명</th>
+                <th>마감 일자</th>
+                <th>요청 사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(request, index) in filteredOrderDeleteRequests" :key="request.orderDeleteRequestId" @click="goToOrderDetail(request.orderDeleteRequestId)">
+                <td>{{ filteredOrderDeleteRequests.length - index }}</td>
+                <td>{{ request.order.transaction.transactionCode  }}</td>
+                <td>{{ request.order.account.accountName }}</td>
+                <td>{{ request.order.orderDueDate }}</td>
+                <td>{{ request.orderDeleteRequestReason }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </template>
     </div>
   </div>
@@ -261,9 +270,11 @@ const goToContractDetail = (contractDeleteRequestId) => {
 </script>
 
 <style scoped>
-/* Styles for the component */
+
 .delete-request-content {
   padding: 20px;
+  max-width: 1200px; /* 페이지 중앙에 고정된 넓이 */
+  margin: 0 auto; /* 페이지 중앙에 정렬 */
 }
 
 .delete-request-search {
@@ -273,49 +284,95 @@ const goToContractDetail = (contractDeleteRequestId) => {
 .delete-request-title {
   font-size: 24px;
   font-weight: bold;
+  text-align: center; /* 제목을 중앙에 정렬 */
 }
 
 .filter-box {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center; /* 필터 박스를 중앙에 정렬 */
 }
 
 .filter-controls {
   display: flex;
   align-items: center;
+  gap: 10px; /* 요소 간의 간격 */
 }
 
-.delete-type-select {
-  margin-right: 10px;
-  padding: 5px;
-}
-
+.delete-type-select,
 .delete-request-search-input {
-  margin-right: 10px;
   padding: 5px;
-  width: 200px;
+  font-size: 16px; /* 입력 필드의 폰트 크기 조정 */
 }
 
 .delete-request-search-btn {
   padding: 5px 10px;
+  font-size: 16px; /* 버튼의 폰트 크기 조정 */
 }
 
 .delete-request-list {
   margin-top: 20px;
+  display: flex;
+  justify-content: center; /* 테이블을 중앙에 정렬 */
+}
+
+.delete-request-table-wrapper {
+  margin-bottom: 40px; /* 각 테이블 섹션의 아래에 여백 추가 */
+}
+
+.delete-request-subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px; /* 테이블 위에 여백 추가 */
+  text-align: center; /* 부제목을 중앙에 정렬 */
 }
 
 .delete-request-table {
-  width: 100%;
+  width: 100%; /* 테이블을 부모 요소에 맞게 확장 */
+  max-width: 1200px; /* 최대 넓이를 설정 */
   border-collapse: collapse;
+  text-align: left; /* 텍스트를 왼쪽에 정렬 */
+  margin: 0 auto; /* 테이블을 중앙에 정렬 */
 }
 
-.delete-request-table th, .delete-request-table td {
+.delete-request-table th, 
+.delete-request-table td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: left;
 }
 
 .delete-request-table th {
   background-color: #f2f2f2;
   font-weight: bold;
+}
+
+.delete-request-table th:first-child,
+.delete-request-table td:first-child {
+  width: 50px; /* 번호 열의 폭을 고정 */
+  text-align: center; /* 번호 열의 텍스트를 중앙에 정렬 */
+}
+
+.delete-request-table th:nth-child(2),
+.delete-request-table td:nth-child(2) {
+  width: 150px; /* 코드 열의 폭을 고정 */
+}
+
+.delete-request-table th:nth-child(3),
+.delete-request-table td:nth-child(3) {
+  width: 200px; /* 거래처명 열의 폭을 고정 */
+}
+
+.delete-request-table th:nth-child(4),
+.delete-request-table td:nth-child(4) {
+  width: 150px; /* 요청일자 열의 폭을 고정 */
+}
+
+.delete-request-table th:nth-child(5),
+.delete-request-table td:nth-child(5) {
+  width: 300px; /* 요청 사유 열의 폭을 고정 */
+}
+
+.delete-request-table td {
+  word-break: break-word; /* 긴 텍스트를 줄 바꿈 */
 }
 </style>

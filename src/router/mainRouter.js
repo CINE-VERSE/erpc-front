@@ -53,6 +53,7 @@ import EmployeeDetail from '@/components/employee/EmployeeDetail.vue';
 import RegisterEmployee from '@/components/employee/RegisterEmployee.vue';
 import ModifyEmployee from '@/components/employee/ModifyEmployee.vue';
 import EmployeeAccess from '@/components/employee/EmployeeAccess.vue';
+import EmployeeAccessApply from '@/components/employee/EmployeeAccessApply.vue';
 import EmployeeApp from '@/components/employee/EmployeeApp.vue';
 import ChangePassword from '@/components/employee/ChangePassword.vue'
 
@@ -245,6 +246,11 @@ const routes = [
     {
         path: '/employees/access',
         component: EmployeeAccess,
+        beforeEnter: requirePermission(22)
+    },
+    {
+        path: '/employees/access/apply',
+        component: EmployeeAccessApply,
         beforeEnter: requirePermission(22)
     },
     {

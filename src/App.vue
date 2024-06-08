@@ -126,7 +126,8 @@ const menuItems = ref([
     title: '관리자 페이지',
     subItems: [
       { title: '사원 리스트', path: '/employees' },
-      { title: '접근 신청', path: '/employees/access' },
+      { title: '권한 신청', path: '/employees/access/apply' },
+      // { title: '권한 등록', path: '/employees/access' },
       { title: '삭제 신청', path: '/delete' }
     ],
     isOpen: false,
