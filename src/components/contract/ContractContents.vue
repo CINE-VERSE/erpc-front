@@ -8,7 +8,7 @@
                 </div>
                 <button class="contract-edit" @click="handleEditContract" :disabled="deleteRequested">수정</button>
                 <button class="contract-delete" v-if="!deleteRequested" @click="deleteContract">삭제요청</button>
-                <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
+                <button class="contract-excel" @click="downloadExcel">엑셀다운</button>
             </div>
             <div class="contract-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && contractData.approvalContent">
                 <h3 class="contract-approval-note2">결재 비고란</h3>

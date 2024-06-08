@@ -9,7 +9,7 @@
                 </div>
                 <button class="order-edit" @click="goToOrderPage" :disabled="deleteRequested">수정</button>
                 <button class="order-delete" v-if="showDeleteButton" @click="deleteOrder">삭제요청</button>
-                <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
+                <button class="order-excel" @click="downloadExcel">엑셀다운</button>
             </div>
             <div class="order-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && orderData.approvalContent">
                 <h3 class="order-approval-note2">결재 비고란</h3>
