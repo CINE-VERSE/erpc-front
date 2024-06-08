@@ -4,10 +4,10 @@
             <h1 class="maintext">계약서 정보 조회 내역</h1>
             <div class="contract-btn">
                 <div class="contract-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="contract-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재 요청</button>
+                    <button class="contract-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재요청</button>
                 </div>
                 <button class="contract-edit" @click="handleEditContract" :disabled="deleteRequested">수정</button>
-                <button class="contract-delete" v-if="!deleteRequested" @click="deleteContract">삭제</button>
+                <button class="contract-delete" v-if="!deleteRequested" @click="deleteContract">삭제요청</button>
                 <button class="contract-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="contract-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && contractData.approvalContent">

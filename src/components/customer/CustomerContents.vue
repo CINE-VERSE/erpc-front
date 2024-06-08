@@ -4,7 +4,7 @@
             <h1 class="maintext">거래처 정보 조회 내역</h1>
             <div class="customer-btn">
                 <button class="customer-edit" @click="handleEditAccount" :disabled="deleteRequested">수정</button>
-                <button class="customer-delete" v-if="showDeleteButton" @click="deleteAccount">삭제</button>
+                <button class="customer-delete" v-if="showDeleteButton" @click="deleteAccount">삭제요청</button>
             </div>
         </div>
         <div class="customer-box">

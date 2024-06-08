@@ -5,10 +5,10 @@
             <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
                 <div class="order-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
-                    <button class="order-request" @click="requestApproval" :disabled="deleteRequested">결재 요청</button>
+                    <button class="order-request" @click="requestApproval" :disabled="deleteRequested">결재요청</button>
                 </div>
                 <button class="order-edit" @click="goToOrderPage" :disabled="deleteRequested">수정</button>
-                <button class="order-delete" v-if="showDeleteButton" @click="deleteOrder">삭제</button>
+                <button class="order-delete" v-if="showDeleteButton" @click="deleteOrder">삭제요청</button>
                 <button class="order-excel" @click="downloadExcel">엑셀 다운</button>
             </div>
             <div class="order-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && orderData.approvalContent">
