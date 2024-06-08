@@ -133,7 +133,7 @@
             </table>
         </div>
 
-        <div class="contract-attachment3">
+        <div class="contract-attachment33">
             <h2 class="contract-file">첨부파일</h2>
             <div v-for="(file, index) in files" :key="index" class="file-list">
                 <span class="file-icon">📄</span>
@@ -468,35 +468,20 @@ const formatNumber = (value) => {
     padding: 8px;
 }
 
-.contract-attachment3 {
+.contract-attachment33 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
-    width: 100%;
-    /* 너비를 90%로 설정 */
+    width: 90%;
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
-    height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-}
-
-.contract-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.contract-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
 .file-list {
@@ -504,19 +489,22 @@ const formatNumber = (value) => {
     align-items: center;
     background-color: white;
     width: 90%;
-    height: 70px;
+    min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
 }
 
 .file-upload-btn {
@@ -535,6 +523,7 @@ const formatNumber = (value) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
 
 .contract-regist-btn-div33 {
@@ -555,13 +544,13 @@ const formatNumber = (value) => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 
 .contract-regist-btn33:hover {
     background-color: #007bff;
 }
+
 
 
 </style>

@@ -123,18 +123,20 @@
                 </tbody>
             </table>
         </div>
-        <div class="contract-attachment3">
+        <div class="contract-attachment34">
                 <h2 class="contract-file">첨부파일</h2>
                 <div v-if="files.length > 0">
-                    <div v-for="(file, index) in files" :key="index" class="file-list">
+                    <div v-for="(file, index) in files" :key="index" class="file-list34">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.name }}</span>
+                        <button @click="removeNewFile(index)" class="remove-file-btn">제거</button>
                     </div>
                 </div>
                 <div v-else>
-                    <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list">
+                    <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list34">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.originName }}</span>
+                        <button @click="removeExistingFile(index)" class="remove-file-btn">제거</button>
                     </div>
                 </div>
                 <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
@@ -193,6 +195,14 @@ const populateFields = (data) => {
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
     contractData.value.contractFile = []; // 파일 선택 시 기존 파일 목록 초기화
+};
+
+const removeNewFile = (index) => {
+    files.value.splice(index, 1);
+};
+
+const removeExistingFile = (index) => {
+    contractData.value.contractFile.splice(index, 1);
 };
 
 const setSearchBy = (criteria) => {
@@ -299,7 +309,7 @@ const updateContract = async () => {
 }
 
 .contract-list-box1 {
-    width: 100%;
+    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
     max-width: 1400px;
     display: flex;
     flex-direction: column;
@@ -407,53 +417,48 @@ const updateContract = async () => {
     display: block;
 }
 
-.contract-attachment3 {
+.contract-attachment34 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
     max-width: 1400px;
-    height: 220px;
+    min-width: 900px;
+    height: auto;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.contract-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.contract-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list34 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 800px;
+    min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all;
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+    overflow: hidden; /* 넘치는 부분을 숨김 */
+    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
 }
 
 .file-upload-btn {
@@ -472,6 +477,18 @@ const updateContract = async () => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
+}
+
+.remove-file-btn {
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .contract-edit-btn-div33 {
@@ -498,4 +515,5 @@ const updateContract = async () => {
 .contract-edit-btn33:hover {
     background-color: #007bff;
 }
+
 </style>

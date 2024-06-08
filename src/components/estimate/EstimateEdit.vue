@@ -1,7 +1,7 @@
 <template>
-    <div class="estimate-edit-content11" v-if="quotationData">
+    <div class="estimate-edit-content33" v-if="quotationData">
         <h1>견적서 수정</h1>
-        <div class="estimate-list-box">
+        <div class="estimate-list-box33">
             <table class="estimate-table1">
                 <thead>
                     <tr>
@@ -17,21 +17,24 @@
                     <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
+                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요."
+                                    class="item-code-box2" />
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1"
+                                        class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
                         <td>{{ product.productName }}</td>
                         <td class="narrow-column">
-                            <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
+                            <input type="number" v-model.number="product.quantity" class="estimate-test2"
+                                @input="updateSupplyValue(index)" />
                         </td>
                         <td>{{ product.productPrice }}</td>
                         <td>{{ product.supplyValue }}</td>
-                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
+                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3" /></td>
                     </tr>
                 </tbody>
             </table>
@@ -52,7 +55,8 @@
                     <tr>
                         <td>
                             <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
-                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId"
+                                    :value="warehouse.warehouseCode">
                                     {{ warehouse.warehouseCode }}
                                 </option>
                             </select>
@@ -81,40 +85,45 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
+                                <input type="text" v-model="customerCode"
+                                    @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요."
+                                    class="customer-code-box2" />
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td>{{ employeeName }}</td> 
-                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
-                        <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
+                        <td>{{ employeeName }}</td>
+                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box" /></td>
+                        <td><input type="text" v-model="accountNote" class="customer-test9" /></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="estimate-attachment3">
+        <div class="estimate-attachment34">
             <h2 class="estimate-file">첨부파일</h2>
+            <!-- 새로 업로드된 파일이 있는 경우 -->
             <div v-if="files.length > 0">
-                <div v-for="(file, index) in files" :key="index" class="file-list">
+                <div v-for="(file, index) in files" :key="index" class="file-list34">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.name }}</span>
-                    <button @click="removeNewFile(index)" class="remove-file-btn">제거</button>
                 </div>
             </div>
-            <div v-else-if="filteredFiles.length > 0">
-                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list">
+            <!-- 기존 파일 목록에 파일이 있는 경우 -->
+            <div v-else-if="quotationData?.quotationFile?.length > 0">
+                <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list34">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.originName }}</span>
-                    <button @click="removeExistingFile(index)" class="remove-file-btn">제거</button>
                 </div>
             </div>
+            <!-- 첨부파일이 없는 경우 -->
             <div v-else class="file-download no-file">
                 첨부파일 없음
             </div>
-            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
+            <input type="file" @click="resetFiles" @change="handleFileUpload" multiple class="file-upload-btn"
+                id="file-upload" />
             <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
+
         <div class="estimate-edit-btn-div33">
             <button @click="updateQuotation" class="estimate-edit-btn33">견적 수정하기</button>
         </div>
@@ -125,14 +134,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const quotationData = ref(null);
-const files = ref([]);
+const files = ref([]); // 새로 추가된 파일
+const existingFiles = ref([]); // 기존 파일 목록
 
 const products = ref([createNewProduct()]);
 
@@ -154,11 +164,6 @@ const dueDate = ref('');
 const accountNote = ref('');
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
-
-// 필터된 파일 목록을 계산하는 함수
-const filteredFiles = computed(() => {
-    return quotationData.value?.quotationFile.filter(file => file.originName !== 'blob') || [];
-});
 
 function createNewProduct() {
     return {
@@ -211,6 +216,8 @@ const populateFields = (data) => {
     responsiblePerson.value = data.employee.employeeName;
     dueDate.value = data.quotationDueDate;
     accountNote.value = data.quotationNote;
+
+    existingFiles.value = data.quotationFile.filter(file => file.originName !== 'blob');
 };
 
 const fetchProductData = async (index) => {
@@ -301,15 +308,15 @@ const updateSupplyValue = (index) => {
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
-    quotationData.value.quotationFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
 const removeNewFile = (index) => {
     files.value.splice(index, 1);
 };
 
-const removeExistingFile = (index) => {
-    quotationData.value.quotationFile.splice(index, 1);
+const resetFiles = () => {
+    files.value = [];
+    existingFiles.value = [];
 };
 
 const addProductRow = () => {
@@ -326,7 +333,7 @@ const removeProductRow = (index) => {
 
 const updateQuotation = async () => {
     const quotationId = route.params.quotationId; // quotationId 값을 가져옵니다.
-    const areProductsValid = products.value.every(product => 
+    const areProductsValid = products.value.every(product =>
         product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
     );
     const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
@@ -344,7 +351,7 @@ const updateQuotation = async () => {
         quotationNote: accountNote.value,
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
-        employee: { 
+        employee: {
             employeeId: employeeId.value, // 수정: employeeId 값 설정
             employeeName: employeeName.value // 수정: employeeName 값 설정
         },
@@ -355,18 +362,12 @@ const updateQuotation = async () => {
             quotationSupplyPrice: product.supplyValue,
             quotationProductionNote: product.otherInfo,
             product: { productId: product.productId }
-        }))
+        })),
+        removeFileIds: existingFiles.value.filter(file => file.deleted).map(file => file.fileId)
     };
 
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
-
-    // 기존 파일 목록을 유지하도록 추가
-    if (quotationData.value.quotationFile.length > 0) {
-        quotationData.value.quotationFile.forEach(file => {
-            formData.append('existingFiles', JSON.stringify(file));
-        });
-    }
 
     // 첨부 파일이 있는 경우에만 파일 추가
     if (files.value.length > 0) {
@@ -427,7 +428,7 @@ watch(products, (newProducts) => {
 
 
 <style>
-.estimate-edit-content11 {
+.estimate-edit-content33 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -441,7 +442,7 @@ watch(products, (newProducts) => {
     margin-top: 3%;
 }
 
-.estimate-list-box {
+.estimate-list-box33 {
     width: 90%;
     max-width: 1400px;
     display: flex;
@@ -552,59 +553,53 @@ watch(products, (newProducts) => {
     gap: 5px;
 }
 
-.estimate-attachment3 {
+.estimate-attachment34 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 90%;
+    /* 부모 요소의 너비를 90%로 설정 */
     max-width: 1400px;
-    height: 220px;
+    min-width: 900px;
+    height: auto;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.estimate-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.estimate-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
-.estimate-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list34 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 80%;
+    /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 800px;
+    min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all;
+    white-space: nowrap;
+    /* 텍스트가 한 줄로 표시되도록 설정 */
+    overflow: hidden;
+    /* 넘치는 부분을 숨김 */
+    text-overflow: ellipsis;
+    /* 넘치는 부분을 생략 부호(...)로 표시 */
 }
 
 .file-upload-btn {
@@ -623,6 +618,18 @@ watch(products, (newProducts) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
+}
+
+.remove-file-btn {
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .estimate-edit-btn-div33 {
