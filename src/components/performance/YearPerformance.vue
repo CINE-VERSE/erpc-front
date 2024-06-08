@@ -31,7 +31,10 @@
                         <th>월/분기</th>
                         <th>목표 금액</th>
                         <th>달성 금액</th>
-                        <th>달성 필요금액</th>
+                        <th class="filter-header">
+                            <span>달성 필요금액</span>
+                            <button class="filter-btn" @click="toggleFilter">{{ showAll ? '전체' : '달성초과' }}</button>
+                        </th>
                         <th>달성률</th>
                     </tr>
                 </thead>
@@ -66,6 +69,7 @@ const employeeName = ref(''); // 조회된 사원명을 저장할 변수
 const salesData = ref({}); // 실적 데이터를 저장할 변수
 const teamSalesData = ref({}); // 팀 실적 데이터를 저장할 변수
 const employeeSalesData = ref({}); // 사원 실적 데이터를 저장할 변수
+const showAll = ref(true); // 전체/달성초과 토글 상태
 
 const fetchSalesData = async () => {
     try {
@@ -314,6 +318,9 @@ const filterData = () => {
     if (searchQuery.value) {
         filteredData = filteredData.filter(target => target.employeeName && target.employeeName.includes(searchQuery.value));
     }
+    if (!showAll.value) {
+        filteredData = filteredData.filter(target => getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) < 0);
+    }
     console.log('Filtered target data:', filteredData);
     filteredTargetData.value = filteredData;
 };
@@ -349,6 +356,11 @@ const fetchTeams = async () => {
     }
 };
 
+const toggleFilter = () => {
+    showAll.value = !showAll.value;
+    filterData();
+};
+
 onMounted(async () => {
     await fetchSalesData();
     await fetchTargetData();
@@ -361,7 +373,6 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 
 <style>
 .target-list-content {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -373,15 +384,13 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     align-items: center;
     justify-content: center;
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .filters {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    /* margin-bottom: 20px; */
-    gap: 10px; /* 추가 */
+    gap: 10px;
 }
 
 .year-filter,
@@ -407,7 +416,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 .search-box {
     display: flex;
     align-items: center;
-    gap: 10px; /* 추가 */
+    gap: 10px;
 }
 
 .search-input {
@@ -439,6 +448,27 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     background-color: #007bff;
 }
 
+.filter-toggle {
+    margin-top: 20px;
+}
+
+.filter-btn {
+    height: 30px; 
+    padding: 5px 10px; 
+    border: none;
+    border-radius: 5px;
+    background-color: #DC3545; 
+    color: white;
+    font-size: 12px; 
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* 버튼과 텍스트 간격 조절 */
+}
+
+.filter-btn:hover {
+    background-color: #c82333;
+}
+
 .target-list-box {
     width: 100%;
     display: flex;
@@ -448,12 +478,10 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    max-width: 1400px;
+    max-width: 1600px; /* 전체 너비를 더 넓게 설정 */
     margin: 20px auto;
-    /* margin-top: 3%; */
     margin-bottom: 7%;
     gap: 1px;
-    /* margin-left: -65px; */
 }
 
 .target-table {
@@ -465,19 +493,43 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 
 .target-table th,
 .target-table td {
-    text-align: center;
+    text-align: center; /* 기본 중앙 정렬 */
     border: 1px solid #ccc;
     padding: 13px;
     font-family: GmarketSansMedium;
-    width: 120px; /* 너비 조절 */
+    width: 180px; /* 기본 열 너비를 더 넓게 설정 */
 }
-
 
 .target-table th {
     background-color: #0C2092;
     color: white;
     font-size: 18px;
     padding: 10px;
+    position: relative; 
+}
+
+/* 달성 필요금액 칸 좌측 정렬 */
+.target-table th:nth-child(5) {
+    text-align: left; 
+}
+
+.target-table th:nth-child(5) .filter-btn {
+    position: absolute; 
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+}
+
+.target-table th:nth-child(1),
+.target-table th:nth-child(2),
+.target-table td:nth-child(1),
+.target-table td:nth-child(2) {
+    width: 80px; 
+}
+
+.target-table th:nth-child(6),
+.target-table td:nth-child(6) {
+    width: 100px; 
 }
 
 .quarter-row {
@@ -500,4 +552,7 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     outline: none;
     width: 200px;
 }
+
+
+
 </style>
