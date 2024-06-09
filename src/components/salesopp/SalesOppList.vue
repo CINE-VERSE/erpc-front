@@ -1,5 +1,5 @@
 <template>
-  <div class="contract-content">
+  <div class="contract-list-content333">
     <div class="contract-list">
       <h1>영업기회 목록</h1>
     </div>
@@ -36,7 +36,7 @@
 
     <!-- 영업기회 목록 테이블 -->
     <div class="contract-list-box">
-      <table class="contract-table7">
+      <table class="contract-table88">
         <thead>
           <tr class="header1">
             <th>번호</th>
@@ -158,7 +158,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.contract-list-content {
+.contract-list-content333 {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -265,15 +265,15 @@ onMounted(async () => {
   overflow-x: auto;
 }
 
-.contract-table7 {
+.contract-table88 {
   width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
   font-size: 16px;
 }
 
-.contract-table7 th,
-.contract-table7 td {
+.contract-table88 th,
+.contract-table88 td {
   text-align: center;
   width: 160px; /* 너비 조절 */
   border: 1px solid #ccc;
@@ -281,19 +281,19 @@ onMounted(async () => {
   font-family: GmarketSansMedium;
 }
 
-.contract-table7 th.wide-column,
-.contract-table7 td.wide-column {
+.contract-table88 th.wide-column,
+.contract-table88 td.wide-column {
   width: 250px; /* 넓은 열 너비 설정 */
 }
 
-.contract-table7 th {
+.contract-table88 th {
   background-color: #0c2092;
   color: white;
   font-size: 18px;
   padding: 10px;
 }
 
-.contract-table7 tr:hover {
+.contract-table88 tr:hover {
   background-color: #d5e6ff;
   cursor: pointer;
 }

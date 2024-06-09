@@ -1,9 +1,9 @@
 <template>
-  <div class="contract-content">
+  <div class="contract-content123">
     <div class="contract-list">
       <h1>창고 목록</h1>
     </div>
-    <div class="contract-list-box7">
+    <div class="contract-list-box778">
       <div class="search-bar">
         <select v-model="searchCategory">
           <option value="warehouseName">창고 이름</option>
@@ -13,7 +13,8 @@
         <input type="text" v-model="searchKeyword" placeholder="검색어를 입력하세요">
         <button @click="search">검색</button>
       </div>
-      <table class="contract-table7">
+
+      <table class="contract-table778">
         <thead>
           <tr class="header1">
             <th>번호</th>
@@ -40,11 +41,13 @@
           </tr>
         </tbody>
       </table>
-      <div class="pagination">
-        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
-        <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
-        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
-      </div>
+    </div>
+
+    <div class="pagination">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+      <button v-for="page in totalPages" :key="page" @click="changePage(page)"
+        :class="{ active: currentPage === page }">{{ page }}</button>
+      <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
     </div>
   </div>
 </template>
@@ -66,7 +69,7 @@ export default {
     filteredWarehouseList() {
       const keyword = this.searchKeyword.trim().toLowerCase();
       const category = this.searchCategory;
-      
+
       if (!keyword) {
         return this.warehouseList;
       }
@@ -116,8 +119,9 @@ export default {
 };
 </script>
 
+
 <style scoped>
-.contract-list-content {
+.contract-content123 {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -126,9 +130,18 @@ export default {
 
 .contract-list {
   text-align: center;
+  width: 100%;
 }
 
-.contract-list-box7 {
+.contract-list-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.contract-list-box778 {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -137,71 +150,110 @@ export default {
   border-radius: 10px;
   box-sizing: border-box;
   background-color: white;
-  max-width: 1000px; /* 최대 너비 조정 */
-  overflow-x: auto; /* 가로 스크롤 추가 */
+  max-width: 1400px;
+  overflow-x: auto;
 }
 
-.contract-table7 {
+.contract-table778 {
   width: 100%;
   border-collapse: collapse;
   margin: 10px 0;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 14px;
 }
 
-.contract-table7 th,
-.contract-table7 td {
+.contract-table778 th,
+.contract-table778 td {
   text-align: center;
   border: 1px solid #ccc;
-  padding: 6px; /* 패딩 줄임 */
+  padding: 8px;
+  font-family: GmarketSansMedium;
 }
 
-.contract-table7 th {
+.contract-table778 th {
   background-color: #0C2092;
   color: white;
-  font-size: 14px; /* 폰트 크기 줄임 */
-  padding: 8px; /* 패딩 줄임 */
+  font-size: 14px;
+  padding: 10px;
 }
 
-.contract-table7 tr:hover {
+.contract-table778 tr:hover {
   background-color: #d5e6ff;
   cursor: pointer;
+}
+
+.contract-table778 th:nth-child(1),
+.contract-table778 td:nth-child(1) {
+  width: 5%; /* 번호 열 너비 */
+}
+
+.contract-table778 th:nth-child(2),
+.contract-table778 td:nth-child(2) {
+  width: 15%; /* 창고 이름 열 너비 */
+}
+
+.contract-table778 th:nth-child(3),
+.contract-table778 td:nth-child(3) {
+  width: 35%; /* 창고 위치 열 너비 */
+}
+
+.contract-table778 th:nth-child(4),
+.contract-table778 td:nth-child(4) {
+  width: 10%; /* 창고 유형 열 너비 */
+}
+
+.contract-table778 th:nth-child(5),
+.contract-table778 td:nth-child(5) {
+  width: 10%; /* 창고 용도 열 너비 */
+}
+
+.contract-table778 th:nth-child(6),
+.contract-table778 td:nth-child(6) {
+  width: 10%; /* 생산 라인 열 너비 */
+}
+
+.contract-table778 th:nth-child(7),
+.contract-table778 td:nth-child(7) {
+  width: 15%; /* 외주 업체 열 너비 */
 }
 
 .search-bar {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
+  width: 100%;
+  justify-content: center;
 }
 
 .search-bar select {
-  padding: 6px; /* 패딩 줄임 */
+  padding: 6px;
   margin-right: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
 }
 
 .search-bar input[type="text"] {
   flex: 1;
-  padding: 6px; /* 패딩 줄임 */
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
+  max-width: 150px;
 }
 
 .search-bar button {
-  padding: 6px 10px; /* 패딩 줄임 */
+  padding: 6px 10px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
-  height: 30px; /* 높이 추가 */
-  line-height: 1; /* 텍스트 중앙 정렬 */
+  font-size: 12px;
+  height: 30px;
+  line-height: 1;
   margin-left: 10px;
 }
 
@@ -221,24 +273,19 @@ export default {
 }
 
 .pagination button {
-  padding: 8px 12px; /* 패딩 줄임 */
+  padding: 8px 12px;
   margin: 0 5px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
 }
 
 .pagination button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
-}
-
-.pagination span {
-  margin: 0 10px;
-  font-size: 12px; /* 폰트 크기 줄임 */
 }
 
 .pagination .active {
