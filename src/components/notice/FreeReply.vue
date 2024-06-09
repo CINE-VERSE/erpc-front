@@ -13,7 +13,7 @@
       </div>
       <div class="closebuttondiv">
         <form action="" name="deleteReply" method="post">
-          <button type="button" class="closebutton" @click="removeReply(reply.noticeCommentId)">X</button>
+          <button type="button" class="closebutton2" @click="removeReply(reply.noticeCommentId)">X</button>
         </form>
       </div>
     </div>
@@ -185,14 +185,7 @@ textarea {
     /* margin-left: 250px; */
 }
 
-.closebutton {
-    border: 0;
-    cursor: pointer;
-    background-color: white;
-    border-radius: 100%;
-    width: 20px;
-    height: 20px;
-}
+
 
 .btn {
     background-color: #6c7aa1;
@@ -297,15 +290,17 @@ textarea {
 textarea::placeholder {
     font-size: 12px;
 }
+.closebutton2 {
+    background-color: white; /* 삭제 버튼 배경색을 흰색으로 설정 */
+    color: black; /* 삭제 버튼 글자색을 검은색으로 설정 */
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 5px 10px;
+}
 
-/* @media (max-width: 768px) {
-    .btn, .box, .allreply div {
-        width: 90%;
-        margin: 10px auto;
-    }
+.closebutton2:hover {
+    background-color: #ccc; /* 삭제 버튼에 마우스를 올렸을 때 배경색을 회색으로 변경 */
+}
 
-    .replywriterdiv, .replycontentdiv, .replydatediv, .closebuttondiv {
-        flex-direction: column; 
-    }
-} */
 </style >
