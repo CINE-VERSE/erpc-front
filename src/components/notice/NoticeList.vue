@@ -7,7 +7,7 @@
           </td>
           <td></td>
           <td class="thing">
-            <button @click="goToWritePage" class="writebutton">게시글 작성</button>
+            <button @click="goToWritePage" class="writebutton">공지사항 작성</button>
           </td>
         </tr>
         <tr class="header2">

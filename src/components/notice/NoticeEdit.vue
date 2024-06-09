@@ -10,30 +10,25 @@
         <label for="noticeContent" class="label">내용</label>
         <textarea id="noticeContent" v-model="noticeContent" class="textarea" placeholder="내용" required></textarea>
       </div>
-
       <div class="file-upload-area">
-        <label for="newFiles" class="file-upload-label">
+        <label for="noticeFiles" class="file-upload-label">
           <i class="fas fa-cloud-upload-alt"></i> 첨부 파일 추가
         </label>
-        <input type="file" id="newFiles" @change="handleFileChange" multiple accept="image/*" hidden>
-        <div v-if="newFiles.length > 0" class="file-list">
-          <div v-for="(file, index) in newFiles" :key="index" class="file-item">
+        <input type="file" id="noticeFiles" @change="handleFileChange" multiple accept="image/*" hidden>
+        <div v-if="files.length > 0" class="file-list">
+          <div v-for="(file, index) in files" :key="index" class="file-item">
             {{ file.name }}
-            <button @click="removeNewFile(index)" class="remove-btn">삭제</button>
+            <button @click="removeFile(index)" class="remove-btn">삭제</button>
           </div>
         </div>
       </div>
-
       <div v-if="existingFiles.length > 0" class="existing-file-list">
         <h3>기존 첨부 파일</h3>
-        <div v-for="file in existingFiles" :key="file.fileId" class="file-item">
-          <a :href="getDownloadUrl(file)" target="_blank">{{ file.name }}</a>
-          <button @click="toggleFileDelete(file)" class="remove-btn">
-            {{ file.deleted ? '복원' : '삭제' }}
-          </button>
+        <div v-for="(file, index) in existingFiles" :key="index" class="file-item">
+          {{ file.name }}
+          <button @click="removeExistingFile(index)" class="remove-btn">삭제</button>
         </div>
       </div>
-
       <button type="submit" class="submit-btn" :disabled="submitting">수정</button>
     </form>
   </div>
@@ -43,81 +38,70 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
-import router from '@/router/mainRouter';
 
-export default defineComponent({
+export default {
   data() {
     return {
       noticeId: null,
       noticeTitle: '',
       noticeContent: '',
-      newFiles: ref([]), // 새로 추가된 파일
-      existingFiles: ref([]), // 기존 첨부 파일
-      submitting: false,
+      files: [],
+      existingFiles: [], // 서버에서 받아온 기존 파일 목록
+      submitting: false
     };
   },
   methods: {
     handleFileChange(event) {
-      this.newFiles = Array.from(event.target.files);
+      this.files = Array.from(event.target.files);
     },
-
-    removeNewFile(index) {
-      this.newFiles.splice(index, 1);
+    removeFile(index) {
+      this.files.splice(index, 1);
     },
-
-    toggleFileDelete(file) {
-      file.deleted = !file.deleted;
+    removeExistingFile(index) {
+      this.existingFiles.splice(index, 1);
     },
+async modifyNotice() {
+  if (this.submitting) return;
+  this.submitting = true;
 
-    getDownloadUrl(file) {
-      return `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/file/${this.noticeId}/${file.fileId}`;
-    },
+  const formData = new FormData();
+  formData.append('notice', JSON.stringify({
+    noticeId: this.noticeId, // noticeId 추가
+    noticeTitle: this.noticeTitle,
+    noticeContent: this.noticeContent
+  }));
+  
+  // 새로운 파일만 추가
+  this.files.forEach(file => {
+    formData.append('files', file);
+  });
 
-    async modifyNotice() {
-      if (this.submitting) return;
-      this.submitting = true;
-
-      const formData = new FormData();
-      formData.append('notice', JSON.stringify({
-        noticeId: this.noticeId,
-        noticeTitle: this.noticeTitle,
-        noticeContent: this.noticeContent,
-        removeFileIds: this.existingFiles.filter(file => file.deleted).map(file => file.fileId),
-      }));
-
-      this.newFiles.forEach(file => {
-        formData.append('files', file);
-      });
-
-      try {
-        const response = await axios.patch(
-          `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`, 
-          formData, 
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        );
-        console.log('Notice modified successfully:', response.data);
-        router.push('/notice/list');
-      } catch (error) {
-        console.error('Error modifying notice:', error.response ? error.response.data : error.message);
-      } finally {
-        this.submitting = false;
+  try {
+    const response = await axios.patch(
+      `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`, 
+      formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       }
-    },
-
+    );
+    console.log('Notice modified successfully:', response.data);
+    this.$router.push('/notice/list');
+  } catch (error) {
+    console.error('Error modifying notice:', error.response ? error.response.data : error.message);
+  } finally {
+    this.submitting = false;
+  }
+},
     async fetchNoticeDetails() {
       try {
         const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/${this.noticeId}`);
         const notice = response.data;
         this.noticeTitle = notice.noticeTitle;
         this.noticeContent = notice.noticeContent;
-        // 기존 파일 목록에 deleted 속성 추가
-        this.existingFiles = (notice.files || []).map(file => ({ ...file, deleted: false })); 
+        this.existingFiles = notice.noticeFile || []; // 기존 파일 목록 설정
       } catch (error) {
         console.error('Error fetching notice details:', error);
       }
@@ -127,8 +111,9 @@ export default defineComponent({
     this.noticeId = this.$route.params.noticeId;
     this.fetchNoticeDetails();
   }
-});
+};
 </script>
+
 <style scoped>
 .post-form {
   width: 800px; 

@@ -38,8 +38,8 @@ const menuItems = ref([
   {
     title: '공지 사항',
     subItems: [
-      { title: '게시글 작성', path: '/notice/regist' },
-      { title: '게시글 목록', path: '/notice/list' }
+      { title: '공지사항 작성', path: '/notice/regist' },
+      { title: '공지사항 목록', path: '/notice/list' }
     ],
     isOpen: false,
   },
