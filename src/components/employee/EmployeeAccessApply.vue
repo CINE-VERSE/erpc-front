@@ -38,7 +38,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="request in allAccessRequests" :key="request.employee.employeeId">
+          <tr v-for="(request, index) in paginatedRequests" :key="index">
             <td>{{ request.employee.employeeName }}</td>
             <td>{{ request.employee.employeeCode }}</td>
             <td>{{ request.employee.teamCode.teamCode }}</td>
@@ -50,11 +50,17 @@
           </tr>
         </tbody>
       </table>
+      <div class="pagination">
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+        <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+      </div>
     </div>
   </div>
 </template>
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 
 // 상태 변수
@@ -65,6 +71,8 @@ const selectedAccessRights = ref([]);
 const allAccessRights = ref([]);
 const allAccessRequests = ref([]);
 const showAllAccessRequests = ref(false);
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 const addAccess = ref({
   employee: {
@@ -96,12 +104,6 @@ const accessRightsMap = {
   20: "결재 처리",
   21: "품목 읽기",
   22: "관리자"
-};
-
-const aggregateAllAccessRights = (data) => {
-  const rightsSet = new Set();
-  data.forEach(item => rightsSet.add(JSON.stringify(item.accessRight)));
-  allAccessRights.value = Array.from(rightsSet).map(item => JSON.parse(item));
 };
 
 // 사원의 보유 권한 조회 함수
@@ -137,7 +139,7 @@ const submitAddAccess = async () => {
   }
 };
 
-// 모든 권한 신청 조회 함수
+// 페이지 로드 시 모든 권한 신청 조회
 const getAllAccessRequests = async () => {
   try {
     const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/list');
@@ -147,11 +149,6 @@ const getAllAccessRequests = async () => {
     console.error('모든 권한 신청 조회 중 에러 발생:', error);
   }
 };
-
-// 페이지 로드 시 모든 권한 신청 조회
-onMounted(() => {
-  getAllAccessRequests();
-});
 
 // 권한 삭제 요청 함수
 const deleteRequest = async (accessRequestId) => {
@@ -163,6 +160,28 @@ const deleteRequest = async (accessRequestId) => {
     console.error('권한 삭제 중 에러 발생:', error);
   }
 };
+
+// 페이징 처리를 위한 함수
+const paginatedRequests = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return allAccessRequests.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(allAccessRequests.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
+}
+
+// 페이지 로드 시 모든 권한 신청 조회
+onMounted(() => {
+  getAllAccessRequests();
+});
 
 </script>
 
