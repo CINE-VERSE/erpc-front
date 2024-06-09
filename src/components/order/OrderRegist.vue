@@ -18,7 +18,7 @@
                     <tr>
                         <td class="contract-test333">
                             <div class="contract-number-div33">
-                                <input type="text" v-model="contractCode" class="contract-number-box33">
+                                <input type="text" v-model="contractCode" class="contract-number-box33" @input="contractCode = contractCode.replace(/\s/g, '')">
                                 <button @click="fetchContractData" class="contract-number-btn33">조회</button>
                             </div>
                         </td>

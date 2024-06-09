@@ -17,7 +17,7 @@
                     <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
+                                <input type="text" v-model="product.itemCode" class="item-code-box2" @input="product.itemCode = product.itemCode.replace(/\s/g, '')"/>
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
@@ -81,7 +81,7 @@
                     <tr>
                         <td>
                             <div class="customer-code-div34">
-                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box34"/>
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.replace(/\s/g, '').toUpperCase()" class="customer-code-box34" />
                                 <button @click="fetchCustomerData" class="customer-code-btn34">확인</button>
                             </div>
                         </td>

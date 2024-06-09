@@ -621,21 +621,17 @@ const goToOrderPage = (orderRegistrationId) => {
     font-family: GmarketSansMedium;
     font-size: 16px;
     cursor: default;
+    cursor:pointer;
 }
 
 .project-number-box {
     background-color: #BEE7FF;
     border: 2px solid #BEE7FF;
-    transition: background-color 0.3s ease; /* 추가: Hover 효과를 위한 전환 */
 }
 
 .project-employee-box {
     background-color: white;
     border: 1px solid #ccc;
-}
-
-.project-number-box:hover {
-    background-color: #a3d4f7; /* 추가: Hover 시 진한 파란색 */
 }
 
 .customer-orders-wrapper {
