@@ -69,33 +69,4 @@ function logout() {
 
 <style>
     @import url('@/assets/css/main/Header.css');
-    .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-    }
-
-    .nav-buttons {
-        display: flex;
-        align-items: center;
-    }
-
-    .profile-button,
-    .logout-button {
-        margin-left: 10px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        background-color: #4CAF50;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .profile-button:hover,
-    .logout-button:hover {
-        background-color: #45a049;
-    }
 </style>

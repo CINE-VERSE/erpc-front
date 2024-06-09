@@ -1,18 +1,16 @@
-.order-regist-content11 {
+.regist-content21 {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    width: 100%;
-    max-width: calc(100% - 80px);
 }
 
-.order-regist11 {
+.order-regist21 {
     text-align: center;
 }
 
 .order-list-box1 {
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -58,7 +56,7 @@
     border: 1px solid #ccc;
     padding: 8px;
     font-family: GmarketSansMedium;
-    width: 600px;
+    width: 600px; /* 너비를 늘리기 위해 추가 */
 }
 
 .order-table1 th,
@@ -125,48 +123,95 @@
     display: block;
 }
 
-.contract-number-div33 {
+.test1,
+.test2 {
+    width: 300px;
+}
+
+.order-search-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+    box-sizing: border-box;
+    background-color: whitesmoke;
+    height: auto;
+    margin: 20px auto;
+    gap: 1px;
+    max-width: 400px;
+}
+
+.contract-number {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contract-number-text {
     display: flex;
     align-items: center;
-    justify-content: center; /* 가운데 정렬 추가 */
+    text-align: center;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
-.contract-number-box33 {
-    width: 200px; /* 원하는 너비로 설정 */
-    height: 35px;
-    padding: 8px;
+.contract-number-box {
+    flex-grow: 1;
+    padding: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
-    border-radius: 5px 0 0 5px;
+    border-radius: 10px;
     box-sizing: border-box;
-    font-family: GmarketSansMedium;
-    font-size: 15px;
-    margin-right: -1px; /* 테두리 겹침 방지 */
+    width: 320px;
+    font-size: 18px;
 }
 
-.contract-number-btn33 {
-    border-radius: 0 5px 5px 0;
-    border: 2px solid #0C2092;
-    height: 35px;
+.order-search-btn-div1,
+.order-regist-btn-div1 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.order-search-btn1,
+.order-regist-btn1 {
+    padding: 10px 20px;
+    font-size: 16px;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
     background-color: #0C2092;
     color: white;
-    font-size: 11px;
     cursor: pointer;
-    padding: 0 10px;
-    margin-left: 0px;
+    transition: background-color 0.3s ease;
+    margin-bottom: 15px;
+    margin-top: 15px;
 }
 
-.contract-test333 {
-    width: 250px;
+.order-search-btn1 {
+    max-width: 320px;
 }
 
-.order-attachment33 {
+.order-regist-btn1 {
+    width: 320px;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+.order-attachment77 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
     width: 90%;
-    max-width: 1400px;
+    max-width: 1600px; /* 최대 너비를 증가 */
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
@@ -175,12 +220,12 @@
     height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
-.file-list34 {
+.file-list77 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 100%; /* 너비를 100%로 설정 */
-    max-width: 1200px; /* 최대 너비를 더 길게 설정 */
+    width: 100%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 1200px; /* 최대 너비 설정 */
     min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
@@ -189,6 +234,7 @@
     margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
     white-space: nowrap; /* 줄 바꿈 하지 않음 */
     overflow: hidden;    /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호(...)로 표시 */
 }
 
 .file-icon {
@@ -196,12 +242,14 @@
     margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
-.file-name {
+.file-name77 {
     font-size: 18px;
     white-space: nowrap;   /* 줄 바꿈 하지 않음 */
     overflow: hidden;      /* 넘치는 내용 숨김 */
     text-overflow: ellipsis; /* 넘치는 내용 생략 부호 (...)로 표시 */
+    width: calc(100% - 34px); /* 파일명 부분이 줄어들지 않도록 너비를 조정 */
 }
+
 
 .file-upload-btn {
     position: absolute;
@@ -222,14 +270,15 @@
     margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
 
-.order-regist-btn-div33 {
+
+.order-regist-btn-div1 {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.order-regist-btn33 {
+.order-regist-btn1 {
     width: 320px;
     padding: 10px 20px;
     text-align: center;
@@ -240,9 +289,10 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    margin-bottom: 50px;
+    margin-top: 30px;
+    margin-bottom: 100px;
 }
 
-.order-regist-btn33:hover {
+.order-regist-btn1:hover {
     background-color: #007bff;
 }

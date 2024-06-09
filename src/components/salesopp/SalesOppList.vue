@@ -40,26 +40,36 @@
         <thead>
           <tr class="header1">
             <th>번호</th>
-            <th>{{ searchBy }}</th>
-            <th>영업기회 작성일</th>
+            <th class="wide-column">{{ searchBy }}</th>
+            <th class="wide-column">영업기회 작성일</th>
             <th>상태</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(approval, index) in filteredApprovals" :key="approval.salesOppId" @click="goToSalesOppContents(approval.salesOppId)">
-            <td>{{ index + 1 }}</td>
-            <td>{{ searchBy === '거래처명' ? approval.oppAccountName : approval.oppAccountPic }}</td>
-            <td>{{ approval.oppDate }}</td>
+          <tr v-for="(approval, index) in paginatedApprovals" :key="approval.salesOppId" @click="goToSalesOppContents(approval.salesOppId)">
+            <td>{{ totalApprovals - ((currentPage - 1) * pageSize + index) }}</td>
+            <td class="wide-column">{{ searchBy === '거래처명' ? approval.oppAccountName : approval.oppAccountPic }}</td>
+            <td class="wide-column">{{ approval.oppDate }}</td>
             <td>{{ approval.salesOppStatus.salesOppStatus }}</td>
+          </tr>
+          <tr v-if="filteredApprovals.length === 0">
+            <td colspan="4" class="no-result">검색 결과가 없습니다.</td>
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- 페이징 -->
+    <div class="pagination">
+      <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+      <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+      <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -70,6 +80,8 @@ const filteredApprovals = ref([]);
 const searchKeyword = ref('');
 const searchBy = ref('거래처명');
 const statusFilter = ref('전체');
+const currentPage = ref(1);
+const pageSize = ref(10);
 
 // 검색 기준 설정 함수
 function setSearchBy(type) {
@@ -105,6 +117,27 @@ function filterApprovals() {
 
     return matchesQuery && matchesStatus;
   });
+  currentPage.value = 1; // 검색할 때 페이지를 1페이지로 초기화
+}
+
+const paginatedApprovals = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return filteredApprovals.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredApprovals.value.length / pageSize.value);
+});
+
+const totalApprovals = computed(() => {
+  return filteredApprovals.value.length;
+});
+
+function changePage(page) {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+  }
 }
 
 // 상세 보기로 이동하는 함수
@@ -120,11 +153,176 @@ onMounted(async () => {
     filteredApprovals.value = approvals.value;
   } catch (error) {
     console.error('영업기회 목록을 불러오는 중 오류가 발생했습니다:', error);
-    // 오류 처리 로직 추가
   }
 });
 </script>
-  
-  <style scoped>
-    @import url('@/assets/css/contract/ContractList.css');
-  </style>
+
+<style scoped>
+.contract-list-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.contract-list {
+  text-align: center;
+}
+
+.contract-list-search {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.contract-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.contract-dropdown-btn {
+  width: 150px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  outline: none;
+  color: black;
+}
+
+.contract-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.contract-dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #ccc;
+}
+
+.contract-dropdown-content a:hover {
+  background-color: #d5e6ff;
+}
+
+.contract-dropdown:hover .contract-dropdown-content {
+  display: block;
+}
+
+.contract-search-input {
+  height: 40px;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+  background-color: #e5f0ff;
+  color: #0c2092;
+  outline: none;
+  width: 250px;
+}
+
+.contract-search-btn {
+  height: 40px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #0c2092;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contract-search-btn:hover {
+  background-color: #007bff;
+}
+
+.contract-list-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: white;
+  max-width: 1400px;
+  overflow-x: auto;
+}
+
+.contract-table7 {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.contract-table7 th,
+.contract-table7 td {
+  text-align: center;
+  width: 160px; /* 너비 조절 */
+  border: 1px solid #ccc;
+  padding: 8px;
+  font-family: GmarketSansMedium;
+}
+
+.contract-table7 th.wide-column,
+.contract-table7 td.wide-column {
+  width: 250px; /* 넓은 열 너비 설정 */
+}
+
+.contract-table7 th {
+  background-color: #0c2092;
+  color: white;
+  font-size: 18px;
+  padding: 10px;
+}
+
+.contract-table7 tr:hover {
+  background-color: #d5e6ff;
+  cursor: pointer;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  margin: 0 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination .active {
+  background-color: #0C2092 !important;
+  color: white;
+}
+</style>

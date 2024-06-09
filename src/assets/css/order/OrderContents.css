@@ -1,14 +1,14 @@
-.order-content {
-    margin-top: 4%;
+.order-content11 {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
 }
 
-.order-search {
+.order-search11 {
     text-align: center;
-    margin-top: 3%;
 }
 
 .maintext,
@@ -51,7 +51,7 @@
     margin-right: 15px;
 }
 
-.order-pdf {
+.order-pdf77 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -63,8 +63,7 @@
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 500px;
-    height: 150px;
+    width: 430px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -73,7 +72,7 @@
 }
 
 .order-pdf1,
-.order-pdf2 {
+.order-pdf33 {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -87,11 +86,11 @@
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
 .order-pdf1:hover,
-.order-pdf2:hover {
+.order-pdf33:hover {
     background-color: #d5e6ff;
 }
 
@@ -128,7 +127,7 @@
 .order2-table5,
 .order2-table6,
 .order2-table7,
-.shipment-table1,
+.shipment-table333,
 .shipment-table2 {
     width: 100%;
     border-collapse: collapse;
@@ -142,16 +141,16 @@
 .order2-table2 td,
 .order2-table3 th,
 .order2-table3 td,
-order2-table4 th,
-order2-table4 td,
-order2-table5 th,
-order2-table5 td,
-order2-table6 th,
-order2-table6 td,
-order2-table7 th,
-order2-table7 td,
-.shipment-table1 th,
-.shipment-table1 td,
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td,
+.order2-table6 th,
+.order2-table6 td,
+.order2-table7 th,
+.order2-table7 td,
+.shipment-table333 th,
+.shipment-table333 td,
 .shipment-table2 th,
 .shipment-table2 td {
     text-align: center;
@@ -164,10 +163,10 @@ order2-table7 td,
 .order2-table2 th,
 .order2-table3 th,
 .order2-table4 th,
-order2-table5 th,
-order2-table6 th,
-order2-table7 th,
-.shipment-table1 th,
+.order2-table5 th,
+.order2-table6 th,
+.order2-table7 th,
+.shipment-table333 th,
 .shipment-table2 th {
     background-color: whitesmoke;
     color: black;
@@ -178,12 +177,12 @@ order2-table7 th,
 
 .order2-table1 td,
 .order2-table2 td,
-order2-table3 td,
-order2-table4 td,
-order2-table5 td,
-order2-table6 td,
-order2-table7 td,
-.shipment-table1 td,
+.order2-table3 td,
+.order2-table4 td,
+.order2-table5 td,
+.order2-table6 td,
+.order2-table7 td,
+.shipment-table333 td,
 .shipment-table2 td {
     height: 40px;
 }
@@ -192,16 +191,29 @@ order2-table7 td,
     background-color: #d5e6ff;
 }
 
-.shipment-table1 th,
-.shipment-table1 td {
-    background-color: #D3F9E0;
+.shipment-status-requested {
+    background-color: whitesmoke; /* 연회색 */
 }
+
+.shipment-status-in-progress {
+    background-color: #FFFACD; /* 진한 파스텔 노란색 */
+}
+
+.shipment-status-completed {
+    background-color: #D3F9E0; /* 연한 녹색 */
+}
+
+.shipment-table333 th,
+.shipment-table333 td {
+    background-color: inherit;
+}
+
 
 .shipment-table2 {
     margin-bottom: 7%;
 }
 
-.order-process-box {
+.order22-process-box {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -212,30 +224,32 @@ order2-table7 td,
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 1200px;
+    width: 100%;
+    max-width: 1100px;
+    min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
-    margin-top: 30px;
+    margin-top: 60px;
     height: auto;
     flex-direction: column;
     margin-bottom: 7%;
 }
 
-.order-process-text {
-    margin-bottom: 20px;
+.order22-process-text {
     color: #0C2092;
 }
 
-.order-process-box-detail {
+.order22-process-box-detail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-left: 8px;
 }
 
-.order-process-info {
+.order22-process-info {
     display: flex;
     width: 100%;
     justify-content: space-between;
@@ -243,12 +257,13 @@ order2-table7 td,
     margin-bottom: 10px;
 }
 
-.order-process-writer {
+.order22-process-writer {
     margin: 0;
-    margin-left: 45px;
+    margin-left: 30px;
+    margin-bottom: -13px;
 }
 
-.order-process-detail {
+.order22-process-detail {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
@@ -260,14 +275,14 @@ order2-table7 td,
     outline: none;
     color: black;
     font-weight: bold;
-    width: 93%;
+    width: 94%;
     height: auto;
-    margin-left: 40px;
+    margin-right: 5px;
     margin-top: -10px;
     font-weight: normal;
 }
 
-.order-process-date {
+.order22-process-date {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,42 +293,46 @@ order2-table7 td,
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 45px;
+    margin-right: 34px;
 }
 
-.order-process-btn {
+.order22-process-btn,
+.order22-process-btn2 {
     display: flex;
     width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     gap: 7px;
 }
 
-.order-process-edit,
-.order-process-delete {
+.order22-process-regist,
+.order22-process-delete {
     background-color: #0C2092;
     border: 2px solid #0C2092;
     color: white;
     border-radius: 10px;
     padding: 5px 7px;
-    margin-top: 4px;
+    margin-top: 10px;
     cursor: pointer;
 }
 
-.order-process-delete {
-    margin-right: 46px;
+.order22-process-regist {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
-.order-process-reply {
+.order22-process-reply {
     display: flex;
     width: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 5px;
+    padding: 10px;
     margin-top: 10px;
 }
 
-.order-process-reply-box {
+.order22-process-reply-box {
     background-color: white;
     border: 2px solid #0C2092;
     border-radius: 10px;
@@ -321,21 +340,9 @@ order2-table7 td,
     font-size: 15px;
     outline: none;
     color: black;
-    width: 90.5%;
+    width: 91%;
     height: auto;
     font-weight: normal;
-}
-
-.order-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    width: 95px;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-left: 992px;
-    cursor: pointer;
-    margin-bottom: 7px;
 }
 
 .popup-overlay {
@@ -371,4 +378,48 @@ order2-table7 td,
 
 .popup-content button {
     margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #007BFF; /* Blue */
+}
+
+.cancel-btn {
+    background-color: #DC3545; /* Red */
+}
+
+.order-btn .order-approve {
+    background-color: #007BFF; /* Blue */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.order-btn .order-reject {
+    background-color: #DC3545; /* Red */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 15px;
+    font-size: 16px;
+}
+
+.order-btn .order-approve:hover {
+    background-color: #0056b3; /* Darker Blue */
+}
+
+.order-btn .order-reject:hover {
+    background-color: #c82333; /* Darker Red */
 }

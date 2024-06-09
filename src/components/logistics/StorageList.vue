@@ -41,9 +41,9 @@
         </tbody>
       </table>
       <div class="pagination">
-        <button :disabled="currentPage === 1" @click="prevPage">이전</button>
-        <span>{{ currentPage }} / {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">다음</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+        <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
       </div>
     </div>
   </div>
@@ -72,7 +72,6 @@ export default {
       }
 
       return this.warehouseList.filter(warehouse => {
-        // 검색 카테고리에 따라 필터링
         if (category === 'warehouseName') {
           return warehouse.warehouseName.toLowerCase().includes(keyword);
         } else if (category === 'warehouseLocation') {
@@ -105,25 +104,19 @@ export default {
         console.error('창고 목록을 불러오는 중 에러 발생:', error);
       }
     },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
       }
     },
     search() {
-      this.currentPage = 1; // 검색할 때 페이지를 1페이지로 초기화
+      this.currentPage = 1;
     }
   }
 };
 </script>
 
 <style scoped>
-/* 크기 및 스타일 조정 */
 .contract-list-content {
   display: flex;
   flex-direction: column;
@@ -207,6 +200,9 @@ export default {
   cursor: pointer;
   outline: none;
   font-size: 12px; /* 폰트 크기 줄임 */
+  height: 30px; /* 높이 추가 */
+  line-height: 1; /* 텍스트 중앙 정렬 */
+  margin-left: 10px;
 }
 
 .search-bar button:hover {
@@ -243,5 +239,10 @@ export default {
 .pagination span {
   margin: 0 10px;
   font-size: 12px; /* 폰트 크기 줄임 */
+}
+
+.pagination .active {
+  background-color: #0C2092 !important;
+  color: white;
 }
 </style>
