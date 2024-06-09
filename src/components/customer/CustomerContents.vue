@@ -80,7 +80,7 @@
         <div v-if="orderData.length > 0" class="customer-orders-wrapper">
             <h2>조회된 수주 정보</h2>
             <div class="customer-orders">
-                <div class="order-item" v-for="order in orderData" :key="order.orderRegistrationId">
+                <div class="order-item" v-for="order in orderData" :key="order.orderRegistrationId" @click="goToOrderPage(order.orderRegistrationId)">
                     <div class="project-number">
                         <p class="project-number-text">프로젝트 번호</p>
                         <button class="project-number-box">{{ order.transaction.transactionCode }}</button>
@@ -250,11 +250,14 @@ const deleteNote = async (accountNoteId) => {
         alert('노트 삭제 중 오류가 발생했습니다.');
     }
 };
+
+const goToOrderPage = (orderRegistrationId) => {
+    router.push({ path: `/order/${orderRegistrationId}` });
+};
 </script>
 
 <style>
 .customer-content {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -264,7 +267,6 @@ const deleteNote = async (accountNoteId) => {
 
 .customer-search {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .customer-code {
@@ -624,11 +626,16 @@ const deleteNote = async (accountNoteId) => {
 .project-number-box {
     background-color: #BEE7FF;
     border: 2px solid #BEE7FF;
+    transition: background-color 0.3s ease; /* 추가: Hover 효과를 위한 전환 */
 }
 
 .project-employee-box {
     background-color: white;
     border: 1px solid #ccc;
+}
+
+.project-number-box:hover {
+    background-color: #a3d4f7; /* 추가: Hover 시 진한 파란색 */
 }
 
 .customer-orders-wrapper {
@@ -657,6 +664,11 @@ const deleteNote = async (accountNoteId) => {
     padding: 20px;
     box-sizing: border-box;
     margin-bottom: 20px; /* 아래 간격을 위해 margin-bottom 사용 */
+    cursor: pointer; /* 추가: 클릭 가능한 요소임을 나타내는 커서 */
+}
+
+.order-item:hover {
+    background-color: #f0f8ff; /* 추가: Hover 시 색상 변경 */
 }
 
 </style>

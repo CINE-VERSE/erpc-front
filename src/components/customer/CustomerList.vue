@@ -84,19 +84,24 @@ function applyFilter() {
     if (!searchQuery.value) {
         filteredCustomers.value = customers.value;
     } else {
-        const query = searchQuery.value.toUpperCase(); // 검색어를 대문자로 변환
+        const query = searchQuery.value.toUpperCase().replace(/\D/g, ''); // 숫자만 남기기
         filteredCustomers.value = customers.value.filter(customer => {
+            const accountName = customer.accountName.toUpperCase();
+            const accountCode = customer.accountCode.toUpperCase();
+            const corporationNumDigits = customer.corporationNum.replace(/\D/g, ''); // 사업자 번호의 숫자만 추출
+
             if (searchBy.value === '거래처명') {
-                return customer.accountName.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
+                return accountName.includes(searchQuery.value.toUpperCase()); // 대상 문자열을 대문자로 변환 후 비교
             } else if (searchBy.value === '거래처 코드') {
-                return customer.accountCode.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
+                return accountCode.includes(searchQuery.value.toUpperCase()); // 대상 문자열을 대문자로 변환 후 비교
             } else if (searchBy.value === '사업자 번호') {
-                return customer.corporationNum.toUpperCase().includes(query); // 대상 문자열을 대문자로 변환 후 비교
+                return corporationNumDigits.includes(query); // 숫자만 비교
             }
         });
     }
     currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
 }
+
 
 const paginatedCustomers = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
