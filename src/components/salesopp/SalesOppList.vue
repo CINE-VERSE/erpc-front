@@ -47,15 +47,9 @@
         </thead>
         <tbody>
           <tr v-for="(approval, index) in paginatedApprovals" :key="approval.salesOppId" @click="goToSalesOppContents(approval.salesOppId)">
-<<<<<<< HEAD
             <td>{{ totalApprovals - ((currentPage - 1) * pageSize + index) }}</td>
             <td class="wide-column">{{ searchBy === '거래처명' ? approval.oppAccountName : approval.oppAccountPic }}</td>
             <td class="wide-column">{{ approval.oppDate }}</td>
-=======
-            <td>{{ filteredApprovals.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
-            <td>{{ searchBy === '거래처명' ? approval.oppAccountName : approval.oppAccountPic }}</td>
-            <td>{{ approval.oppDate }}</td>
->>>>>>> e0c5bb054eb8d6074babcfb32458ff026aefd4d3
             <td>{{ approval.salesOppStatus.salesOppStatus }}</td>
           </tr>
           <tr v-if="filteredApprovals.length === 0">
@@ -64,7 +58,6 @@
         </tbody>
       </table>
     </div>
-<<<<<<< HEAD
 
     <!-- 페이징 -->
     <div class="pagination">
@@ -72,13 +65,6 @@
       <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
       <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
     </div>
-=======
-    <div class="pagination">
-            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
-            <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
-            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
-        </div>
->>>>>>> e0c5bb054eb8d6074babcfb32458ff026aefd4d3
   </div>
 </template>
 
@@ -94,29 +80,8 @@ const filteredApprovals = ref([]);
 const searchKeyword = ref('');
 const searchBy = ref('거래처명');
 const statusFilter = ref('전체');
-<<<<<<< HEAD
 const currentPage = ref(1);
 const pageSize = ref(10);
-=======
-const currentPage = ref(1); // 현재 페이지
-const itemsPerPage = ref(10); // 페이지 당 항목 수
-
-const paginatedApprovals = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return filteredApprovals.value.slice(start, end);
-});
-
-const totalPages = computed(() => {
-    return Math.ceil(filteredApprovals.value.length / itemsPerPage.value);
-});
-
-function changePage(page) {
-    if (page > 0 && page <= totalPages.value) {
-        currentPage.value = page;
-    }
-}
->>>>>>> e0c5bb054eb8d6074babcfb32458ff026aefd4d3
 
 // 검색 기준 설정 함수
 function setSearchBy(type) {
@@ -192,7 +157,6 @@ onMounted(async () => {
 });
 </script>
 
-<<<<<<< HEAD
 <style scoped>
 .contract-list-content {
   display: flex;
@@ -362,9 +326,3 @@ onMounted(async () => {
   color: white;
 }
 </style>
-=======
-  
-  <style scoped>
-    @import url('@/assets/css/contract/ContractList.css');
-  </style>
->>>>>>> e0c5bb054eb8d6074babcfb32458ff026aefd4d3
