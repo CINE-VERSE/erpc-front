@@ -129,14 +129,12 @@
                     <div v-for="(file, index) in files" :key="index" class="file-list34">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.name }}</span>
-                        <button @click="removeNewFile(index)" class="remove-file-btn">제거</button>
                     </div>
                 </div>
                 <div v-else>
                     <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list34">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.originName }}</span>
-                        <button @click="removeExistingFile(index)" class="remove-file-btn">제거</button>
                     </div>
                 </div>
                 <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />

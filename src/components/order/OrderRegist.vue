@@ -433,7 +433,7 @@ const registerOrder = async () => {
 .order-attachment33 {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
     width: 100%;
@@ -441,32 +441,34 @@ const registerOrder = async () => {
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-    padding: 20px;
-    box-sizing: border-box;
-    height: auto;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
 .file-list34 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 880px;
-    min-height: 70px;
+    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 800px;
+    min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
 }
+
 
 .file-icon {
     font-size: 24px;
-    margin-right: 10px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
 .file-name {
     font-size: 18px;
-    word-break: break-all;
+    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
 }
 
 .file-upload-btn {
@@ -485,7 +487,7 @@ const registerOrder = async () => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
 
 .order-regist-btn-div33 {

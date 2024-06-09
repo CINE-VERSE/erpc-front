@@ -17,24 +17,21 @@
                     <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요."
-                                    class="item-code-box2" />
+                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" :disabled="products.length === 1"
-                                        class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
                         <td>{{ product.productName }}</td>
                         <td class="narrow-column">
-                            <input type="number" v-model.number="product.quantity" class="estimate-test2"
-                                @input="updateSupplyValue(index)" />
+                            <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
                         </td>
                         <td>{{ product.productPrice }}</td>
                         <td>{{ product.supplyValue }}</td>
-                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3" /></td>
+                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -55,8 +52,7 @@
                     <tr>
                         <td>
                             <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
-                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId"
-                                    :value="warehouse.warehouseCode">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
                                     {{ warehouse.warehouseCode }}
                                 </option>
                             </select>
@@ -85,16 +81,14 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode"
-                                    @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요."
-                                    class="customer-code-box2" />
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td>{{ employeeName }}</td>
-                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box" /></td>
-                        <td><input type="text" v-model="accountNote" class="customer-test9" /></td>
+                        <td>{{ employeeName }}</td> 
+                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
+                        <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -109,21 +103,18 @@
                 </div>
             </div>
             <!-- 기존 파일 목록에 파일이 있는 경우 -->
-            <div v-else-if="quotationData?.quotationFile?.length > 0">
-                <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list34">
+            <div v-else-if="filteredFiles.length > 0">
+                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list34">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.originName }}</span>
                 </div>
             </div>
-            <!-- 첨부파일이 없는 경우 -->
             <div v-else class="file-download no-file">
                 첨부파일 없음
             </div>
-            <input type="file" @click="resetFiles" @change="handleFileUpload" multiple class="file-upload-btn"
-                id="file-upload" />
+            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
             <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
-
         <div class="estimate-edit-btn-div33">
             <button @click="updateQuotation" class="estimate-edit-btn33">견적 수정하기</button>
         </div>
@@ -134,15 +125,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
 const route = useRoute();
 const router = useRouter();
 const quotationData = ref(null);
-const files = ref([]); // 새로 추가된 파일
-const existingFiles = ref([]); // 기존 파일 목록
+const files = ref([]);
 
 const products = ref([createNewProduct()]);
 
@@ -164,6 +154,11 @@ const dueDate = ref('');
 const accountNote = ref('');
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
+
+// filteredFiles는 "blob" 파일을 제외한 기존 파일 목록을 반환합니다.
+const filteredFiles = computed(() => {
+    return quotationData.value?.quotationFile ? quotationData.value.quotationFile.filter(file => file.originName !== 'blob') : [];
+});
 
 function createNewProduct() {
     return {
@@ -216,8 +211,6 @@ const populateFields = (data) => {
     responsiblePerson.value = data.employee.employeeName;
     dueDate.value = data.quotationDueDate;
     accountNote.value = data.quotationNote;
-
-    existingFiles.value = data.quotationFile.filter(file => file.originName !== 'blob');
 };
 
 const fetchProductData = async (index) => {
@@ -310,13 +303,8 @@ const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
 };
 
-const removeNewFile = (index) => {
-    files.value.splice(index, 1);
-};
-
 const resetFiles = () => {
     files.value = [];
-    existingFiles.value = [];
 };
 
 const addProductRow = () => {
@@ -333,7 +321,7 @@ const removeProductRow = (index) => {
 
 const updateQuotation = async () => {
     const quotationId = route.params.quotationId; // quotationId 값을 가져옵니다.
-    const areProductsValid = products.value.every(product =>
+    const areProductsValid = products.value.every(product => 
         product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
     );
     const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
@@ -351,7 +339,7 @@ const updateQuotation = async () => {
         quotationNote: accountNote.value,
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
-        employee: {
+        employee: { 
             employeeId: employeeId.value, // 수정: employeeId 값 설정
             employeeName: employeeName.value // 수정: employeeName 값 설정
         },
@@ -362,15 +350,18 @@ const updateQuotation = async () => {
             quotationSupplyPrice: product.supplyValue,
             quotationProductionNote: product.otherInfo,
             product: { productId: product.productId }
-        })),
-        removeFileIds: existingFiles.value.filter(file => file.deleted).map(file => file.fileId)
+        }))
     };
 
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
 
-    // 첨부 파일이 있는 경우에만 파일 추가
-    if (files.value.length > 0) {
+    // 파일이 선택되지 않은 경우 기존 파일을 유지
+    if (files.value.length === 0 && filteredFiles.value.length > 0) {
+        filteredFiles.value.forEach(file => {
+            formData.append('existingFiles', JSON.stringify(file));
+        });
+    } else {
         files.value.forEach(file => {
             formData.append('files', file);
         });
@@ -424,8 +415,6 @@ watch(products, (newProducts) => {
     });
 }, { deep: true });
 </script>
-
-
 
 <style>
 .estimate-edit-content33 {
@@ -559,8 +548,7 @@ watch(products, (newProducts) => {
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 90%;
-    /* 부모 요소의 너비를 90%로 설정 */
+    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
     max-width: 1400px;
     min-width: 900px;
     height: auto;
@@ -575,8 +563,7 @@ watch(products, (newProducts) => {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 80%;
-    /* 부모 요소의 너비를 기준으로 설정 */
+    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
     max-width: 800px;
     min-height: 70px;
     border-radius: 10px;
@@ -594,12 +581,9 @@ watch(products, (newProducts) => {
 .file-name {
     font-size: 18px;
     word-break: break-all;
-    white-space: nowrap;
-    /* 텍스트가 한 줄로 표시되도록 설정 */
-    overflow: hidden;
-    /* 넘치는 부분을 숨김 */
-    text-overflow: ellipsis;
-    /* 넘치는 부분을 생략 부호(...)로 표시 */
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+    overflow: hidden; /* 넘치는 부분을 숨김 */
+    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
 }
 
 .file-upload-btn {
@@ -656,4 +640,5 @@ watch(products, (newProducts) => {
 .estimate-edit-btn33:hover {
     background-color: #007bff;
 }
+
 </style>
