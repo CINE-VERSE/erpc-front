@@ -47,10 +47,10 @@
         </tbody>
       </table>
       <div class="pagination">
-        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
-        <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
-        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
-      </div>
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
   </div>
 </template>

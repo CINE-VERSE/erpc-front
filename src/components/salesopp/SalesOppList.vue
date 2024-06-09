@@ -46,8 +46,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(approval, index) in filteredApprovals" :key="approval.salesOppId" @click="goToSalesOppContents(approval.salesOppId)">
-            <td>{{ index + 1 }}</td>
+          <tr v-for="(approval, index) in paginatedApprovals" :key="approval.salesOppId" @click="goToSalesOppContents(approval.salesOppId)">
+            <td>{{ filteredApprovals.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
             <td>{{ searchBy === '거래처명' ? approval.oppAccountName : approval.oppAccountPic }}</td>
             <td>{{ approval.oppDate }}</td>
             <td>{{ approval.salesOppStatus.salesOppStatus }}</td>
@@ -55,11 +55,16 @@
         </tbody>
       </table>
     </div>
+    <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -70,6 +75,24 @@ const filteredApprovals = ref([]);
 const searchKeyword = ref('');
 const searchBy = ref('거래처명');
 const statusFilter = ref('전체');
+const currentPage = ref(1); // 현재 페이지
+const itemsPerPage = ref(10); // 페이지 당 항목 수
+
+const paginatedApprovals = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredApprovals.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredApprovals.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
+}
 
 // 검색 기준 설정 함수
 function setSearchBy(type) {
@@ -124,6 +147,7 @@ onMounted(async () => {
   }
 });
 </script>
+
   
   <style scoped>
     @import url('@/assets/css/contract/ContractList.css');
