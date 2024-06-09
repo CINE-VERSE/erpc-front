@@ -28,8 +28,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(estimate, index) in filteredEstimates" :key="estimate.quotationId" @click="goToEstimateContents(estimate.quotationId)">
-                        <td>{{ filteredEstimates.length - index }}</td> <!-- Reverse numbering -->
+                    <tr v-for="(estimate, index) in paginatedEstimates" :key="estimate.quotationId" @click="goToEstimateContents(estimate.quotationId)">
+                        <td>{{ filteredEstimates.length - ((currentPage - 1) * itemsPerPage + index) }}</td> <!-- Reverse numbering -->
                         <td>{{ estimate.quotationCode }}</td>
                         <td>{{ estimate.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ estimate.quotationDate }}</td>
@@ -40,11 +40,16 @@
                 </tbody>
             </table>
         </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -54,6 +59,8 @@ const estimates = ref([]);
 const filteredEstimates = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('견적서 코드');
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 onMounted(async () => {
     await fetchEstimates();
@@ -112,12 +119,30 @@ function applyFilter() {
             }
         });
     }
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
+}
+
+const paginatedEstimates = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredEstimates.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredEstimates.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
 }
 
 function goToEstimateContents(quotationId) {
     router.push({ path: `/estimate/${quotationId}` });
 }
 </script>
+
 
 <style>
 .estimate-content {
@@ -226,7 +251,7 @@ function goToEstimateContents(quotationId) {
     height: auto;
     max-width: 1400px;
     margin: 20px auto;
-    margin-bottom: 7%;
+    /* margin-bottom: 7%; */
     gap: 1px;
 }
 
@@ -257,4 +282,39 @@ function goToEstimateContents(quotationId) {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.pagination button {
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* padding: 15px; */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #007bff;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    background-color: #007bff;
+}
+
 </style>

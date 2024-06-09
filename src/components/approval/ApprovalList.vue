@@ -39,8 +39,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in sortedFilteredApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotationApprovalId)">
-                            <td>{{ sortedFilteredApprovals.length - index }}</td>
+                        <tr v-for="(approval, index) in paginatedApprovals" :key="approval.quotationApprovalId" @click="goToApprovalContents(approval.quotationApprovalId)">
+                            <td>{{ sortedFilteredApprovals.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
                             <td>{{ approval.quotation.quotationCode }}</td>
                             <td>{{ approval.quotation.account.accountName }}</td>
                             <td>{{ approval.quotation.quotationTotalCost.toLocaleString() }}</td>
@@ -65,8 +65,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in sortedFilteredContractApprovals" :key="approval.contractApprovalId" @click="goToContractContents(approval.contractApprovalId)">
-                            <td>{{ sortedFilteredContractApprovals.length - index }}</td>
+                        <tr v-for="(approval, index) in paginatedContractApprovals" :key="approval.contractApprovalId" @click="goToContractContents(approval.contractApprovalId)">
+                            <td>{{ sortedFilteredContractApprovals.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
                             <td>{{ approval.contract.contractCode }}</td>
                             <td>{{ approval.contract.account.accountName }}</td>
                             <td>{{ approval.contract.contractTotalPrice.toLocaleString() }}</td>
@@ -91,8 +91,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(approval, index) in sortedFilteredShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.shipmentApprovalId)">
-                            <td>{{ sortedFilteredShipmentApprovals.length - index }}</td>
+                        <tr v-for="(approval, index) in paginatedShipmentApprovals" :key="approval.shipmentApprovalId" @click="goToShipmentContents(approval.shipmentApprovalId)">
+                            <td>{{ sortedFilteredShipmentApprovals.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
                             <td>{{ approval.order.transaction.transactionCode }}</td>
                             <td>{{ approval.order.account.accountName }}</td>
                             <td>{{ approval.order.orderTotalPrice.toLocaleString() }}</td>
@@ -103,11 +103,18 @@
                 </table>
             </template>
         </div>
+
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -124,6 +131,8 @@ const selectedApprovalStatus = ref('');
 const filteredApprovals = ref([]);
 const filteredContractApprovals = ref([]);
 const filteredShipmentApprovals = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 const placeholderText = computed(() => {
     switch (selectedApprovalType.value) {
@@ -237,6 +246,8 @@ const applyFilter = () => {
     filteredApprovals.value.sort((a, b) => b.quotationApprovalId - a.quotationApprovalId);
     filteredContractApprovals.value.sort((a, b) => b.contractApprovalId - a.contractApprovalId);
     filteredShipmentApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
+
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
 };
 
 const sortedFilteredApprovals = computed(() => {
@@ -250,6 +261,43 @@ const sortedFilteredContractApprovals = computed(() => {
 const sortedFilteredShipmentApprovals = computed(() => {
     return filteredShipmentApprovals.value.sort((a, b) => b.shipmentApprovalId - a.shipmentApprovalId);
 });
+
+const paginatedApprovals = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return sortedFilteredApprovals.value.slice(start, end);
+});
+
+const paginatedContractApprovals = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return sortedFilteredContractApprovals.value.slice(start, end);
+});
+
+const paginatedShipmentApprovals = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return sortedFilteredShipmentApprovals.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    switch (selectedApprovalType.value) {
+        case 'quotation':
+            return Math.ceil(filteredApprovals.value.length / itemsPerPage.value);
+        case 'contract':
+            return Math.ceil(filteredContractApprovals.value.length / itemsPerPage.value);
+        case 'shipment':
+            return Math.ceil(filteredShipmentApprovals.value.length / itemsPerPage.value);
+        default:
+            return 1;
+    }
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
+}
 
 const goToApprovalContents = (quotationApprovalId) => {
     router.push({ path: `/approval/quotation/${quotationApprovalId}` });
@@ -265,19 +313,20 @@ const goToShipmentContents = (shipmentApprovalId) => {
 </script>
 
 
+
 <style>
 .approval-content1 {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    width: 100%; /* 추가 */
-    box-sizing: border-box; /* 추가 */
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .approval-search {
     text-align: center;
-    width: 100%; /* 추가 */
+    width: 100%;
 }
 
 .approval-search-text {
@@ -289,7 +338,7 @@ const goToShipmentContents = (shipmentApprovalId) => {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap; /* 추가 */
+    flex-wrap: wrap;
 }
 
 .search-start-date-box,
@@ -361,7 +410,7 @@ const goToShipmentContents = (shipmentApprovalId) => {
     margin: 20px auto;
     margin-bottom: 7%;
     gap: 1px;
-    overflow-x: auto; /* 추가 */
+    overflow-x: auto;
 }
 
 .approval-table {
@@ -369,14 +418,14 @@ const goToShipmentContents = (shipmentApprovalId) => {
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
-    table-layout: auto; /* 추가 */
+    table-layout: auto;
 }
 
 .approval-table th,
 .approval-table td {
     text-align: center;
     border: 1px solid #ccc;
-    min-width: 160px; /* 수정 */
+    min-width: 160px;
     padding: 8px;
     font-family: GmarketSansMedium;
 }
@@ -392,5 +441,39 @@ const goToShipmentContents = (shipmentApprovalId) => {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.pagination button {
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #007bff;
+}
+
+.pagination button:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    background-color: #007bff;
+}
+
 
 </style>

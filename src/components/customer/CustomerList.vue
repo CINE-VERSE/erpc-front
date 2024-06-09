@@ -29,8 +29,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(customer, index) in filteredCustomers" :key="customer.accountId" @click="goToCustomerContents(customer.accountId)">
-                        <td>{{ filteredCustomers.length - index }}</td> <!-- Reverse numbering -->
+                    <tr v-for="(customer, index) in paginatedCustomers" :key="customer.accountId" @click="goToCustomerContents(customer.accountId)">
+                        <td>{{ filteredCustomers.length - ((currentPage - 1) * itemsPerPage + index) }}</td> <!-- Reverse numbering -->
                         <td>{{ customer.accountCode }}</td>
                         <td>{{ customer.accountName }}</td>
                         <td>{{ customer.corporationNum }}</td>
@@ -41,6 +41,11 @@
                 </tbody>
             </table>
         </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
 </template>
 
@@ -48,7 +53,7 @@
 
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -57,12 +62,15 @@ const customers = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('거래처명');
 const filteredCustomers = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 onMounted(async () => {
     try {
         const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/list');
         customers.value = response.data.sort((a, b) => b.accountId - a.accountId); // Sort by accountId
         filteredCustomers.value = customers.value;
+        applyFilter(); // Apply initial filter
     } catch (error) {
         console.error('Error fetching customers:', error);
     }
@@ -87,12 +95,30 @@ function applyFilter() {
             }
         });
     }
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
+}
+
+const paginatedCustomers = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredCustomers.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredCustomers.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
 }
 
 function goToCustomerContents(accountId) {
     router.push({ path: `/customer/${accountId}` });
 }
 </script>
+
 
 
 
@@ -205,7 +231,7 @@ function goToCustomerContents(accountId) {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto;
-    margin-bottom: 7%;
+    /* margin-bottom: 7%; */
     gap: 1px;
 }
 
@@ -236,4 +262,39 @@ function goToCustomerContents(accountId) {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.pagination button {
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* padding: 15px; */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #007bff;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    background-color: #007bff;
+}
+
 </style>

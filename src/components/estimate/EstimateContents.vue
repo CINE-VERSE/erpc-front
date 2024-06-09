@@ -1,7 +1,7 @@
 <template>
     <div class="estimate-content11" v-if="quotationData">
         <div class="order-search">
-            <h1 class="maintext">견적서 정보 조회 내역</h1>
+            <h1>견적서 정보 조회 내역</h1>
             <div class="estimate-btn">
                 <div class="estimate-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
                     <button class="estimate-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재요청</button>

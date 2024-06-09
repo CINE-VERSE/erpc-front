@@ -1,7 +1,7 @@
 <template>
     <div class="customer-content">
         <div class="customer-search">
-            <h1 class="maintext">거래처 정보 조회 내역</h1>
+            <h1>거래처 정보 조회 내역</h1>
             <div class="customer-btn">
                 <button class="customer-edit" @click="handleEditAccount" :disabled="deleteRequested">수정</button>
                 <button class="customer-delete" v-if="showDeleteButton" @click="deleteAccount">삭제요청</button>
@@ -77,6 +77,21 @@
                 </table>
             </div>
         </div>
+        <div v-if="orderData.length > 0" class="customer-orders-wrapper">
+            <h2>조회된 수주 정보</h2>
+            <div class="customer-orders">
+                <div class="order-item" v-for="order in orderData" :key="order.orderRegistrationId">
+                    <div class="project-number">
+                        <p class="project-number-text">프로젝트 번호</p>
+                        <button class="project-number-box">{{ order.transaction.transactionCode }}</button>
+                    </div>
+                    <div class="project-employee">
+                        <p class="project-employee-text">담당자</p>
+                        <button class="project-employee-box">{{ order.employee.employeeName }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="customer-process-box">
             <h1 class="customer-process-text">Process</h1>
             <div v-for="note in filteredAccountNotes" :key="note.accountNoteId" class="customer-process-box-detail">
@@ -107,7 +122,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -123,6 +137,7 @@ const newNote = ref('');
 const employeeName = ref(''); // 추가: Employee Name을 저장하기 위한 ref
 const showDeleteButton = ref(true);
 const deleteRequested = ref(false); // 삭제 요청 상태를 저장
+const orderData = ref([]); // 추가: Order 데이터를 저장하기 위한 ref
 
 const filteredAccountNotes = computed(() => {
     return accountNoteData.value.filter(note => note.accountDeleteDate === null);
@@ -154,8 +169,13 @@ onMounted(async () => {
             deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
         }
 
+        // 추가: Order 데이터 가져오기
+        const orderResponse = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order');
+        const allOrders = orderResponse.data;
+        orderData.value = allOrders.filter(order => order.account.accountId === parseInt(accountId)); // accountId가 일치하는 Order 데이터 필터링
+
     } catch (error) {
-        console.error('Error fetching account data:', error);
+        console.error('Error fetching data:', error);
     }
 });
 
@@ -231,8 +251,6 @@ const deleteNote = async (accountNoteId) => {
     }
 };
 </script>
-
-
 
 <style>
 .customer-content {
@@ -559,14 +577,9 @@ const deleteNote = async (accountNoteId) => {
 }
 
 .customer-box3 {
-    max-width: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     margin-bottom: 100px;
     border-radius: 10px;
@@ -618,65 +631,32 @@ const deleteNote = async (accountNoteId) => {
     border: 1px solid #ccc;
 }
 
-.project-number-list {
+.customer-orders-wrapper {
+    width: 82%;
+    max-width: 1200px;
+    margin: 20px auto;
+    text-align: center;
+    align-items: center;
+}
+
+.customer-orders {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start; /* 앞에서부터 채우기 위해 flex-start 사용 */
+    gap: 30px; /* 상자 간격을 조절하기 위한 gap 속성 사용 */
 }
 
-.project-number-row {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-.project-number-item {
+.order-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px;
-    width: 200px;
+    flex-basis: calc(33.333% - 20px); /* 한 행에 3개씩 배치 */
+    background-color: whitesmoke;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* 아래 간격을 위해 margin-bottom 사용 */
 }
 
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.popup-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    text-align: center;
-}
-.popup-content h2 {
-    margin-bottom: 20px;
-}
-.popup-content textarea {
-    width: 90%;
-    height: 100px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-.popup-content button {
-    margin: 5px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.popup-content button:last-child {
-    background-color: #dc3545;
-}
 </style>

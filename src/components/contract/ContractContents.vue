@@ -1,7 +1,7 @@
 <template>
     <div class="contract-content11" v-if="contractData">
         <div class="contract-search">
-            <h1 class="maintext">계약서 정보 조회 내역</h1>
+            <h1>계약서 정보 조회 내역</h1>
             <div class="contract-btn">
                 <div class="contract-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
                     <button class="contract-request" @click="handleApprovalRequest" :disabled="deleteRequested">결재요청</button>

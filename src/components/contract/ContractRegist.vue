@@ -133,9 +133,9 @@
             </table>
         </div>
 
-        <div class="contract-attachment33">
+        <div class="contract-attachment77">
             <h2 class="contract-file">첨부파일</h2>
-            <div v-for="(file, index) in files" :key="index" class="file-list">
+            <div v-for="(file, index) in files" :key="index" class="file-list77">
                 <span class="file-icon">📄</span>
                 <span class="file-name">{{ file.name }}</span>
             </div>
@@ -450,7 +450,7 @@ const formatNumber = (value) => {
     padding: 8px;
 }
 
-.contract-attachment33 {
+.contract-attachment77 {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -466,12 +466,12 @@ const formatNumber = (value) => {
     height: auto;
 }
 
-.file-list {
+.file-list77 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 100%;
-    max-width: 1200px;
+    width: 80%;
+    max-width: 700px;
     min-height: 70px;
     border-radius: 10px;
     padding: 20px;

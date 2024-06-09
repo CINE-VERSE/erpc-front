@@ -85,12 +85,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="billing-attachment3">
+        <div class="billing-attachment23">
             <h2 class="billing-file">첨부파일</h2>
-            <div v-for="(file, index) in files" :key="index" class="file-list">
+            <div v-for="(file, index) in files" :key="index" class="file-list23">
                 <span class="file-icon">📄</span>
                 <span class="file-name">{{ file.name }}</span>
-                <button @click="removeFile(index)" class="remove-file-btn">삭제</button>
             </div>
             <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
             <label for="file-upload" class="file-upload-label">파일 선택</label>
@@ -181,8 +180,9 @@ const fetchCollectionData = async () => {
 
 const handleFileUpload = (event) => {
     const uploadedFiles = Array.from(event.target.files);
-    files.value.push(...uploadedFiles);
+    files.value = uploadedFiles; // 기존 파일 목록을 초기화하고 새 파일로 교체
 };
+
 
 const removeFile = (index) => {
     files.value.splice(index, 1);
@@ -369,53 +369,48 @@ const registerRequest = async () => {
     cursor: pointer;
 }
 
-.billing-attachment3 {
+.billing-attachment23 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     position: relative;
     width: 100%;
     max-width: 1400px;
-    height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px;
+    box-sizing: border-box;
+    height: auto;
 }
 
-.billing-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.billing-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list23 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 80%;
+    max-width: 700px;
+    min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .file-name {
     font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .file-upload-btn {
@@ -434,7 +429,9 @@ const registerRequest = async () => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
 }
+
 
 .billing-regist-btn-div {
     display: flex;

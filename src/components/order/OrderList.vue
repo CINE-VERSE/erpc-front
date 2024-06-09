@@ -27,8 +27,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(order, index) in filteredOrders" :key="order.orderRegistrationId" @click="goToOrderContents(order.orderRegistrationId)">
-                        <td>{{ filteredOrders.length - index }}</td>
+                    <tr v-for="(order, index) in paginatedOrders" :key="order.orderRegistrationId" @click="goToOrderContents(order.orderRegistrationId)">
+                        <td>{{ filteredOrders.length - ((currentPage - 1) * itemsPerPage + index) }}</td>
                         <td>{{ order.transaction.transactionCode }}</td>
                         <td>{{ order.orderTotalPrice.toLocaleString() }}</td>
                         <td>{{ order.orderDate }}</td>
@@ -38,12 +38,17 @@
                 </tbody>
             </table>
         </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
 </template>
 
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 
@@ -53,6 +58,8 @@ const orders = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('프로젝트 코드');
 const filteredOrders = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 onMounted(async () => {
     await fetchOrders();
@@ -108,13 +115,29 @@ function applyFilter() {
             }
         });
     }
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
+}
+
+const paginatedOrders = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredOrders.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredOrders.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
 }
 
 function goToOrderContents(orderRegistrationId) {
     router.push({ path: `/order/${orderRegistrationId}` });
 }
 </script>
-
 
 <style>
 .order-content33 {
@@ -210,7 +233,6 @@ function goToOrderContents(orderRegistrationId) {
     background-color: #007bff;
 }
 
-
 .order-list-box {
     width: 100%;
     display: flex;
@@ -225,7 +247,7 @@ function goToOrderContents(orderRegistrationId) {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto;
-    margin-bottom: 7%;
+    /* margin-bottom: 7%; */
     gap: 1px;
 }
 
@@ -256,4 +278,40 @@ function goToOrderContents(orderRegistrationId) {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.pagination button {
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #007bff;
+}
+
+.pagination button:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed;
+    color: #666; /* 회색 텍스트 색상 */
+}
+
+.pagination .active {
+    background-color: #0C2092 !important; /* 남색 */
+}
 </style>
+
+

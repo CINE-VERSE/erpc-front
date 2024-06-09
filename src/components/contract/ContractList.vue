@@ -1,5 +1,5 @@
 <template>
-    <div class="contract-list-content">
+    <div class="contract-list-content9">
         <div class="contract-list">
             <h1>계약서 목록</h1>
         </div>
@@ -14,8 +14,8 @@
             <input type="text" class="contract-search-input22" v-model="searchQuery" placeholder="검색어를 입력하세요">
             <button class="contract-search-btn22" @click="applyFilter">조회하기</button>
         </div>
-        <div class="contract-list-box7">
-            <table class="contract-table7">
+        <div class="contract-list-box9">
+            <table class="contract-table9">
                 <thead>
                     <tr>
                         <th>번호</th>
@@ -28,8 +28,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(contract, index) in filteredContracts" :key="contract.contractId" @click="goToContractContents(contract.contractId)">
-                        <td>{{ filteredContracts.length - index }}</td> <!-- Reverse numbering -->
+                    <tr v-for="(contract, index) in paginatedContracts" :key="contract.contractId" @click="goToContractContents(contract.contractId)">
+                        <td>{{ filteredContracts.length - ((currentPage - 1) * itemsPerPage + index) }}</td> <!-- Reverse numbering -->
                         <td>{{ contract.contractCode }}</td>
                         <td>{{ contract.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ contract.contractDate }}</td>
@@ -40,11 +40,17 @@
                 </tbody>
             </table>
         </div>
+        <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
     </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -54,6 +60,8 @@ const contracts = ref([]);
 const filteredContracts = ref([]);
 const searchQuery = ref('');
 const searchBy = ref('계약서 코드');
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
 
 onMounted(async () => {
     await fetchContracts();
@@ -112,6 +120,23 @@ function applyFilter() {
             }
         });
     }
+    currentPage.value = 1; // 필터 적용 시 첫 페이지로 이동
+}
+
+const paginatedContracts = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value;
+    const end = start + itemsPerPage.value;
+    return filteredContracts.value.slice(start, end);
+});
+
+const totalPages = computed(() => {
+    return Math.ceil(filteredContracts.value.length / itemsPerPage.value);
+});
+
+function changePage(page) {
+    if (page > 0 && page <= totalPages.value) {
+        currentPage.value = page;
+    }
 }
 
 function goToContractContents(contractId) {
@@ -120,8 +145,9 @@ function goToContractContents(contractId) {
 </script>
 
 
+
 <style>
-.contract-list-content {
+.contract-list-content9 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -214,7 +240,7 @@ function goToContractContents(contractId) {
     background-color: #007bff;
 }
 
-.contract-list-box7 {
+.contract-list-box9 {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -228,19 +254,19 @@ function goToContractContents(contractId) {
     width: 100%;
     max-width: 1400px;
     margin: 20px auto;
-    margin-bottom: 7%;
+    /* margin-bottom: 7%; */
     gap: 1px;
 }
 
-.contract-table7 {
+.contract-table9 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
     font-size: 16px;
 }
 
-.contract-table7 th,
-.contract-table7 td {
+.contract-table9 th,
+.contract-table9 td {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
@@ -248,15 +274,50 @@ function goToContractContents(contractId) {
     width: 160px; /* 너비 조절 */
 }
 
-.contract-table7 th {
+.contract-table9 th {
     background-color: #0C2092;
     color: white;
     font-size: 18px;
     padding: 10px;
 }
 
-.contract-table7 tr:hover {
+.contract-table9 tr:hover {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.pagination button {
+    background-color: #0C2092;
+    color: white;
+    border: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    /* padding: 15px; */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination button:hover {
+    background-color: #007bff;
+}
+
+.pagination button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination .active {
+    background-color: #007bff;
+}
+
 </style>
