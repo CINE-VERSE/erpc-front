@@ -126,6 +126,7 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  width: 90%;
 }
 
 .contract-list {
@@ -183,7 +184,7 @@ export default {
 
 .contract-table778 th:nth-child(1),
 .contract-table778 td:nth-child(1) {
-  width: 5%; /* 번호 열 너비 */
+  width: 7%; /* 번호 열 너비 */
 }
 
 .contract-table778 th:nth-child(2),
@@ -193,7 +194,7 @@ export default {
 
 .contract-table778 th:nth-child(3),
 .contract-table778 td:nth-child(3) {
-  width: 35%; /* 창고 위치 열 너비 */
+  width: 30%; /* 창고 위치 열 너비 */
 }
 
 .contract-table778 th:nth-child(4),
@@ -213,7 +214,7 @@ export default {
 
 .contract-table778 th:nth-child(7),
 .contract-table778 td:nth-child(7) {
-  width: 15%; /* 외주 업체 열 너비 */
+  width: 18%; /* 외주 업체 열 너비 */
 }
 
 .search-bar {
@@ -240,7 +241,7 @@ export default {
   border-radius: 5px;
   outline: none;
   font-size: 12px;
-  max-width: 150px;
+  max-width: 200px;
 }
 
 .search-bar button {
