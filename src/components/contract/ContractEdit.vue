@@ -123,18 +123,18 @@
                 </tbody>
             </table>
         </div>
-        <div class="contract-attachment34">
+        <div class="contract-attachment55">
                 <h2 class="contract-file">첨부파일</h2>
                 <div v-if="files.length > 0">
-                    <div v-for="(file, index) in files" :key="index" class="file-list34">
+                    <div v-for="(file, index) in files" :key="index" class="file-list55">
                         <span class="file-icon">📄</span>
-                        <span class="file-name">{{ file.name }}</span>
+                        <span class="file-name55">{{ file.name }}</span>
                     </div>
                 </div>
                 <div v-else>
-                    <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list34">
+                    <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list55">
                         <span class="file-icon">📄</span>
-                        <span class="file-name">{{ file.originName }}</span>
+                        <span class="file-name55">{{ file.originName }}</span>
                     </div>
                 </div>
                 <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
@@ -299,7 +299,7 @@ const updateContract = async () => {
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px);
+    max-width: calc(100% - 80px);
 }
 
 .contract-regist {
@@ -415,48 +415,48 @@ const updateContract = async () => {
     display: block;
 }
 
-.contract-attachment34 {
+.contract-attachment55 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
-    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
-    max-width: 1400px;
-    min-width: 900px;
-    height: auto;
+    width: 90%;
+    max-width: 1400px; /* 최대 너비를 더 길게 설정 */
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
-.file-list34 {
+.file-list55 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
-    max-width: 800px;
+    width: 100%; /* width를 100%로 설정 */
+    max-width: 1200px; /* 최대 너비를 더 길게 설정 */
     min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 10px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
-.file-name {
+.file-name55 {
     font-size: 18px;
-    word-break: break-all;
-    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
-    overflow: hidden; /* 넘치는 부분을 숨김 */
-    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호 (...)로 표시 */
 }
 
 .file-upload-btn {
@@ -475,8 +475,9 @@ const updateContract = async () => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
+
 
 .remove-file-btn {
     margin-left: 10px;
@@ -513,5 +514,6 @@ const updateContract = async () => {
 .contract-edit-btn33:hover {
     background-color: #007bff;
 }
+
 
 </style>

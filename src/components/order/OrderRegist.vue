@@ -277,7 +277,7 @@ const registerOrder = async () => {
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px);
+    max-width: calc(100% - 80px);
 }
 
 .order-regist11 {
@@ -401,10 +401,11 @@ const registerOrder = async () => {
 .contract-number-div33 {
     display: flex;
     align-items: center;
+    justify-content: center; /* 가운데 정렬 추가 */
 }
 
 .contract-number-box33 {
-    width: calc(100% - 50px);
+    width: 200px; /* 원하는 너비로 설정 */
     height: 35px;
     padding: 8px;
     border: 1px solid #ccc;
@@ -412,6 +413,7 @@ const registerOrder = async () => {
     box-sizing: border-box;
     font-family: GmarketSansMedium;
     font-size: 15px;
+    margin-right: -1px; /* 테두리 겹침 방지 */
 }
 
 .contract-number-btn33 {
@@ -422,8 +424,8 @@ const registerOrder = async () => {
     color: white;
     font-size: 11px;
     cursor: pointer;
-    margin-left: -1px;
     padding: 0 10px;
+    margin-left: 0px;
 }
 
 .contract-test333 {
@@ -436,7 +438,7 @@ const registerOrder = async () => {
     justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 90%;
     max-width: 1400px;
     background-color: #d5e6ff;
     border-radius: 10px;
@@ -450,16 +452,17 @@ const registerOrder = async () => {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
-    max-width: 800px;
+    width: 100%; /* 너비를 100%로 설정 */
+    max-width: 1200px; /* 최대 너비를 더 길게 설정 */
     min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
     margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
     box-sizing: border-box; /* 패딩이 포함되도록 설정 */
     margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden;    /* 넘치는 내용 숨김 */
 }
-
 
 .file-icon {
     font-size: 24px;
@@ -468,7 +471,9 @@ const registerOrder = async () => {
 
 .file-name {
     font-size: 18px;
-    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
+    white-space: nowrap;   /* 줄 바꿈 하지 않음 */
+    overflow: hidden;      /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호 (...)로 표시 */
 }
 
 .file-upload-btn {
@@ -514,4 +519,5 @@ const registerOrder = async () => {
 .order-regist-btn33:hover {
     background-color: #007bff;
 }
+
 </style>

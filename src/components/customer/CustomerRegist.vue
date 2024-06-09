@@ -260,14 +260,12 @@ const registerAccount = async () => {
 
 <style>
 .customer-regist-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
     max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
 }
 
 .customer-regist {

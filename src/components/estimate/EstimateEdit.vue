@@ -80,9 +80,9 @@
                 <tbody>
                     <tr>
                         <td>
-                            <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
-                                <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
+                            <div class="customer-code-div34">
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box34"/>
+                                <button @click="fetchCustomerData" class="customer-code-btn34">확인</button>
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
@@ -93,20 +93,20 @@
                 </tbody>
             </table>
         </div>
-        <div class="estimate-attachment34">
+        <div class="estimate-attachment22">
             <h2 class="estimate-file">첨부파일</h2>
             <!-- 새로 업로드된 파일이 있는 경우 -->
             <div v-if="files.length > 0">
-                <div v-for="(file, index) in files" :key="index" class="file-list34">
+                <div v-for="(file, index) in files" :key="index" class="file-list22">
                     <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.name }}</span>
+                    <span class="file-name22">{{ file.name }}</span>
                 </div>
             </div>
             <!-- 기존 파일 목록에 파일이 있는 경우 -->
             <div v-else-if="filteredFiles.length > 0">
-                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list34">
+                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list22">
                     <span class="file-icon">📄</span>
-                    <span class="file-name">{{ file.originName }}</span>
+                    <span class="file-name22">{{ file.originName }}</span>
                 </div>
             </div>
             <div v-else class="file-download no-file">
@@ -423,7 +423,7 @@ watch(products, (newProducts) => {
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px);
+    max-width: calc(100% - 120px);
 }
 
 .estimate-regist {
@@ -542,48 +542,48 @@ watch(products, (newProducts) => {
     gap: 5px;
 }
 
-.estimate-attachment34 {
+.estimate-attachment22 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
-    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
-    max-width: 1400px;
-    min-width: 900px;
-    height: auto;
+    width: 90%;
+    max-width: 1400px; /* 최대 너비를 더 길게 설정 */
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-    padding: 20px;
-    box-sizing: border-box;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
-.file-list34 {
+.file-list22 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
-    max-width: 800px;
+    width: 100%; /* width를 100%로 설정 */
+    max-width: 1200px; /* 최대 너비를 더 길게 설정 */
     min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: 10px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 10px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
-.file-name {
+.file-name22 {
     font-size: 18px;
-    word-break: break-all;
-    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
-    overflow: hidden; /* 넘치는 부분을 숨김 */
-    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호 (...)로 표시 */
 }
 
 .file-upload-btn {
@@ -602,8 +602,9 @@ watch(products, (newProducts) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
+
 
 .remove-file-btn {
     margin-left: 10px;
@@ -640,5 +641,36 @@ watch(products, (newProducts) => {
 .estimate-edit-btn33:hover {
     background-color: #007bff;
 }
+
+.customer-code-div34 {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 가운데 정렬 추가 */
+}
+
+.customer-code-box34 {
+    width: 220px; /* 원하는 너비로 설정 */
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    box-sizing: border-box;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
+    margin-right: -1px; /* 테두리 겹침 방지 */
+}
+
+.customer-code-btn34 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0 10px;
+    margin-left: 0px;
+}
+
 
 </style>

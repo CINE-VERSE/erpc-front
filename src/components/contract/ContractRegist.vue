@@ -19,7 +19,7 @@
                         <td class="estimate-test333">
                             <div class="quotation-number-div33">
                                 <input type="text" v-model="quotationCode" class="quotation-number-box33">
-                                <button @click="fetchQuotationData" class="quotation-number-btn33">확인</button>
+                                <button @click="fetchQuotationData" class="quotation-number-btn33">조회</button>
                             </div>
                         </td>
                         <td>{{ employee.employeeName }}</td>
@@ -340,54 +340,21 @@ const formatNumber = (value) => {
 <style>
 
 .contract-regist-content11 {
-    /* margin-top: 8%; */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
     width: 100%;
-    max-width: calc(100% - 220px);
-    /* main1의 너비를 뺀 나머지 공간 */
+    max-width: calc(100% - 80px);
 }
 
-
-.customer-regist {
+.contract-regist {
     text-align: center;
 }
 
-.quotation-number-div33 {
-    display: flex;
-    align-items: center;
-}
-
-.quotation-number-box33 {
-    width: calc(100% - 50px); /* 버튼 크기를 뺀 나머지 너비 */
-    height: 35px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px 0 0 5px;
-    box-sizing: border-box;
-    font-family: GmarketSansMedium;
-    font-size: 15px;
-}
-
-.quotation-number-btn33 {
-    border-radius: 0 5px 5px 0;
-    border: 2px solid #0C2092;
-    height: 35px;
-    background-color: #0C2092;
-    color: white;
-    font-size: 11px;
-    cursor: pointer;
-    margin-left: -1px; /* 테두리 겹침 방지 */
-    padding: 0 10px;
-}
-
-.contract-list-box {
+.contract-list-box1 {
     width: 90%;
-    /* 너비를 90%로 설정 */
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -404,7 +371,8 @@ const formatNumber = (value) => {
 .contract-table1,
 .contract-table2,
 .contract-table3,
-.contract-table4 {
+.contract-table4,
+.contract-table5 {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
@@ -418,7 +386,9 @@ const formatNumber = (value) => {
 .contract-table3 th,
 .contract-table3 td,
 .contract-table4 th,
-.contract-table4 td  {
+.contract-table4 td,
+.contract-table5 th,
+.contract-table5 td {
     text-align: center;
     border: 1px solid #ccc;
     padding: 8px;
@@ -428,7 +398,8 @@ const formatNumber = (value) => {
 .contract-table1 th,
 .contract-table2 th,
 .contract-table3 th,
-.contract-table4 th {
+.contract-table4 th,
+.contract-table5 th {
     background-color: whitesmoke;
     color: black;
     font-size: 18px;
@@ -439,17 +410,28 @@ const formatNumber = (value) => {
 .contract-table1 td,
 .contract-table2 td,
 .contract-table3 td,
-.contract-table4 td {
+.contract-table4 td,
+.contract-table5 td {
     height: 40px;
-    width: 14.28%;
-    /* 7개의 셀 너비를 균일하게 설정 (100% / 7) */
     box-sizing: border-box;
     padding: 8px;
 }
 
+.contract-table3 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    table-layout: fixed; /* 테이블 레이아웃을 고정으로 설정 */
+}
+
+.contract-table3 th:nth-child(1),
+.contract-table3 td:nth-child(1) {
+    width: 250px; /* 원하는 너비로 설정 */
+}
+
 .contract-test2 {
     width: 80px;
-    /* 수량 필드의 너비를 좁게 설정 */
     height: 35px;
     box-sizing: border-box;
     padding: 8px;
@@ -471,7 +453,7 @@ const formatNumber = (value) => {
 .contract-attachment33 {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
+    justify-content: flex-start;
     align-items: center;
     position: relative;
     width: 90%;
@@ -479,32 +461,37 @@ const formatNumber = (value) => {
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-    padding: 20px; /* 패딩 추가 */
-    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
-    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
+    padding: 20px;
+    box-sizing: border-box;
+    height: auto;
 }
 
 .file-list {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    min-height: 70px; /* 최소 높이 설정 */
+    width: 100%;
+    max-width: 1200px;
+    min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
-    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
-    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
+    margin-right: 10px;
 }
 
 .file-name {
     font-size: 18px;
-    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .file-upload-btn {
@@ -523,7 +510,7 @@ const formatNumber = (value) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
+    margin-top: 20px;
 }
 
 .contract-regist-btn-div33 {
@@ -549,6 +536,36 @@ const formatNumber = (value) => {
 
 .contract-regist-btn33:hover {
     background-color: #007bff;
+}
+
+.quotation-number-div33 {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 가운데 정렬 추가 */
+}
+
+.quotation-number-box33 {
+    width: 200px; /* 원하는 너비로 설정 */
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    box-sizing: border-box;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
+    margin-right: -1px; /* 테두리 겹침 방지 */
+}
+
+.quotation-number-btn33 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    padding: 0 10px;
+    margin-left: 0px;
 }
 
 

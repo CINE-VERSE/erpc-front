@@ -107,21 +107,21 @@
                 </table>
             </div>
         </div>
-        <div class="order-attachment333">
+        <div class="order-attachment77">
             <div class="order-attachment-header">
                 <h2 class="order-file">첨부파일</h2>
             </div>
             <div class="order-attachment-content">
                 <div v-if="files.length > 0">
-                    <div v-for="(file, index) in files" :key="index" class="file-list">
+                    <div v-for="(file, index) in files" :key="index" class="file-list77">
                         <span class="file-icon">📄</span>
-                        <span class="file-name">{{ file.name }}</span>
+                        <span class="file-name77">{{ file.name }}</span>
                     </div>
                 </div>
                 <div v-else>
-                    <div v-for="(file, index) in orderData.orderFile" :key="file.fileId" class="file-list">
+                    <div v-for="(file, index) in orderData.orderFile" :key="file.fileId" class="file-list77">
                         <span class="file-icon">📄</span>
-                        <span class="file-name">{{ file.originName }}</span>
+                        <span class="file-name77">{{ file.originName }}</span>
                     </div>
                 </div>
             </div>
@@ -240,7 +240,6 @@ onMounted(() => {
 
 <style>
 .regist-content21 {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -249,11 +248,10 @@ onMounted(() => {
 
 .order-regist21 {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .order-list-box1 {
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -447,59 +445,58 @@ onMounted(() => {
     margin-bottom: 100px;
 }
 
-.order-attachment333 {
+.order-attachment77 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
-    width: 100%;
-    height: 350px;
+    width: 90%;
+    max-width: 1600px; /* 최대 너비를 증가 */
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
-.order-attachment-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.order-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list77 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 100%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 1200px; /* 최대 너비 설정 */
+    min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
+    white-space: nowrap; /* 줄 바꿈 하지 않음 */
+    overflow: hidden;    /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호(...)로 표시 */
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
-.file-name {
+.file-name77 {
     font-size: 18px;
+    white-space: nowrap;   /* 줄 바꿈 하지 않음 */
+    overflow: hidden;      /* 넘치는 내용 숨김 */
+    text-overflow: ellipsis; /* 넘치는 내용 생략 부호 (...)로 표시 */
+    width: calc(100% - 34px); /* 파일명 부분이 줄어들지 않도록 너비를 조정 */
 }
+
 
 .file-upload-btn {
     position: absolute;
     bottom: 10px;
     right: 20px;
-    opacity: 0; 
+    opacity: 0;
     width: 0;
     height: 0;
 }
@@ -511,7 +508,9 @@ onMounted(() => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
+
 
 .order-regist-btn-div1 {
     display: flex;
