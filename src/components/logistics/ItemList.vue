@@ -31,7 +31,7 @@
         </thead>
         <tbody>
           <tr v-for="(product, index) in paginatedProductList" :key="product.productId">
-            <td>{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+            <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
             <td>{{ product.productMainCategory }}</td>
             <td>{{ product.productSubCategory }}</td>
             <td>{{ product.productCode }}</td>
@@ -41,15 +41,15 @@
             <td>{{ product.productStatus }}</td>
             <td>{{ product.productInventory }}</td>
           </tr>
-          <tr v-if="productList.length === 0">
+          <tr v-if="filteredProductList.length === 0">
             <td colspan="9" class="no-result">검색 결과가 없습니다.</td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <button :disabled="currentPage === 1" @click="prevPage">이전</button>
-        <span>{{ currentPage }} / {{ totalPages }}</span>
-        <button :disabled="currentPage === totalPages" @click="nextPage">다음</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+        <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
       </div>
     </div>
   </div>
@@ -63,19 +63,19 @@ export default {
     return {
       productList: [],
       currentPage: 1,
-      pageSize: 10,
+      itemsPerPage: 10,
       searchKeyword: '',
       searchCategory: 'productCode' // 기본 검색 카테고리를 '상품 코드'로 설정
     };
   },
   computed: {
     paginatedProductList() {
-      const startIndex = (this.currentPage - 1) * this.pageSize;
-      const endIndex = this.currentPage * this.pageSize;
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = this.currentPage * this.itemsPerPage;
       return this.filteredProductList.slice(startIndex, endIndex);
     },
     totalPages() {
-      return Math.ceil(this.filteredProductList.length / this.pageSize);
+      return Math.ceil(this.filteredProductList.length / this.itemsPerPage);
     },
     filteredProductList() {
       const keyword = this.searchKeyword.trim().toLowerCase();
@@ -86,7 +86,6 @@ export default {
       }
 
       return this.productList.filter(product => {
-        // 검색 카테고리에 따라 필터링
         if (category === 'productCode') {
           return product.productCode.toLowerCase().includes(keyword);
         } else if (category === 'productName') {
@@ -113,25 +112,19 @@ export default {
         console.error('품목 목록을 불러오는 중 에러 발생:', error);
       }
     },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.currentPage--;
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.currentPage++;
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
       }
     },
     search() {
-      this.currentPage = 1; // 검색할 때 페이지를 1페이지로 초기화
+      this.currentPage = 1;
     }
   }
 };
 </script>
 
 <style>
-/* 기존 스타일을 바탕으로 조정 */
 .contract-list-content {
     display: flex;
     flex-direction: column;
@@ -162,19 +155,7 @@ export default {
     border: 2px solid #0C2092;
     border-radius: 10px;
     padding: 6px 30px;
-    font-size: 14px; /* 폰트 크기 줄임 */
-    cursor: pointer;
-    outline: none;
-    color: #0C2092;
-}
-
-.contract-search-btn {
-    width: 100px;
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 6px 30px;
-    font-size: 14px; /* 폰트 크기 줄임 */
+    font-size: 14px;
     cursor: pointer;
     outline: none;
     color: #0C2092;
@@ -189,7 +170,7 @@ export default {
     z-index: 1;
     border-radius: 10px;
     width: 100%;
-    font-size: 13px; /* 폰트 크기 줄임 */
+    font-size: 13px;
 }
 
 .contract-dropdown-content a {
@@ -210,12 +191,12 @@ export default {
 
 .contract-search-input {
     max-width: 300px;
-    height: 15px; /* 높이 줄임 */
-    padding: 8px; /* 패딩 줄임 */
+    height: 15px;
+    padding: 8px;
     border: 2px solid #0C2092;
     border-radius: 10px;
     outline: none;
-    font-size: 14px; /* 폰트 크기 줄임 */
+    font-size: 14px;
     background-color: #e5F0FF;
     color: #0C2092;
 }
@@ -224,9 +205,9 @@ export default {
     background-color: #0C2092;
     border: none;
     color: white;
-    padding: 8px 5px; /* 패딩 줄임 */
-    width: 60px; /* 너비 줄임 */
-    font-size: 14px; /* 폰트 크기 줄임 */
+    padding: 8px 5px;
+    width: 60px;
+    font-size: 14px;
     border-radius: 10px;
     cursor: pointer;
     outline: none;
@@ -242,32 +223,32 @@ export default {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    max-width: 1000px; /* 최대 너비 조정 */
+    max-width: 1000px;
     margin: 20px auto;
     gap: 1px;
-    overflow-x: auto; /* 가로 스크롤 추가 */
+    overflow-x: auto;
 }
 
 .contract-table7 {
     width: 100%;
     border-collapse: collapse;
-    margin: 10px 0; /* 마진 줄임 */
-    font-size: 12px; /* 폰트 크기 줄임 */
+    margin: 10px 0;
+    font-size: 12px;
 }
 
 .contract-table7 th,
 .contract-table7 td {
     text-align: center;
     border: 1px solid #ccc;
-    padding: 6px; /* 패딩 줄임 */
+    padding: 6px;
     font-family: GmarketSansMedium;
 }
 
 .contract-table7 th {
     background-color: #0C2092;
     color: white;
-    font-size: 14px; /* 폰트 크기 줄임 */
-    padding: 8px; /* 패딩 줄임 */
+    font-size: 14px;
+    padding: 8px;
 }
 
 .contract-table7 tr:hover {
@@ -282,32 +263,35 @@ export default {
 }
 
 .search-bar select {
-  padding: 6px; /* 패딩 줄임 */
+  padding: 6px;
   margin-right: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
 }
 
 .search-bar input[type="text"] {
   flex: 1;
-  padding: 6px; /* 패딩 줄임 */
+  padding: 6px;
   border: 1px solid #ccc;
   border-radius: 5px;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
 }
 
 .search-bar button {
-  padding: 6px 10px; /* 패딩 줄임 */
+  padding: 6px 10px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   outline: none;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
+  height: 30px; /* 높이 추가 */
+  line-height: 1; /* 텍스트 중앙 정렬 */
+  margin-left: 10px;
 }
 
 .search-bar button:hover {
@@ -326,14 +310,14 @@ export default {
 }
 
 .pagination button {
-  padding: 8px 12px; /* 패딩 줄임 */
+  padding: 8px 12px;
   margin: 0 5px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 12px; /* 폰트 크기 줄임 */
+  font-size: 12px;
 }
 
 .pagination button:disabled {
@@ -341,8 +325,8 @@ export default {
   cursor: not-allowed;
 }
 
-.pagination span {
-  margin: 0 10px;
-  font-size: 12px; /* 폰트 크기 줄임 */
+.pagination .active {
+  background-color: #0C2092 !important;
+  color: white;
 }
 </style>
