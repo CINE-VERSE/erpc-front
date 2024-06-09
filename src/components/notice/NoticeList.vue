@@ -6,9 +6,6 @@
             <h1 class="boardTitle">공지사항</h1>
           </td>
           <td></td>
-          <td class="thing">
-            <button @click="goToWritePage" class="writebutton">공지사항 작성</button>
-          </td>
         </tr>
         <tr class="header2">
             <td></td>

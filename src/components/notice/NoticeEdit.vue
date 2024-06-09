@@ -15,18 +15,21 @@
           <i class="fas fa-cloud-upload-alt"></i> 첨부 파일 추가
         </label>
         <input type="file" id="noticeFiles" @change="handleFileChange" multiple accept="image/*" hidden>
-        <div v-if="files.length > 0" class="file-list">
-          <div v-for="(file, index) in files" :key="index" class="file-item">
-            {{ file.name }}
-            <button @click="removeFile(index)" class="remove-btn">삭제</button>
-          </div>
+      </div>
+      <!-- 기존 파일 목록 -->
+      <div v-if="existingFiles.length > 0" class="file-list">
+        <h3>기존 파일</h3>
+        <div v-for="(file, index) in existingFiles" :key="file.fileId" class="file-item">
+          {{ file.originName }}
+          <button @click="removeExistingFile(index)" class="remove-btn">삭제</button>
         </div>
       </div>
-      <div v-if="existingFiles.length > 0" class="existing-file-list">
-        <h3>기존 첨부 파일</h3>
-        <div v-for="(file, index) in existingFiles" :key="index" class="file-item">
+      <!-- 새로 추가된 파일 목록 -->
+      <div v-if="newFiles.length > 0" class="file-list">
+        <h3>새로 추가된 파일</h3>
+        <div v-for="(file, index) in newFiles" :key="index" class="file-item">
           {{ file.name }}
-          <button @click="removeExistingFile(index)" class="remove-btn">삭제</button>
+          <button @click="removeFile(index)" class="remove-btn">삭제</button>
         </div>
       </div>
       <button type="submit" class="submit-btn" :disabled="submitting">수정</button>
@@ -36,9 +39,9 @@
     <p>Loading...</p>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
+import router from "@/router/mainRouter";
 
 export default {
   data() {
@@ -46,41 +49,47 @@ export default {
       noticeId: null,
       noticeTitle: '',
       noticeContent: '',
-      files: [],
-      existingFiles: [], // 서버에서 받아온 기존 파일 목록
+      newFiles: [], // 새로 추가된 파일
+      existingFiles: [], // 서버에서 받아온 기존 파일
+      filesToRemove: [], // 삭제할 기존 파일의 ID 목록
       submitting: false
     };
   },
   methods: {
     handleFileChange(event) {
-      this.files = Array.from(event.target.files);
+      // 새로 선택한 파일들을 newFiles 배열에 추가
+      const files = Array.from(event.target.files);
+      this.newFiles.push(...files);
     },
     removeFile(index) {
-      this.files.splice(index, 1);
+      // newFiles 배열에서 파일을 제거
+      this.newFiles.splice(index, 1);
     },
     removeExistingFile(index) {
+      // 기존 파일 목록에서 제거할 파일의 ID를 filesToRemove 배열에 추가
+      this.filesToRemove.push(this.existingFiles[index].fileId);
       this.existingFiles.splice(index, 1);
     },
-async modifyNotice() {
+    async modifyNotice() {
   if (this.submitting) return;
   this.submitting = true;
 
   const formData = new FormData();
   formData.append('notice', JSON.stringify({
-    noticeId: this.noticeId, // noticeId 추가
+    noticeId: this.noticeId,
     noticeTitle: this.noticeTitle,
     noticeContent: this.noticeContent
   }));
-  
-  // 새로운 파일만 추가
-  this.files.forEach(file => {
+
+  // 기존 파일과 새 파일 모두 추가
+  [...this.existingFiles, ...this.newFiles].forEach(file => {
     formData.append('files', file);
   });
 
   try {
     const response = await axios.patch(
-      `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`, 
-      formData, 
+      `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`,
+      formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -88,7 +97,7 @@ async modifyNotice() {
       }
     );
     console.log('Notice modified successfully:', response.data);
-    this.$router.push('/notice/list');
+    router.push('/notice/list');
   } catch (error) {
     console.error('Error modifying notice:', error.response ? error.response.data : error.message);
   } finally {
@@ -114,6 +123,126 @@ async modifyNotice() {
 };
 </script>
 
+<style scoped>
+.post-form {
+  width: 800px; 
+  margin: 40px auto; 
+  padding: 30px;
+  background-color: #e3e9f6; 
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 28px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600; /* 폰트 굵기 조절 */
+  color: #444; /* 진한 회색 */
+}
+
+.input,
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* 테두리 포함하여 너비 계산 */
+  font-size: 16px;
+}
+
+.textarea {
+  height: 200px;
+  resize: vertical;
+}
+
+.file-upload-area {
+  border: 2px dashed #007bff; 
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 8px; 
+}
+
+.file-upload-label {
+  display: inline-block;
+  padding: 15px 25px;
+  background-color: #007bff; /* 파란색 배경 */
+  color: white;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.file-upload-label:hover {
+  background-color: #0056b3; /* 어두운 파란색 */
+}
+
+.file-upload-label i {
+  margin-right: 10px; /* 아이콘과 텍스트 간격 */
+}
+
+.file-list,
+.existing-file-list {
+  margin-top: 10px;
+  list-style-type: none;
+  padding: 0;
+}
+
+.file-item {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-btn {
+  background-color: #e74c3c; /* 빨간색 */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-btn:hover {
+  background-color: #c0392b; /* 어두운 빨간색 */
+}
+
+.submit-btn {
+  display: block; /* 블록 요소로 변경 */
+  width: auto; 
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 12px 20px;
+  font-size: 18px;
+  background-color: #0C2092; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #007bff;
+}
+</style>
 <style scoped>
 .post-form {
   width: 800px; 

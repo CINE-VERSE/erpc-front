@@ -183,19 +183,19 @@ button {
     margin-left: 30px;
 }
 .editbtn {
-    width: 50px;
-    height: 30px;
-    margin-top: 17px;
-    border-radius: 5px;
+  width: 80px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .deletebtn {
-    width: 50px;
-    height: 30px;
-    margin-top: 17px;
-    border-radius: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
+  width: 80px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 .maincontent {
@@ -233,4 +233,26 @@ button {
   max-width: 100%;
   height: auto;
 }
+.edit, .delete {
+
+  margin-right: 10px;
+}
+
+/* 회색 배경으로 버튼 스타일 */
+.editbtn, .deletebtn {
+  width: 80px;
+  height: 40px;
+  cursor: pointer;
+  font-family: 'GmarketSansMedium';
+  background-color: #6c7aa1; /* 기본 회색 배경 */
+  color: white; /* 흰색 글자 */
+  border: none; /* 테두리 없음 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.editbtn:hover, .deletebtn:hover {
+  background-color: #5a6781; /* 호버 시 약간 어두운 회색 */
+}
+
 </style>

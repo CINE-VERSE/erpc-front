@@ -45,7 +45,7 @@
             <td>{{ request.employee.employeeRank.employeeRank }}</td>
             <td>{{ request.accessRight.accessRight }}</td>
             <td>
-              <button @click="deleteRequest(request.accessRequestId)">삭제</button> <!-- 삭제 버튼 -->
+              <button @click="deleteRequest(request.accessRequestId)">처리완료</button> 
             </td>
           </tr>
         </tbody>
