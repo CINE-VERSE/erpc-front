@@ -2,6 +2,7 @@
   <div class="post-form" v-if="noticeId">
     <h2 class="title">공지사항 수정</h2>
     <form @submit.prevent="modifyNotice" class="form">
+      <!-- 입력 폼 -->
       <div class="form-group">
         <label for="noticeTitle" class="label">제목</label>
         <input type="text" id="noticeTitle" v-model="noticeTitle" class="input" placeholder="제목" required>
@@ -10,26 +11,26 @@
         <label for="noticeContent" class="label">내용</label>
         <textarea id="noticeContent" v-model="noticeContent" class="textarea" placeholder="내용" required></textarea>
       </div>
+      <!-- 파일 업로드 -->
       <div class="file-upload-area">
         <label for="noticeFiles" class="file-upload-label">
           <i class="fas fa-cloud-upload-alt"></i> 첨부 파일 추가
         </label>
         <input type="file" id="noticeFiles" @change="handleFileChange" multiple accept="image/*" hidden>
+        <!-- 새로 추가된 파일 목록 -->
+        <div v-if="newFiles.length > 0" class="file-list">
+          <h3>새로 추가된 파일</h3>
+          <div v-for="(file, index) in newFiles" :key="index" class="file-item">
+            {{ file.name }}
+            <button @click="removeFile(index)" class="remove-btn">삭제</button>
+          </div>
+        </div>
       </div>
       <!-- 기존 파일 목록 -->
-      <div v-if="existingFiles.length > 0" class="file-list">
+      <div v-if="existingFiles.length > 0 && newFiles.length === 0" class="file-list">
         <h3>기존 파일</h3>
         <div v-for="(file, index) in existingFiles" :key="file.fileId" class="file-item">
           {{ file.originName }}
-          <button @click="removeExistingFile(index)" class="remove-btn">삭제</button>
-        </div>
-      </div>
-      <!-- 새로 추가된 파일 목록 -->
-      <div v-if="newFiles.length > 0" class="file-list">
-        <h3>새로 추가된 파일</h3>
-        <div v-for="(file, index) in newFiles" :key="index" class="file-item">
-          {{ file.name }}
-          <button @click="removeFile(index)" class="remove-btn">삭제</button>
         </div>
       </div>
       <button type="submit" class="submit-btn" :disabled="submitting">수정</button>
@@ -39,6 +40,7 @@
     <p>Loading...</p>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import router from "@/router/mainRouter";
@@ -65,45 +67,40 @@ export default {
       // newFiles 배열에서 파일을 제거
       this.newFiles.splice(index, 1);
     },
-    removeExistingFile(index) {
-      // 기존 파일 목록에서 제거할 파일의 ID를 filesToRemove 배열에 추가
-      this.filesToRemove.push(this.existingFiles[index].fileId);
-      this.existingFiles.splice(index, 1);
-    },
     async modifyNotice() {
-  if (this.submitting) return;
-  this.submitting = true;
+      if (this.submitting) return;
+      this.submitting = true;
 
-  const formData = new FormData();
-  formData.append('notice', JSON.stringify({
-    noticeId: this.noticeId,
-    noticeTitle: this.noticeTitle,
-    noticeContent: this.noticeContent
-  }));
+      const formData = new FormData();
+      formData.append('notice', JSON.stringify({
+        noticeId: this.noticeId,
+        noticeTitle: this.noticeTitle,
+        noticeContent: this.noticeContent
+      }));
 
-  // 기존 파일과 새 파일 모두 추가
-  [...this.existingFiles, ...this.newFiles].forEach(file => {
-    formData.append('files', file);
-  });
+      // 새로 추가된 파일만 추가
+      this.newFiles.forEach(file => {
+        formData.append('files', file);
+      });
 
-  try {
-    const response = await axios.patch(
-      `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      try {
+        const response = await axios.patch(
+          `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/modify/${this.noticeId}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        );
+        console.log('Notice modified successfully:', response.data);
+        router.push('/notice/list');
+      } catch (error) {
+        console.error('Error modifying notice:', error.response ? error.response.data : error.message);
+      } finally {
+        this.submitting = false;
       }
-    );
-    console.log('Notice modified successfully:', response.data);
-    router.push('/notice/list');
-  } catch (error) {
-    console.error('Error modifying notice:', error.response ? error.response.data : error.message);
-  } finally {
-    this.submitting = false;
-  }
-},
+    },
     async fetchNoticeDetails() {
       try {
         const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/notice_board/${this.noticeId}`);
@@ -168,7 +165,7 @@ export default {
 
 .file-upload-area {
   border: 2px dashed #007bff; 
-  padding: 40px;
+  padding: 10px;
   text-align: center;
   margin-bottom: 20px;
   border-radius: 8px; 
