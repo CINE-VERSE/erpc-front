@@ -416,13 +416,14 @@ const deleteNote = async (quotationNoteId) => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 430px;
-    height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
     gap: 20px;
     margin-top: 40px;
 }
+
+
 
 .estimate-pdf1 {
     display: flex;
@@ -438,7 +439,7 @@ const deleteNote = async (quotationNoteId) => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
 .estimate-pdf1:hover {

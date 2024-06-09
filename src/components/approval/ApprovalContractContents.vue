@@ -261,10 +261,10 @@ const submitRejection = async () => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 430px;
-    height: auto;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
+    gap: 20px;
     margin-top: 40px;
 }
 

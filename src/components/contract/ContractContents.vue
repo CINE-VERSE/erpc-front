@@ -384,7 +384,6 @@ const confirmDelete = async () => {
     border-radius: 10px;
     box-sizing: border-box;
     width: 430px;
-    height: 150px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -407,7 +406,7 @@ const confirmDelete = async () => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
 .contract-pdf1:hover,

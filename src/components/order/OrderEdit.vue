@@ -221,7 +221,7 @@ const registerOrder = async () => {
             withCredentials: true
         });
         alert('수주 수정이 성공적으로 완료되었습니다.');
-        router.push({ path: `/order` });
+        router.push({ path: `/order/${route.params.orderRegistrationId}` });
     } catch (error) {
         console.error('수주 수정 중 오류가 발생했습니다.', error);
         console.log('Response data:', error.response?.data); // Additional logging

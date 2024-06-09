@@ -18,7 +18,7 @@
             <div class="order-pdf77">
                 <div v-if="orderData.orderFile.length > 0">
                     <div v-for="file in orderData.orderFile" :key="file.fileId" class="file-download">
-                        <button class="order-pdf2" @click="downloadFile(file.accessUrl)">
+                        <button class="order-pdf33" @click="downloadFile(file.accessUrl)">
                             {{ file.originName }} 다운로드
                         </button>
                     </div>
@@ -524,18 +524,16 @@ const deleteNote = async (orderNoteId) => {
     border: 2px solid #BEE7FF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 420px;
-    height: 150px;
+    width: 430px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
     gap: 20px;
     margin-top: 40px;
-    margin-left: 9px;
 }
 
 .order-pdf1,
-.order-pdf2 {
+.order-pdf33 {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -549,11 +547,11 @@ const deleteNote = async (orderNoteId) => {
     outline: none;
     color: black;
     font-weight: bold;
-    width: 270px;
+    width: 320px;
 }
 
 .order-pdf1:hover,
-.order-pdf2:hover {
+.order-pdf33:hover {
     background-color: #d5e6ff;
 }
 
