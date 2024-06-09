@@ -1,51 +1,49 @@
-.cbtext {
-    margin-bottom: 50px;
-}
-
-.cb-search-content {
-    margin-top: 4%;
+.cb-search-content33 {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
+    width: 100%;
+    max-width: calc(100% - 220px);
 }
 
-.cb-search,
-.cb-search2 {
+.cb-search33 {
     text-align: center;
-    margin-top: 3%;
 }
 
-.cb-search-box,
-.cb-search-box2 {
-    width: 100%;
+.order-number-div33,
+.deposit-code-div33 {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin: 15px;
-    margin-bottom: 100px;
-    border-radius: 10px;
-    border: 2px solid #ccc;
+}
+
+.order-number-box33,
+.deposit-code-box33 {
+    width: calc(100% - 50px);
+    height: 35px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
     box-sizing: border-box;
-    background-color: whitesmoke;
-    height: auto;
-    width: 100%;
-    margin: 20px auto;
+    font-family: GmarketSansMedium;
+    font-size: 15px;
 }
 
-.cb-search-box {
-    max-width: 400px;
+.order-number-btn33,
+.deposit-code-btn33 {
+    border-radius: 0 5px 5px 0;
+    border: 2px solid #0C2092;
+    height: 35px;
+    background-color: #0C2092;
+    color: white;
+    font-size: 11px;
+    cursor: pointer;
+    margin-left: -1px;
+    padding: 0 10px;
 }
 
-.cb-search-box2 {
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin: 20px auto;
-    gap: 20px;
+.order-test333 {
+    width: 250px;
 }
 
 .cb-list-box1 {
@@ -126,68 +124,79 @@
     cursor: pointer;
 }
 
-.order1-pdf {
+.billing-attachment23 {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
-    font-size: 17px;
-    flex-grow: 1;
-    padding: 10px;
-    background-color: #CCEAFF;
-    border: 2px solid #CCEAFF;
-    border-radius: 10px;
-    box-sizing: border-box;
-    width: 800px;
-    height: 90px;
-    margin-bottom: 20px;
-    font-family: GmarketSansMedium;
-    font-size: 17px;
-    gap: 70px;
-    margin-top: 30px;
-}
-
-.order1-pdf1,
-.order1-pdf2 {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    border: 2px solid #0C2092;
-    border-radius: 10px;
-    padding: 6px 30px;
-    font-size: 16px;
-    cursor: pointer;
-    outline: none;
-    color: black;
-    font-weight: bold;
-    width: 330px;
-}
-
-.order1-pdf1:hover,
-.order1-pdf2:hover {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
     background-color: #d5e6ff;
-}
-
-.pdfimage1,
-.pdfimage2 {
-    width: 30px;
+    border-radius: 10px;
+    margin-bottom: 50px;
+    padding: 20px;
+    box-sizing: border-box;
     height: auto;
-    margin-left: 5px;
-    margin-right: -10px;
 }
 
-.search-btn-div1,
-.regist-btn-div {
+.file-list23 {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 80%;
+    max-width: 700px;
+    min-height: 70px;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.file-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.file-name {
+    font-size: 18px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-upload-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.file-upload-label {
+    font-size: 12px;
+    background-color: #0C2092;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+
+.billing-regist-btn-div {
     display: flex;
     justify-content: center;
     width: 100%;
     margin-bottom: 10px;
 }
 
-.search-btn1,
-.regist-btn2 {
+.billing-regist-btn {
+    width: 320px;
     padding: 10px 20px;
     text-align: center;
     border: none;
@@ -196,17 +205,10 @@
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-
-.search-btn1 {
-    max-width: 320px;
-}
-
-.regist-btn2 {
-    width: 350px;
     font-size: 18px;
-    margin-top: 30px;
-    margin-bottom: 7%;
+    margin-bottom: 50px;
+}
+
+.billing-regist-btn:hover {
+    background-color: #007bff;
 }

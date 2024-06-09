@@ -1,5 +1,4 @@
 .customer-content {
-    /* margin-top: 4%; */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,7 +8,6 @@
 
 .customer-search {
     text-align: center;
-    /* margin-top: 3%; */
 }
 
 .customer-code {
@@ -78,7 +76,7 @@
 
 .customer-edit,
 .customer-delete {
-    width: 60px;
+    width: 70px;
     height: 40px;
     cursor: pointer;
     margin-left: 15px;
@@ -128,17 +126,21 @@
     margin-bottom: 100px;
 }
 
-.customer-list-box33 {
+.customer-list-box1 {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 100px;
     border-radius: 10px;
     box-sizing: border-box;
     background-color: white;
     height: auto;
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    margin-bottom: 20px;
     gap: 1px;
 }
 
@@ -196,8 +198,9 @@
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 100%;
-    max-width: 800px;
+    width: 83%;
+    max-width: 1000px;
+    min-width: 100px;
     margin-bottom: 20px;
     font-family: GmarketSansMedium;
     font-size: 17px;
@@ -214,9 +217,10 @@
 .customer-process-box-detail {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
     width: 100%;
+    margin-left: 8px;
 }
 
 .customer-process-info {
@@ -229,7 +233,8 @@
 
 .customer-process-writer {
     margin: 0;
-    margin-left: 25px;
+    margin-left: 30px;
+    margin-bottom: -13px;
 }
 
 .customer-process-detail {
@@ -244,9 +249,9 @@
     outline: none;
     color: black;
     font-weight: bold;
-    width: 95%;
+    width: 94%;
     height: auto;
-    margin-left: 21px;
+    margin-right: 5px;
     margin-top: -10px;
     font-weight: normal;
 }
@@ -262,18 +267,19 @@
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 20px;
+    margin-right: 34px;
 }
 
-.customer-process-btn {
+.customer-process-btn,
+.customer-process-btn2 {
     display: flex;
     width: 100%;
-    justify-content: flex-end;
-    align-items: flex-end;
+    justify-content: center;
+    align-items: center;
     gap: 7px;
 }
 
-.customer-process-edit,
+.customer-process-regist,
 .customer-process-delete {
     background-color: #0C2092;
     border: 2px solid #0C2092;
@@ -282,11 +288,11 @@
     padding: 5px 7px;
     margin-top: 10px;
     cursor: pointer;
-    margin-top: 4px;
 }
 
-.customer-process-delete {
-    margin-right: 20px;
+.customer-process-regist {
+    margin-top: 5px;
+    margin-left: 5px;
 }
 
 .customer-process-reply {
@@ -308,32 +314,15 @@
     font-size: 15px;
     outline: none;
     color: black;
-    width: 91.5%;
+    width: 91%;
     height: auto;
     font-weight: normal;
-    margin-left: -20px;
-}
-
-.customer-process-regist {
-    background-color: #0C2092;
-    border: 2px solid #0C2092;
-    color: white;
-    border-radius: 10px;
-    padding: 5px 7px;
-    margin-top: 10px;
-    cursor: pointer;
-    margin-top: 4px;
 }
 
 .customer-box3 {
-    max-width: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     margin-bottom: 100px;
     border-radius: 10px;
@@ -373,6 +362,7 @@
     font-family: GmarketSansMedium;
     font-size: 16px;
     cursor: default;
+    cursor:pointer;
 }
 
 .project-number-box {
@@ -385,64 +375,35 @@
     border: 1px solid #ccc;
 }
 
-.project-number-list {
+.customer-orders-wrapper {
+    width: 82%;
+    max-width: 1200px;
+    margin: 20px auto;
+    text-align: center;
+    align-items: center;
+}
+
+.customer-orders {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start; /* 앞에서부터 채우기 위해 flex-start 사용 */
+    gap: 30px; /* 상자 간격을 조절하기 위한 gap 속성 사용 */
 }
 
-.project-number-row {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-}
-
-.project-number-item {
+.order-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 10px;
-    width: 200px;
+    flex-basis: calc(33.333% - 20px); /* 한 행에 3개씩 배치 */
+    background-color: whitesmoke;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-bottom: 20px; /* 아래 간격을 위해 margin-bottom 사용 */
+    cursor: pointer; /* 추가: 클릭 가능한 요소임을 나타내는 커서 */
 }
 
-.popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.popup-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-    text-align: center;
-}
-.popup-content h2 {
-    margin-bottom: 20px;
-}
-.popup-content textarea {
-    width: 90%;
-    height: 100px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-.popup-content button {
-    margin: 5px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #007BFF;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.popup-content button:last-child {
-    background-color: #dc3545;
+.order-item:hover {
+    background-color: #f0f8ff; /* 추가: Hover 시 색상 변경 */
 }
