@@ -5,7 +5,7 @@
             <h3 class="maintext2">{{ salesOppData.salesOppStatus ? salesOppData.salesOppStatus.salesOppStatus : '' }}</h3>
             <div class="order-btn">
                 <button class="order-request" @click="openStatusPopup">상태변경</button>
-                <button class="order-edit" @click="goToEditPage">수정</button>
+                <button class="order-edit" v-if="showDeleteButton" @click="goToEditPage">수정</button>
                 <button class="order-delete" @click="deletesalesOpp">삭제요청</button>
             </div>
             <div class="order-list-box2">
@@ -64,13 +64,12 @@
         </div>
     </div>
 
- 
-    <div class="popup-overlay77" v-if="showDeletePopup">
-        <div class="popup-content77">
+    <div v-if="showDeletePopup" class="popup-overlay">
+        <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
             <textarea v-model="deleteReason" placeholder="삭제 사유를 입력하세요"></textarea>
-            <button @click="confirmDelete">확인</button>
-            <button @click="closePopup">취소</button>
+            <button @click="confirmDelete" class="confirm-btn">확인</button>
+            <button @click="closeDeletePopup" class="cancel-btn">취소</button>
         </div>
     </div>
 
@@ -99,12 +98,11 @@ const route = useRoute();
 const router = useRouter();
 const salesOppData = ref({});
 const salesOppNoteData = ref([]);
-const showDeletePopup = ref(false);
+const showDeletePopup = ref(false); // 삭제 팝업 제어를 위한 변수
 const showStatusPopup = ref(false);
 const deleteReason = ref('');
 const newStatus = ref('');
 const newProcessDetail = ref('');
-
 
 // localStorage에서 userId 가져오기
 const userId = localStorage.getItem('userId');
@@ -122,8 +120,7 @@ const fetchData = async () => {
 
         // 각 프로세스에 대해 salesOppNote 데이터를 가져옵니다.
         const noteResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note`);
-        salesOppNoteData
-.value = noteResponse.data;
+        salesOppNoteData.value = noteResponse.data;
         
         console.log('SalesOppData:', salesOppData.value);
         console.log('SalesOppNoteData:', salesOppNoteData.value);
@@ -144,7 +141,7 @@ const deletesalesOpp = () => {
 };
 
 const closeDeletePopup = () => {
-    showDeletePopup.value = false;
+    showDeletePopup.value = false; // 삭제 팝업 닫기
 };
 
 const confirmDelete = async () => {
@@ -161,7 +158,7 @@ const confirmDelete = async () => {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
     } finally {
-        closeDeletePopup();
+        closeDeletePopup(); // 팝업 닫기
     }
 };
 

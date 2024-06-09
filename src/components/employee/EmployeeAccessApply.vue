@@ -34,6 +34,7 @@
             <th>부서</th>
             <th>직급</th>
             <th>권한</th>
+            <th>삭제</th> <!-- 삭제 버튼 열 추가 -->
           </tr>
         </thead>
         <tbody>
@@ -43,13 +44,15 @@
             <td>{{ request.employee.teamCode.teamCode }}</td>
             <td>{{ request.employee.employeeRank.employeeRank }}</td>
             <td>{{ request.accessRight.accessRight }}</td>
+            <td>
+              <button @click="deleteRequest(request.accessRequestId)">삭제</button> <!-- 삭제 버튼 -->
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -95,7 +98,6 @@ const accessRightsMap = {
   22: "관리자"
 };
 
-// 권한 집계 함수
 const aggregateAllAccessRights = (data) => {
   const rightsSet = new Set();
   data.forEach(item => rightsSet.add(JSON.stringify(item.accessRight)));
@@ -150,6 +152,18 @@ const getAllAccessRequests = async () => {
 onMounted(() => {
   getAllAccessRequests();
 });
+
+// 권한 삭제 요청 함수
+const deleteRequest = async (accessRequestId) => {
+  try {
+    await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/process?accessRequestId=${accessRequestId}`);
+    alert('권한 요청이 삭제되었습니다.');
+    await getAllAccessRequests();
+  } catch (error) {
+    console.error('권한 삭제 중 에러 발생:', error);
+  }
+};
+
 </script>
 
 <style>
@@ -238,5 +252,17 @@ button[type="button"]:hover {
 
 .request-table tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+.request-table button {
+  background-color: #5170de;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.request-table button:hover {
+  background-color: #5170de;
 }
 </style>
