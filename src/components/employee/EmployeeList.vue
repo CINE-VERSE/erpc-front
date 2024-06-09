@@ -14,7 +14,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(employee, index) in employees" :key="employee.employeeId" class="allpost">
+          <tr v-for="(employee, index) in paginatedEmployees" :key="employee.employeeId" class="allpost">
             <td>{{ index + 1 }}</td>
             <td>
               <router-link :to="'/employees/' + employee.employeeId" class="employee-item">
@@ -27,16 +27,24 @@
         </tbody>
       </table>
     </div>
+    <div class="pagination">
+            <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">이전</button>
+            <button v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage === page }">{{ page }}</button>
+            <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">다음</button>
+        </div>
   </div>
 </template>
 
 <script>
+import { ref, computed } from 'vue';
 import axios from 'axios';
 
 export default {
   data() {
     return {
-      employees: []
+      employees: [],
+      currentPage: 1,
+      itemsPerPage: 10
     };
   },
   created() {
@@ -47,6 +55,16 @@ export default {
       .catch(error => {
         console.log(error);
       });
+  },
+  computed: {
+    paginatedEmployees() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.employees.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.employees.length / this.itemsPerPage);
+    }
   },
   methods: {
     mapEmployeeRank(employeeRankId) {
@@ -81,6 +99,11 @@ export default {
           return '관리자';
         default:
           return '팀 미정';
+      }
+    },
+    changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
       }
     }
   }
@@ -152,4 +175,4 @@ export default {
 .writebutton:hover {
   background-color: #b8c4e4;
 }
-</style>00
+</style>
