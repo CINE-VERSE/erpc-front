@@ -333,7 +333,7 @@ const deleteNote = async (accountNoteId) => {
 
 .customer-edit,
 .customer-delete {
-    width: 60px;
+    width: 70px;
     height: 40px;
     cursor: pointer;
     margin-left: 15px;
@@ -455,7 +455,7 @@ const deleteNote = async (accountNoteId) => {
     border: 2px solid #CCEAFF;
     border-radius: 10px;
     box-sizing: border-box;
-    width: 75%;
+    width: 83%;
     max-width: 1000px;
     min-width: 100px;
     margin-bottom: 20px;
