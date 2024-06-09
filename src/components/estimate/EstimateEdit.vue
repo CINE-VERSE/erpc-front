@@ -1,7 +1,7 @@
 <template>
-    <div class="estimate-edit-content11" v-if="quotationData">
+    <div class="estimate-edit-content33" v-if="quotationData">
         <h1>견적서 수정</h1>
-        <div class="estimate-list-box">
+        <div class="estimate-list-box33">
             <table class="estimate-table1">
                 <thead>
                     <tr>
@@ -93,20 +93,20 @@
                 </tbody>
             </table>
         </div>
-        <div class="estimate-attachment3">
+        <div class="estimate-attachment34">
             <h2 class="estimate-file">첨부파일</h2>
+            <!-- 새로 업로드된 파일이 있는 경우 -->
             <div v-if="files.length > 0">
-                <div v-for="(file, index) in files" :key="index" class="file-list">
+                <div v-for="(file, index) in files" :key="index" class="file-list34">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.name }}</span>
-                    <button @click="removeNewFile(index)" class="remove-file-btn">제거</button>
                 </div>
             </div>
+            <!-- 기존 파일 목록에 파일이 있는 경우 -->
             <div v-else-if="filteredFiles.length > 0">
-                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list">
+                <div v-for="(file, index) in filteredFiles" :key="file.fileId" class="file-list34">
                     <span class="file-icon">📄</span>
                     <span class="file-name">{{ file.originName }}</span>
-                    <button @click="removeExistingFile(index)" class="remove-file-btn">제거</button>
                 </div>
             </div>
             <div v-else class="file-download no-file">
@@ -155,9 +155,9 @@ const accountNote = ref('');
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
 
-// 필터된 파일 목록을 계산하는 함수
+// filteredFiles는 "blob" 파일을 제외한 기존 파일 목록을 반환합니다.
 const filteredFiles = computed(() => {
-    return quotationData.value?.quotationFile.filter(file => file.originName !== 'blob') || [];
+    return quotationData.value?.quotationFile ? quotationData.value.quotationFile.filter(file => file.originName !== 'blob') : [];
 });
 
 function createNewProduct() {
@@ -301,15 +301,10 @@ const updateSupplyValue = (index) => {
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
-    quotationData.value.quotationFile = []; // 파일 선택 시 기존 파일 목록 초기화
 };
 
-const removeNewFile = (index) => {
-    files.value.splice(index, 1);
-};
-
-const removeExistingFile = (index) => {
-    quotationData.value.quotationFile.splice(index, 1);
+const resetFiles = () => {
+    files.value = [];
 };
 
 const addProductRow = () => {
@@ -361,15 +356,12 @@ const updateQuotation = async () => {
     const formData = new FormData();
     formData.append('quotation', JSON.stringify(quotation));
 
-    // 기존 파일 목록을 유지하도록 추가
-    if (quotationData.value.quotationFile.length > 0) {
-        quotationData.value.quotationFile.forEach(file => {
+    // 파일이 선택되지 않은 경우 기존 파일을 유지
+    if (files.value.length === 0 && filteredFiles.value.length > 0) {
+        filteredFiles.value.forEach(file => {
             formData.append('existingFiles', JSON.stringify(file));
         });
-    }
-
-    // 첨부 파일이 있는 경우에만 파일 추가
-    if (files.value.length > 0) {
+    } else {
         files.value.forEach(file => {
             formData.append('files', file);
         });
@@ -424,10 +416,8 @@ watch(products, (newProducts) => {
 }, { deep: true });
 </script>
 
-
-
 <style>
-.estimate-edit-content11 {
+.estimate-edit-content33 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -441,7 +431,7 @@ watch(products, (newProducts) => {
     margin-top: 3%;
 }
 
-.estimate-list-box {
+.estimate-list-box33 {
     width: 90%;
     max-width: 1400px;
     display: flex;
@@ -552,59 +542,48 @@ watch(products, (newProducts) => {
     gap: 5px;
 }
 
-.estimate-attachment3 {
+.estimate-attachment34 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 90%; /* 부모 요소의 너비를 90%로 설정 */
     max-width: 1400px;
-    height: 220px;
+    min-width: 900px;
+    height: auto;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.estimate-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.estimate-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
-.estimate-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list34 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 800px;
+    min-height: 70px;
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
 }
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all;
+    white-space: nowrap; /* 텍스트가 한 줄로 표시되도록 설정 */
+    overflow: hidden; /* 넘치는 부분을 숨김 */
+    text-overflow: ellipsis; /* 넘치는 부분을 생략 부호(...)로 표시 */
 }
 
 .file-upload-btn {
@@ -623,6 +602,18 @@ watch(products, (newProducts) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px;
+}
+
+.remove-file-btn {
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
 }
 
 .estimate-edit-btn-div33 {
@@ -649,4 +640,5 @@ watch(products, (newProducts) => {
 .estimate-edit-btn33:hover {
     background-color: #007bff;
 }
+
 </style>

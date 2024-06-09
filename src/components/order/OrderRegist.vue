@@ -112,12 +112,19 @@
                 </table>
             </div>
         </div>
-        <div class="order-attachment">
+        <div class="order-attachment33">
             <h2 class="order-file">첨부파일</h2>
-            <div v-for="(file, index) in files" :key="index" class="file-list">
-                <span class="file-icon">📄</span>
-                <span class="file-name">{{ file.name }}</span>
-                <button @click="removeFile(index)">삭제</button>
+            <div v-if="files.length > 0">
+                <div v-for="(file, index) in files" :key="index" class="file-list34">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.name }}</span>
+                </div>
+            </div>
+            <div v-else>
+                <div v-for="(file, index) in contractData.contractFile" :key="file.fileId" class="file-list34">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.originName }}</span>
+                </div>
             </div>
             <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload"/>
             <label for="file-upload" class="file-upload-label">파일 선택</label>
@@ -196,11 +203,8 @@ const fetchContractData = async () => {
 
 const handleFileUpload = (event) => {
     const uploadedFiles = Array.from(event.target.files);
-    files.value.push(...uploadedFiles);
-};
-
-const removeFile = (index) => {
-    files.value.splice(index, 1);
+    files.value = uploadedFiles;
+    contractData.value.contractFile = [];
 };
 
 const registerOrder = async () => {
@@ -426,53 +430,45 @@ const registerOrder = async () => {
     width: 250px;
 }
 
-.order-attachment {
+.order-attachment33 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
     width: 100%;
     max-width: 1400px;
-    height: 200px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
-.order-attachment-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.order-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-.file-list {
+.file-list34 {
     display: flex;
     align-items: center;
     background-color: white;
-    width: 90%;
-    height: 70px;
+    width: 80%; /* 부모 요소의 너비를 기준으로 설정 */
+    max-width: 800px;
+    min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
 }
+
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
 }
 
 .file-upload-btn {
@@ -491,6 +487,7 @@ const registerOrder = async () => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
 
 .order-regist-btn-div33 {

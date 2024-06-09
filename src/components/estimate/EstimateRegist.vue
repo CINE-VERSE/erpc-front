@@ -1,7 +1,7 @@
 <template>
-    <div class="estimate-regist-content11">
-        <h1>견적서 등록</h1>
-        <div class="estimate-list-box">
+    <div class="estimate-edit-content33" v-if="quotationData">
+        <h1>견적서 수정</h1>
+        <div class="estimate-list-box33">
             <table class="estimate-table1">
                 <thead>
                     <tr>
@@ -17,24 +17,21 @@
                     <tr v-for="(product, index) in products" :key="index">
                         <td>
                             <div class="item-code-div2">
-                                <input type="text" v-model="product.itemCode"
-                                    class="item-code-box2" />
+                                <input type="text" v-model="product.itemCode" placeholder="품목 코드를 입력해주세요." class="item-code-box2"/>
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
-                                    <button @click="removeProductRow(index)" :disabled="products.length === 1"
-                                        class="item-delete-btn2">삭제</button>
+                                    <button @click="removeProductRow(index)" :disabled="products.length === 1" class="item-delete-btn2">삭제</button>
                                 </div>
                             </div>
                         </td>
                         <td>{{ product.productName }}</td>
                         <td class="narrow-column">
-                            <input type="number" v-model.number="product.quantity" class="estimate-test2"
-                                @input="updateSupplyValue(index)" />
+                            <input type="number" v-model.number="product.quantity" class="estimate-test2" @input="updateSupplyValue(index)" />
                         </td>
-                        <td>{{ product.productPrice.toLocaleString() }}</td>
-                        <td>{{ product.supplyValue.toLocaleString() }}</td>
-                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3" /></td>
+                        <td>{{ product.productPrice }}</td>
+                        <td>{{ product.supplyValue }}</td>
+                        <td><input type="text" v-model="product.otherInfo" class="estimate-test3"/></td>
                     </tr>
                 </tbody>
             </table>
@@ -55,8 +52,7 @@
                     <tr>
                         <td>
                             <select v-model="selectedWarehouseCode" @change="updateWarehouseData" class="warehousedrop">
-                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId"
-                                    :value="warehouse.warehouseCode">
+                                <option v-for="warehouse in warehouses" :key="warehouse.warehouseId" :value="warehouse.warehouseCode">
                                     {{ warehouse.warehouseCode }}
                                 </option>
                             </select>
@@ -85,44 +81,61 @@
                     <tr>
                         <td>
                             <div class="customer-code-div2">
-                                <input type="text" v-model="customerCode"
-                                    @input="customerCode = customerCode.toUpperCase()"
-                                    class="customer-code-box2" />
+                                <input type="text" v-model="customerCode" @input="customerCode = customerCode.toUpperCase()" placeholder="거래처 코드를 입력해주세요." class="customer-code-box2"/>
                                 <button @click="fetchCustomerData" class="customer-code-btn2">확인</button>
                             </div>
                         </td>
                         <td>{{ customerName }}</td>
-                        <td>{{ employeeName }}</td>
-                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box" /></td>
-                        <td><input type="text" v-model="accountNote" class="customer-test9" /></td>
+                        <td>{{ employeeName }}</td> 
+                        <td><input type="date" v-model="dueDate" class="due-date-box" id="due-date-box"/></td>
+                        <td><input type="text" v-model="accountNote" class="customer-test9"/></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="estimate-attachment3">
+        <div class="estimate-attachment34">
             <h2 class="estimate-file">첨부파일</h2>
-            <div v-for="(file, index) in files" :key="index" class="file-list">
-                <span class="file-icon">📄</span>
-                <span class="file-name">{{ file.name }}</span>
+            <!-- 새로 업로드된 파일이 있는 경우 -->
+            <div v-if="files.length > 0">
+                <div v-for="(file, index) in files" :key="index" class="file-list34">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.name }}</span>
+                </div>
             </div>
-            <input type="file" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
+            <!-- 기존 파일 목록에 파일이 있는 경우 -->
+            <div v-else-if="quotationData?.quotationFile?.length > 0">
+                <div v-for="(file, index) in quotationData.quotationFile" :key="file.fileId" class="file-list34">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">{{ file.originName }}</span>
+                </div>
+            </div>
+            <div v-else class="file-download no-file">
+                첨부파일 없음
+            </div>
+            <input type="file" @click="resetFiles" @change="handleFileUpload" multiple class="file-upload-btn" id="file-upload" />
             <label for="file-upload" class="file-upload-label">파일 선택</label>
         </div>
-        <div class="estimate-regist-btn-div33">
-            <button @click="registerQuotation" class="estimate-regist-btn33">견적 등록하기</button>
+        <div class="estimate-edit-btn-div33">
+            <button @click="updateQuotation" class="estimate-edit-btn33">견적 수정하기</button>
         </div>
+    </div>
+    <div v-else>
+        <p>Loading...</p>
     </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import router from '@/router/mainRouter';
 
-// 상품 정보
+const route = useRoute();
+const router = useRouter();
+const quotationData = ref(null);
+const files = ref([]);
+
 const products = ref([createNewProduct()]);
 
-// 창고 정보
 const warehouses = ref([]); // 모든 창고 정보를 저장
 const selectedWarehouseCode = ref(''); // 선택된 창고 코드
 const warehouseId = ref(null); // Warehouse ID를 저장하기 위한 ref
@@ -133,18 +146,14 @@ const warehouseUsage = ref('');
 const productionLineName = ref('');
 const outsourceName = ref('');
 
-// 거래처 정보
 const customerCode = ref('');
-const accountId = ref(null); // Account ID를 저장하기 위한 ref
+const accountId = ref(null);
 const customerName = ref('');
 const responsiblePerson = ref('');
 const dueDate = ref('');
 const accountNote = ref('');
 const employeeName = ref(''); // Employee Name을 저장하기 위한 ref
 const employeeId = ref(null); // Employee ID를 저장하기 위한 ref
-
-// 파일 첨부
-const files = ref([]);
 
 function createNewProduct() {
     return {
@@ -154,9 +163,50 @@ function createNewProduct() {
         productPrice: 0,
         quantity: 0,
         supplyValue: 0,
-        otherInfo: '' // 기타
+        otherInfo: ''
     };
 }
+
+onMounted(async () => {
+    const quotationId = route.params.quotationId;
+    try {
+        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/quotation/${quotationId}`, { withCredentials: true });
+        quotationData.value = response.data;
+        populateFields(quotationData.value);
+    } catch (error) {
+        console.error('Error fetching quotation data:', error);
+    }
+    fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
+    fetchWarehouses(); // 컴포넌트가 마운트될 때 창고 정보를 가져옴
+});
+
+const populateFields = (data) => {
+    products.value = data.quotationProduct.map(product => ({
+        itemCode: product.product.productCode,
+        productId: product.product.productId,
+        productName: product.product.productName,
+        productPrice: product.product.productPrice,
+        quantity: product.quotationProductCount,
+        supplyValue: product.quotationSupplyPrice,
+        otherInfo: product.quotationProductionNote
+    }));
+
+    selectedWarehouseCode.value = data.warehouse.warehouseCode;
+    warehouseId.value = data.warehouse.warehouseId;
+    warehouseName.value = data.warehouse.warehouseName;
+    warehouseType.value = data.warehouse.warehouseType;
+    warehouseLocation.value = data.warehouse.warehouseLocation;
+    warehouseUsage.value = data.warehouse.warehouseUsage;
+    productionLineName.value = data.warehouse.productionLineName;
+    outsourceName.value = data.warehouse.outsourceName;
+
+    customerCode.value = data.account.accountCode;
+    accountId.value = data.account.accountId;
+    customerName.value = data.account.accountName;
+    responsiblePerson.value = data.employee.employeeName;
+    dueDate.value = data.quotationDueDate;
+    accountNote.value = data.quotationNote;
+};
 
 const fetchProductData = async (index) => {
     const product = products.value[index];
@@ -239,11 +289,6 @@ const fetchEmployeeData = async () => {
     }
 };
 
-onMounted(() => {
-    fetchEmployeeData(); // 컴포넌트가 마운트될 때 employeeId와 employeeName을 가져옴
-    fetchWarehouses(); // 컴포넌트가 마운트될 때 창고 정보를 가져옴
-});
-
 const updateSupplyValue = (index) => {
     const product = products.value[index];
     product.supplyValue = product.productPrice * product.quantity;
@@ -251,7 +296,14 @@ const updateSupplyValue = (index) => {
 
 const handleFileUpload = (event) => {
     files.value = Array.from(event.target.files);
-    console.log('Files selected:', files.value);
+    if (files.value.length === 0) {
+        quotationData.value.quotationFile = [];
+    }
+};
+
+const resetFiles = () => {
+    files.value = [];
+    quotationData.value.quotationFile = [];
 };
 
 const addProductRow = () => {
@@ -261,12 +313,14 @@ const addProductRow = () => {
 const removeProductRow = (index) => {
     if (products.value.length > 1) {
         products.value.splice(index, 1);
+    } else {
+        alert('최소한 한 개의 품목은 필요합니다.');
     }
 };
 
-const registerQuotation = async () => {
-    // 모든 필수 필드가 채워졌는지 확인
-    const areProductsValid = products.value.every(product =>
+const updateQuotation = async () => {
+    const quotationId = route.params.quotationId; // quotationId 값을 가져옵니다.
+    const areProductsValid = products.value.every(product => 
         product.itemCode && product.productId && product.productName && product.productPrice && product.quantity
     );
     const isWarehouseValid = selectedWarehouseCode.value && warehouseId.value && warehouseName.value && warehouseType.value && warehouseLocation.value && warehouseUsage.value;
@@ -280,12 +334,13 @@ const registerQuotation = async () => {
     }
 
     const quotation = {
+        quotationId: quotationId, // 여기서 quotationId를 추가합니다.
         quotationNote: accountNote.value,
         quotationTotalCost: products.value.reduce((total, product) => total + product.supplyValue, 0),
         quotationDueDate: dueDate.value,
-        employee: {
-            employeeId: employeeId.value,
-            employeeName: employeeName.value
+        employee: { 
+            employeeId: employeeId.value, // 수정: employeeId 값 설정
+            employeeName: employeeName.value // 수정: employeeName 값 설정
         },
         account: { accountId: accountId.value },
         warehouse: { warehouseId: warehouseId.value },
@@ -306,27 +361,19 @@ const registerQuotation = async () => {
             formData.append('files', file);
         });
     } else {
-        // 첨부 파일이 없는 경우 빈 배열로 초기화
         formData.append('files', new Blob([]));
     }
 
-    // 콘솔 로그에 전달하는 데이터 출력
-    console.log("Quotation Data to be sent:", quotation);
-    console.log("Files to be sent:", files.value);
-
     try {
-        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/quotation/regist', formData, {
+        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/quotation/modify`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
             withCredentials: true
         });
-        alert('견적서가 성공적으로 등록되었습니다.');
-        router.push({ path: `/estimate` });
+        alert('견적서가 성공적으로 수정되었습니다.');
+        router.push({ path: `/estimate/${quotationId}` });
     } catch (error) {
-        console.error('견적서를 등록하는 중 오류가 발생했습니다.', error);
-        console.error('에러 응답 데이터:', error.response ? error.response.data : '응답 없음');
-        console.error('에러 응답 상태:', error.response ? error.response.status : '응답 없음');
-        console.error('에러 요청 설정:', error.config);
-        alert('견적서를 등록하는 중 오류가 발생했습니다.');
+        console.error('견적서를 수정하는 중 오류가 발생했습니다.', error);
+        alert('견적서를 수정하는 중 오류가 발생했습니다.');
     }
 };
 
@@ -352,7 +399,7 @@ const clearWarehouseData = () => {
 const clearCustomerData = () => {
     accountId.value = null;
     customerName.value = '';
-    employeeName.value = '';
+    responsiblePerson.value = '';
 };
 
 // 수량이 변경될 때 공급가액을 자동으로 업데이트
@@ -489,7 +536,6 @@ watch(products, (newProducts) => {
     font-size: 11px;
     cursor: pointer;
     margin-left: 5px;
-    /* Add spacing between buttons */
 }
 
 .button-group {
@@ -502,38 +548,17 @@ watch(products, (newProducts) => {
 .estimate-attachment3 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* 수직 방향으로 위에서 아래로 정렬 */
     align-items: center;
     position: relative;
     width: 100%;
-    /* 너비를 90%로 설정 */
     max-width: 1400px;
-    /* 최대 너비를 1400px로 설정 */
-    height: 300px;
     background-color: #d5e6ff;
     border-radius: 10px;
     margin-bottom: 50px;
-}
-
-.estimate-attachment3-header {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    margin-bottom: -20px;
-}
-
-.estimate-pdfimage {
-    width: 30px;
-    padding-bottom: 5px;
-    padding-left: 5px;
-}
-
-.estimate-attachment-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+    padding: 20px; /* 패딩 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    height: auto; /* height를 auto로 설정하여 내용물에 맞게 늘어나도록 설정 */
 }
 
 .file-list {
@@ -541,19 +566,23 @@ watch(products, (newProducts) => {
     align-items: center;
     background-color: white;
     width: 90%;
-    height: 70px;
+    min-height: 70px; /* 최소 높이 설정 */
     border-radius: 10px;
     padding: 20px;
-    margin-top: -5px;
+    margin-top: 10px; /* 각 파일 간의 간격을 위해 margin-top 추가 */
+    box-sizing: border-box; /* 패딩이 포함되도록 설정 */
+    margin-bottom: 10px; /* 각 파일 간의 간격을 위해 margin-bottom 추가 */
 }
+
 
 .file-icon {
     font-size: 24px;
-    margin-right: 5px;
+    margin-right: 10px; /* 아이콘과 파일명 사이의 간격을 위해 margin-right 추가 */
 }
 
 .file-name {
     font-size: 18px;
+    word-break: break-all; /* 긴 파일명이 있을 경우 줄바꿈을 하도록 설정 */
 }
 
 .file-upload-btn {
@@ -572,6 +601,7 @@ watch(products, (newProducts) => {
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 20px; /* 파일 목록 아래에 간격 추가 */
 }
 
 .estimate-regist-btn-div33 {
@@ -592,7 +622,6 @@ watch(products, (newProducts) => {
     cursor: pointer;
     transition: background-color 0.3s ease;
     font-size: 18px;
-    /* margin-top: 20px; */
     margin-bottom: 50px;
 }
 

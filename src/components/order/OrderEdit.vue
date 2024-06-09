@@ -116,14 +116,12 @@
                     <div v-for="(file, index) in files" :key="index" class="file-list">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.name }}</span>
-                        <button @click="removeFile(index)">삭제</button>
                     </div>
                 </div>
                 <div v-else>
                     <div v-for="(file, index) in orderData.orderFile" :key="file.fileId" class="file-list">
                         <span class="file-icon">📄</span>
                         <span class="file-name">{{ file.originName }}</span>
-                        <button @click="removeExistingFile(file.fileId, index)">삭제</button>
                     </div>
                 </div>
             </div>
