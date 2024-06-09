@@ -10,7 +10,8 @@
                 </select>
             </div>
             <div class="team-filter">
-                <select id="team-select" class="team-select" v-model="selectedTeam" @change="handleTeamChange" :disabled="isEmployeeSearchActive || searchQuery.length > 0">
+                <select id="team-select" class="team-select" v-model="selectedTeam" @change="handleTeamChange"
+                    :disabled="isEmployeeSearchActive || searchQuery.length > 0">
                     <option value="">선택안함</option>
                     <option value="1">영업1팀</option>
                     <option value="2">영업2팀</option>
@@ -19,7 +20,8 @@
                 </select>
             </div>
             <div class="search-box">
-                <input type="text" class="search-input" v-model="searchQuery" placeholder="사원명으로 조회" @input="handleInput">
+                <input type="text" class="search-input" v-model="searchQuery" placeholder="사원명으로 조회"
+                    @input="handleInput">
                 <button class="search-btn" @click="fetchEmployeeData">조회하기</button>
             </div>
         </div>
@@ -45,8 +47,14 @@
                         <td>{{ target.displayMonthOrQuarter }}</td>
                         <td>{{ formatNumber(target.goal) }}</td>
                         <td>{{ formatNumber(getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
-                        <td>{{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter))) }}</td>
-                        <td>{{ getPercentage(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) }}</td>
+                        <td
+                            :class="{ 'positive': getRequiredValue(target.goal, getAchievementValue(target.year, target.displayMonthOrQuarter)) > 0 }">
+                            {{ formatNumber(getRequiredValue(target.goal, getAchievementValue(target.year,
+                                target.displayMonthOrQuarter))) }}
+                        </td>
+
+                        <td>{{ getPercentage(target.goal, getAchievementValue(target.year,
+                            target.displayMonthOrQuarter)) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -453,20 +461,22 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 }
 
 .filter-btn {
-    height: 30px; 
-    padding: 5px 10px; 
+    height: 30px;
+    padding: 5px 10px;
     border: none;
     border-radius: 5px;
-    background-color: #DC3545; 
+    background-color: #4CAF50;
+    /* 버튼 색상을 초록색으로 변경 */
     color: white;
-    font-size: 12px; 
+    font-size: 12px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-left: 10px; /* 버튼과 텍스트 간격 조절 */
+    margin-left: 10px;
+    /* 버튼과 텍스트 간격 조절 */
 }
 
 .filter-btn:hover {
-    background-color: #c82333;
+    background-color: #45a049;
 }
 
 .target-list-box {
@@ -478,7 +488,8 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     box-sizing: border-box;
     background-color: white;
     height: auto;
-    max-width: 1600px; /* 전체 너비를 더 넓게 설정 */
+    max-width: 1600px;
+    /* 전체 너비를 더 넓게 설정 */
     margin: 20px auto;
     margin-bottom: 7%;
     gap: 1px;
@@ -493,11 +504,13 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
 
 .target-table th,
 .target-table td {
-    text-align: center; /* 기본 중앙 정렬 */
+    text-align: center;
+    /* 기본 중앙 정렬 */
     border: 1px solid #ccc;
     padding: 13px;
     font-family: GmarketSansMedium;
-    width: 180px; /* 기본 열 너비를 더 넓게 설정 */
+    width: 180px;
+    /* 기본 열 너비를 더 넓게 설정 */
 }
 
 .target-table th {
@@ -505,31 +518,31 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     color: white;
     font-size: 18px;
     padding: 10px;
-    position: relative; 
+    position: relative;
 }
 
 /* 달성 필요금액 칸 좌측 정렬 */
 .target-table th:nth-child(5) {
-    text-align: left; 
+    text-align: left;
 }
 
 .target-table th:nth-child(5) .filter-btn {
-    position: absolute; 
-    right: 10px; 
-    top: 50%; 
-    transform: translateY(-50%); 
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .target-table th:nth-child(1),
 .target-table th:nth-child(2),
 .target-table td:nth-child(1),
 .target-table td:nth-child(2) {
-    width: 80px; 
+    width: 80px;
 }
 
 .target-table th:nth-child(6),
 .target-table td:nth-child(6) {
-    width: 100px; 
+    width: 100px;
 }
 
 .quarter-row {
@@ -553,6 +566,8 @@ watch([selectedYear, selectedTeam, searchQuery], () => {
     width: 200px;
 }
 
-
-
+/* 달성 필요금액이 양수일 때 빨간색 텍스트 */
+.positive {
+    color: red;
+}
 </style>
