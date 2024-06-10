@@ -5,7 +5,7 @@
             <h3 class="maintext2">{{ salesOppData.salesOppStatus?.salesOppStatus || '' }}</h3>
             <div class="order-btn">
                 <button class="order-request" @click="openStatusPopup">상태변경</button>
-                <button class="order-edit" :disabled="editDisabled" @click="goToEditPage">수정</button>
+                <button class="order-edit" :disabled="deleteRequested" @click="goToEditPage">수정</button>
                 <button class="order-delete" v-if="!deleteRequested" @click="deletesalesOpp">삭제요청</button>
             </div>
             <div class="order-list-box2">
@@ -103,7 +103,7 @@ const deleteReason = ref('');
 const newStatus = ref('');
 const newProcessDetail = ref('');
 const isLoading = ref(true);
-const deleteRequested = ref(false); // 삭제 요청 여부를 나타내는 변수
+const deleteRequested = ref(false); 
 
 const userId = localStorage.getItem('userId');
 if (!userId) {
@@ -114,19 +114,33 @@ if (!userId) {
 const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        // 영업기회 데이터와 참고사항 데이터를 병렬로 가져옵니다.
-        const [salesOppResponse, notesResponse] = await Promise.all([
-            axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`),
-            axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note`)
-        ]);
-        
+        // 영업기회 데이터 가져오기
+        const salesOppResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`);
         salesOppData.value = salesOppResponse.data;
-        salesOppNoteData.value = notesResponse.data.filter(note => note.salesOpp?.salesOppId === salesOppId);
+
+        // 참고사항 데이터 가져오기 및 필터링
+        const notesResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note?salesOppId=${salesOppId}`);
+        salesOppNoteData.value = notesResponse.data;
+
 
         // 삭제 요청 상태 확인
-        const deleteResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/sales_opp/${salesOppId}`);
-        if (deleteResponse.data) {
-            deleteRequested.value = true; 
+        const deleteResponse = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/sales_opp');
+        const deleteData = deleteResponse.data;
+        
+
+        if (deleteData && Array.isArray(deleteData)) {
+            const currentDeleteRequest = deleteData.find(deleteData => {
+                const isMatch = deleteData.salesOpp && deleteData.salesOpp.salesOppId == salesOppId;
+                
+                if (isMatch) {
+                    console.log('Found delete request:', deleteData);
+                }
+                
+                return isMatch;
+            });
+            if (currentDeleteRequest) {
+                deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+            }
         }
 
     } catch (error) {
@@ -216,7 +230,83 @@ const getStatusIdByName = (statusName) => {
     return statusMapping[statusName];
 };
 
+// 참고사항 등록 함수
+const registerProcess = async () => {
+    const salesOppId = route.params.salesOppId;
+    if (!newProcessDetail.value.trim()) {
+        alert('내용을 입력해주세요.');
+        return;
+    }
+
+    try {
+        // 새로운 참고사항 등록 요청
+        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/regist', {
+            salesOppNote: newProcessDetail.value,
+            salesOpp: { salesOppId: salesOppId },
+            employee: { employeeId: userId }
+        });
+
+        // 새로운 참고사항을 로컬에 추가
+        salesOppNoteData.value.push(response.data);
+
+        // 참고사항 입력 초기화
+        newProcessDetail.value = '';
+        alert('참고사항이 성공적으로 등록되었습니다.');
+    } catch (error) {
+        console.error('Error registering process:', error);
+        alert('참고사항 등록 중 오류가 발생했습니다.');
+    }
+};
+
+// 참고사항 필터링된 데이터
+const filteredSalesOppNoteData = computed(() => {
+    const currentSalesOppId = route.params.salesOppId;
+    console.log('반환할 값: ', salesOppNoteData.value.map(note => note.salesOpp?.salesOppId == currentSalesOppId));
+    return salesOppNoteData.value.filter(note => note.salesOpp?.salesOppId == currentSalesOppId);
+});
+const deleteProcess = async (salesOppNoteId) => {
+    try {
+        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/delete/${salesOppNoteId}`);
+        const updatedNote = response.data;
+        const noteIndex = salesOppNoteData.value.findIndex(note => note.salesOppNoteId === salesOppNoteId);
+        alert('참고사항이 삭제되었습니다.');
+        if (noteIndex !== -1) {
+            salesOppNoteData.value.splice(noteIndex, 1); // 참고사항 배열에서 삭제
+        }
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        alert('참고사항 삭제 중 오류가 발생했습니다.');
+    }
+};
+
 </script>
+
+<style>
+/* 스타일 관련 내용 추가 가능 */
+.popup-overlay {
+    /* 배경을 어둡게 하기 위한 스타일 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.confirm-btn, .cancel-btn {
+    margin: 10px;
+}
+</style>
+
 <style>
 @import url('@/assets/css/order/OrderContents.css');
 .popup-overlay77 {
