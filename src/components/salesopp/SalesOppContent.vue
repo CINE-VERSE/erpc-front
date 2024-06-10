@@ -2,11 +2,11 @@
     <div class="order-content">
         <div class="order-search">
             <h1 class="maintext">영업기회 조회 내역</h1>
-            <h3 class="maintext2">{{ salesOppData.salesOppStatus ? salesOppData.salesOppStatus.salesOppStatus : '' }}</h3>
+            <h3 class="maintext2">{{ salesOppData.salesOppStatus?.salesOppStatus || '' }}</h3>
             <div class="order-btn">
                 <button class="order-request" @click="openStatusPopup">상태변경</button>
-                <button class="order-edit"  @click="goToEditPage">수정</button>
-                <button class="order-delete"v-if="showDeleteButton" @click="deletesalesOpp">삭제요청</button>
+                <button class="order-edit" :disabled="editDisabled" @click="goToEditPage">수정</button>
+                <button class="order-delete" v-if="!deleteRequested" @click="deletesalesOpp">삭제요청</button>
             </div>
             <div class="order-list-box2">
                 <table class="order2-table1">
@@ -45,7 +45,7 @@
                     <h1 class="order22-process-text">Process</h1>
                     <div class="order22-process-box-detail" v-for="(note, index) in filteredSalesOppNoteData" :key="index">
                         <div class="order22-process-info" v-if="note.employee">
-                            <h4 class="order22-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank ? note.employee.employeeRank.employeeRank : '' }}</h4>
+                            <h4 class="order22-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank?.employeeRank || '' }}</h4>
                             <p class="order22-process-date">{{ note.salesOppNoteDate }}</p>
                         </div>
                         <div class="order22-process-detail">
@@ -63,7 +63,7 @@
             </div>
         </div>
     </div>
-
+    <!-- 삭제 요청 팝업 -->
     <div v-if="showDeletePopup" class="popup-overlay">
         <div class="popup-content">
             <h2>삭제 요청 사유 입력</h2>
@@ -72,19 +72,18 @@
             <button @click="closeDeletePopup" class="cancel-btn">취소</button>
         </div>
     </div>
-
-    <!-- 상태변경 팝업 창 -->
+    <!-- 상태 변경 팝업 -->
     <div class="popup-overlay77" v-if="showStatusPopup">
-        <div class="popup-content" style="position: fixed; top: 50%; left: 57%; transform: translate(-50%, -50%);">
+        <div class="popup-content">
             <h3>상태변경</h3>
             <select v-model="newStatus" class="styled-select">
-            <option value="등록">등록</option>
-            <option value="진행중">진행중</option>
-            <option value="성사">성사</option>
-            <option value="불발">불발</option>
-        </select>
-            <button @click="confirmStatusChange">확인</button>
-            <button class="close-btn" @click="closeStatusPopup">닫기</button>
+                <option value="등록">등록</option>
+                <option value="진행중">진행중</option>
+                <option value="성사">성사</option>
+                <option value="불발">불발</option>
+            </select>
+            <button @click="confirmStatusChange" class="confirm-btn">확인</button>
+            <button class="cancel-btn" @click="closeStatusPopup">닫기</button>
         </div>
     </div>
 </template>
@@ -103,47 +102,63 @@ const showStatusPopup = ref(false);
 const deleteReason = ref('');
 const newStatus = ref('');
 const newProcessDetail = ref('');
+const isLoading = ref(true);
+const deleteRequested = ref(false); // 삭제 요청 여부를 나타내는 변수
 
-// localStorage에서 userId 가져오기
 const userId = localStorage.getItem('userId');
 if (!userId) {
     console.error('User ID not found in localStorage.');
 }
 
-// 데이터를 가져오는 함수
+// 영업기회 데이터를 가져오는 함수
 const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        // 영업기회 데이터를 가져옵니다.
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`);
-        salesOppData.value = response.data;
-
-        // 각 프로세스에 대해 salesOppNote 데이터를 가져옵니다.
-        const noteResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note`);
-        salesOppNoteData.value = noteResponse.data;
+        // 영업기회 데이터와 참고사항 데이터를 병렬로 가져옵니다.
+        const [salesOppResponse, notesResponse] = await Promise.all([
+            axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`),
+            axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note`)
+        ]);
         
-        console.log('SalesOppData:', salesOppData.value);
-        console.log('SalesOppNoteData:', salesOppNoteData.value);
+        salesOppData.value = salesOppResponse.data;
+        salesOppNoteData.value = notesResponse.data.filter(note => note.salesOpp?.salesOppId === salesOppId);
+
+        // 삭제 요청 상태 확인
+        const deleteResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/sales_opp/${salesOppId}`);
+        if (deleteResponse.data) {
+            deleteRequested.value = true; 
+        }
+
     } catch (error) {
         console.error('Error fetching salesOpp data:', error);
+    } finally {
+        isLoading.value = false; // 로딩 상태 해제
     }
 };
 
 // 페이지 로드 시 데이터 가져오기
 fetchData();
 
+// 수정 페이지로 이동하는 함수
 const goToEditPage = () => {
-    router.push({ path: `/salesopp/modify/${route.params.salesOppId}` });
+    if (!deleteRequested.value) {
+        router.push({ path: `/salesopp/modify/${route.params.salesOppId}` });
+    }
 };
 
+// 삭제 요청 팝업 열기
 const deletesalesOpp = () => {
-    showDeletePopup.value = true;
+    if (!deleteRequested.value) { // 이미 삭제 요청이 보내졌는지 확인
+        showDeletePopup.value = true;
+    }
 };
 
+// 삭제 요청 팝업 닫기
 const closeDeletePopup = () => {
-    showDeletePopup.value = false; // 삭제 팝업 닫기
+    showDeletePopup.value = false;
 };
 
+// 삭제 요청을 확인하는 함수
 const confirmDelete = async () => {
     const salesOppId = route.params.salesOppId;
     try {
@@ -151,35 +166,36 @@ const confirmDelete = async () => {
             salesOppDeleteRequestReason: deleteReason.value,
             salesOpp: salesOppData.value
         });
-        console.log('salesOpp delete request sent successfully:', response.data);
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/salesOpp/list'); // 삭제 요청 후 이동
+        router.push('/salesOpp/list'); 
+        deleteRequested.value = true; 
     } catch (error) {
         console.error('Error sending delete request:', error);
         alert('삭제 요청 중 오류가 발생했습니다.');
     } finally {
-        closeDeletePopup(); // 팝업 닫기
+        closeDeletePopup();
     }
 };
 
+// 상태 변경 팝업 열기
 const openStatusPopup = () => {
     showStatusPopup.value = true;
 };
 
+// 상태 변경 팝업 닫기
 const closeStatusPopup = () => {
     showStatusPopup.value = false;
 };
 
+// 상태 변경 확인
 const confirmStatusChange = async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        // 변경할 상태의 ID를 사용하여 요청을 보냅니다
         const statusId = getStatusIdByName(newStatus.value);
         const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/status/${salesOppId}`, {
             salesOppStatus: { salesOppStatusId: statusId }
         });
-        salesOppData.value.salesOppStatus.salesOppStatus = newStatus.value; // 상태 업데이트
-        console.log('salesOpp status change request sent successfully:', response.data);
+        salesOppData.value.salesOppStatus.salesOppStatus = newStatus.value;
         alert('상태가 성공적으로 변경되었습니다.');
     } catch (error) {
         console.error('Error changing salesOpp status:', error);
@@ -189,7 +205,7 @@ const confirmStatusChange = async () => {
     }
 };
 
-// 상태 이름으로 상태 ID를 조회하는 함수 (예: 서버에서 가져온 상태 목록을 사용)
+// 상태 이름으로 상태 ID를 조회하는 함수
 const getStatusIdByName = (statusName) => {
     const statusMapping = {
         '등록': 1,
@@ -200,67 +216,7 @@ const getStatusIdByName = (statusName) => {
     return statusMapping[statusName];
 };
 
-const registerProcess = async () => {
-    const salesOppId = route.params.salesOppId;
-    
-    // salesOpp 객체에 salesOppId를 넣어줍니다.
-    const salesOpp = {
-        salesOppId: salesOppId
-    };
-
-    // employee 객체에 localStorage에서 가져온 userId를 employeeId로 설정합니다.
-    const employee = {
-        employeeId: userId
-    };
-
-    try {
-        // 서버로 보낼 프로세스 데이터를 구성합니다.
-        const newProcess = {
-            salesOppNote: newProcessDetail.value,
-            salesOpp: salesOpp, // salesOpp 객체를 추가합니다.
-            employee: employee,
-            // 필요한 다른 데이터들
-        };
-
-        // 서버에 프로세스 등록 요청을 보냅니다.
-        const response = await axios.post(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/regist`, newProcess);
-
-        // 등록된 프로세스 데이터를 처리합니다.
-        salesOppNoteData.value.push(response.data);
-        newProcessDetail.value = '';
-        
-        // 등록 완료 후 알림 창 표시
-        alert('참고사항이 등록되었습니다.');
-
-          location.reload();
-
-    } catch (error) {
-        console.error('Process 등록 중 오류 발생:', error);
-        alert('Process 등록에 실패했습니다.');
-    }
-};
-
-// Delete process
-const deleteProcess = async (salesOppNoteId) => {
-    try {
-        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/delete/${salesOppNoteId}`);
-        salesOppNoteData.value = salesOppNoteData.value.filter(note => note.salesOppNoteId !== salesOppNoteId);
-        alert('삭제됨.');
-    } catch (error) {
-        console.error('Error deleting process:', error);
-    }
-};
-
-const filteredSalesOppNoteData = computed(() => {
-    if (!salesOppData.value || !salesOppData.value.salesOppId || !salesOppNoteData.value) {
-        return [];
-    }
-
-    const salesOppId = salesOppData.value.salesOppId;
-    return salesOppNoteData.value.filter(note => note.salesOpp && note.salesOpp.salesOppId === salesOppId);
-});
 </script>
-
 <style>
 @import url('@/assets/css/order/OrderContents.css');
 .popup-overlay77 {
@@ -307,5 +263,20 @@ const filteredSalesOppNoteData = computed(() => {
     background-position-x: 95%;
     background-position-y: 50%;
     cursor: pointer;
+}
+.confirm-btn {
+    background-color: #4CAF50; /* Green */
+}
+
+.confirm-btn:hover {
+    background-color: #45a049;
+}
+
+.close-btn {
+    background-color: #f44336; /* Red */
+}
+
+.close-btn:hover {
+    background-color: #da190b;
 }
 </style>

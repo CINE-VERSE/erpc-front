@@ -20,7 +20,7 @@
                         <td><input v-model="newOpp.oppAccountPic"></td>
                         <td><input v-model="newOpp.oppAccountLocation"></td>
                         <td><input v-model="newOpp.oppAccountContact" @input="validateContact" placeholder="02-123-1234 or 010-1234-1234"></td>
-                        <td><input v-model="newOpp.oppAccountEmail" placeholder="example@erpc.com"></td>
+                        <td><input v-model="newOpp.oppAccountEmail"  placeholder="example@erpc.com"></td>
                     </tr>
                 </tbody>
             </table>
@@ -62,12 +62,10 @@ const newOpp = ref({
     },
 });
 
-const validateContact = (event) => {
-    const value = event.target.value;
-    // 숫자 이외의 문자를 제거
-    newOpp.value.oppAccountContact = value.replace(/\D/g, '');
-};
-
+const validateContact = () => {
+    const phonePattern = /^[0-9]{2,3}-\d{3,4}-\d{4}$/;
+    validPhoneNumber.value = phonePattern.test(accountContact.value);
+}
 const validateEmailFormat = (email) => {
     // 이메일에 '@'가 있는지 확인
     return email.includes('@');
