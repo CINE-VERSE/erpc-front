@@ -115,10 +115,10 @@ const login = async () => {
 };
 
 const logout = () => {
-    localStorage.removeItem('token'); // 토큰 삭제
-    localStorage.removeItem('userId'); // 사용자 ID 삭제
-    employeeName.value = ''; // 로그인한 사용자 이름 초기화
-    location.reload(); // 페이지 새로고침하여 상태 초기화
+    localStorage.removeItem('token'); 
+    localStorage.removeItem('userId'); 
+    employeeName.value = ''; 
+    location.reload(); 
 };
 
 const changePassword = () => {

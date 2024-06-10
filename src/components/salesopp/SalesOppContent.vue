@@ -5,8 +5,8 @@
             <h3 class="maintext2">{{ salesOppData.salesOppStatus ? salesOppData.salesOppStatus.salesOppStatus : '' }}</h3>
             <div class="order-btn">
                 <button class="order-request" @click="openStatusPopup">상태변경</button>
-                <button class="order-edit" v-if="showDeleteButton" @click="goToEditPage">수정</button>
-                <button class="order-delete" @click="deletesalesOpp">삭제요청</button>
+                <button class="order-edit"  @click="goToEditPage">수정</button>
+                <button class="order-delete"v-if="showDeleteButton" @click="deletesalesOpp">삭제요청</button>
             </div>
             <div class="order-list-box2">
                 <table class="order2-table1">
