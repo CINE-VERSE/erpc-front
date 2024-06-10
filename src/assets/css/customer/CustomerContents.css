@@ -23,6 +23,7 @@
 }
 
 .customer-code-box {
+    display: flex;
     flex-grow: 1;
     padding: 10px;
     background-color: #BEE7FF;
@@ -34,7 +35,8 @@
     font-family: GmarketSansMedium;
     font-size: 17px;
     user-select: text;
-    cursor: pointer;
+    /* cursor: pointer; */
+    justify-content: center;
 }
 
 .customer-box {
@@ -233,7 +235,7 @@
 
 .customer-process-writer {
     margin: 0;
-    margin-left: 30px;
+    margin-left: 33px;
     margin-bottom: -13px;
 }
 
@@ -249,9 +251,9 @@
     outline: none;
     color: black;
     font-weight: bold;
-    width: 94%;
+    width: 91%;
     height: auto;
-    margin-right: 5px;
+    margin-right: 8px;
     margin-top: -10px;
     font-weight: normal;
 }
@@ -267,7 +269,7 @@
     font-size: 12px;
     font-weight: normal;
     color: black;
-    margin-right: 34px;
+    margin-right: 37px;
 }
 
 .customer-process-btn,
@@ -293,6 +295,10 @@
 .customer-process-regist {
     margin-top: 5px;
     margin-left: 5px;
+}
+
+.customer-process-delete {
+    margin-right: 6px;
 }
 
 .customer-process-reply {

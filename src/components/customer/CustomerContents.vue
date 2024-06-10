@@ -10,7 +10,7 @@
         <div class="customer-box">
             <div class="customer-code">
                 <div class="customer-code-text">거래처 코드</div>
-                <button class="customer-code-box">{{ accountData.accountCode }}</button>
+                <div class="customer-code-box">{{ accountData.accountCode }}</div>
             </div>
         </div>
         <div class="customer-content2">
@@ -99,9 +99,9 @@
                     <h4 class="customer-process-writer">{{ employeeName }}</h4>
                     <p class="customer-process-date">{{ note.accountNoteDate }}</p>
                 </div>
-                <button class="customer-process-detail">
+                <div class="customer-process-detail">
                     {{ note.accountNote }}
-                </button>
+                </div>
                 <div class="customer-process-btn">
                     <button class="customer-process-delete" @click="deleteNote(note.accountNoteId)">삭제하기</button>
                 </div>

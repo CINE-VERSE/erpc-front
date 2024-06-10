@@ -204,9 +204,9 @@
                     <h4 class="order22-process-writer">{{ employeeName }}</h4>
                     <p class="order22-process-date">{{ note.orderNoteDate }}</p>
                 </div>
-                <button class="order22-process-detail">
+                <div class="order22-process-detail">
                     {{ note.orderNote }}
-                </button>
+                </div>
                 <div class="order22-process-btn">
                     <button class="order22-process-delete" @click="deleteNote(note.orderNoteId)">삭제하기</button>
                 </div>

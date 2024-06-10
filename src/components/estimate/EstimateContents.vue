@@ -117,9 +117,9 @@
                     <h4 class="estimate-process-writer">{{ employeeName }}</h4>
                     <p class="estimate-process-date">{{ note.quotationNoteDate }}</p>
                 </div>
-                <button class="estimate-process-detail">
+                <div class="estimate-process-detail">
                     {{ note.quotationNote }}
-                </button>
+                </div>
                 <div class="estimate-process-btn">
                     <button class="estimate-process-delete" @click="deleteNote(note.quotationNoteId)">삭제하기</button>
                 </div>
