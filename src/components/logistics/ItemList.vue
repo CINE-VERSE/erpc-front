@@ -1,9 +1,9 @@
 <template>
-  <div class="contract-content">
+  <div class="contract-content123">
     <div class="contract-list">
       <h1>품목 목록</h1>
     </div>
-    <div class="contract-list-box7">
+    <div class="contract-list-box123">
       <div class="search-bar">
         <!-- 검색 카테고리 선택 추가 -->
         <select v-model="searchCategory">
@@ -15,7 +15,7 @@
         <input type="text" v-model="searchKeyword" placeholder="검색어를 입력하세요">
         <button @click="search">검색</button>
       </div>
-      <table class="contract-table7">
+      <table class="contract-table123">
         <thead>
           <tr class="header1">
             <th>번호</th>
@@ -125,7 +125,7 @@ export default {
 </script>
 
 <style>
-.contract-list-content {
+.contract-content123 {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -213,48 +213,64 @@ export default {
     outline: none;
 }
 
-.contract-list-box7 {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 15px;
-    border-radius: 10px;
-    box-sizing: border-box;
-    background-color: white;
-    height: auto;
-    max-width: 1000px;
-    margin: 20px auto;
-    gap: 1px;
-    overflow-x: auto;
+.contract-list-box123 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background-color: white;
+  max-width: 1400px;
+  overflow-x: auto;
 }
 
-.contract-table7 {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 10px 0;
-    font-size: 12px;
+.contract-table123 {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 12px;
+  table-layout: fixed; /* 추가 */
 }
 
-.contract-table7 th,
-.contract-table7 td {
-    text-align: center;
-    border: 1px solid #ccc;
-    padding: 6px;
-    font-family: GmarketSansMedium;
+.contract-table123 th,
+.contract-table123 td {
+  text-align: center;
+  border: 1px solid #ccc;
+  padding: 6px;
+  font-family: GmarketSansMedium;
+  width: 11%; /* 추가 */
 }
 
-.contract-table7 th {
+.contract-table123 th:nth-child(1),
+.contract-table123 td:nth-child(1) {
+  width: 5%; /* 번호 열 너비 */
+}
+
+.contract-table123 th:nth-child(4),
+.contract-table123 td:nth-child(4) {
+  width: 14%; /* 상품 코드 열 너비 */
+}
+
+.contract-table123 th:nth-child(5),
+.contract-table123 td:nth-child(5) {
+  width: 20%; /* 상품 이름 열 너비 */
+}
+
+
+.contract-table123 th {
     background-color: #0C2092;
     color: white;
     font-size: 14px;
     padding: 8px;
 }
 
-.contract-table7 tr:hover {
+.contract-table123 tr:hover {
     background-color: #d5e6ff;
     cursor: pointer;
 }
+
 
 .search-bar {
   display: flex;

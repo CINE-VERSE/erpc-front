@@ -5,7 +5,7 @@
         </div>
         <div class="info">
             <div class="middle1">
-                <span>© 2022 Brand, Inc.</span>
+                <span>© 2024 Brand, Inc.</span>
             </div>
             <div class="middle2">
                 <span>개인정보처리방침</span>

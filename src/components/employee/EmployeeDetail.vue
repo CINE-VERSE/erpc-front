@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>사원 상세 정보</h1>
-    <p>사원 코드: {{ employee.employeeCode }}</p>
+    <p>사번: {{ employee.employeeCode }}</p>
     <p>이름: {{ employee.employeeName }}</p>
     <p>이메일: {{ employee.employeeEmail }}</p>
     <p>전화번호: {{ employee.employeeHp }}</p>

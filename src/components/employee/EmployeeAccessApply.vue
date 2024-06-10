@@ -7,7 +7,7 @@
       <form @submit.prevent="submitAddAccess">
         <div class="form-group">
           <label for="employeeCode">사원 코드:</label>
-          <input v-model="addAccess.employee.employeeCode" id="employeeCode" placeholder="사원 코드를 입력하세요" required>
+          <input v-model="addAccess.employee.employeeCode" id="employeeCode" placeholder="사원 코드를 입력하세요" @input="updateEmployeeCode" required>
         </div>
         <div class="form-group">
           <button @click="getEmployeesAccess" type="button">조회</button>
@@ -34,7 +34,7 @@
             <th>부서</th>
             <th>직급</th>
             <th>권한</th>
-            <th>삭제</th> <!-- 삭제 버튼 열 추가 -->
+            <th>처리</th> <!-- 삭제 버튼 열 추가 -->
           </tr>
         </thead>
         <tbody>
@@ -45,7 +45,7 @@
             <td>{{ request.employee.employeeRank.employeeRank }}</td>
             <td>{{ request.accessRight.accessRight }}</td>
             <td>
-              <button @click="deleteRequest(request.accessRequestId)">처리완료</button> 
+              <button @click="deleteRequest(request.accessRequestId)">삭제</button> 
             </td>
           </tr>
         </tbody>
@@ -111,7 +111,7 @@ const getEmployeesAccess = async () => {
   try {
     const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${addAccess.value.employee.employeeCode}`);
     employeeAccess.value = response.data;
-    aggregateAllAccessRights(response.data);
+    // aggregateAllAccessRights(response.data);
     employeeCheckedAccessRights.value = employeeAccess.value.map(access => access.accessRight.accessId);
 
     // 현재 보유한 권한을 선택된 권한으로 설정
@@ -177,6 +177,17 @@ function changePage(page) {
     currentPage.value = page;
   }
 }
+
+
+const updateEmployeeCode = (event) => {
+
+addAccess.value.employee.employeeCode = event.target.value.toUpperCase();
+
+employeeCode.value = addAccess.value.employee.employeeCode;
+
+};
+
+
 
 // 페이지 로드 시 모든 권한 신청 조회
 onMounted(() => {
