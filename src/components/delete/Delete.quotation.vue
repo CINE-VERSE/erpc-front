@@ -6,7 +6,7 @@
             <div class="estimate-approval-note1" >
                 <h3 class="estimate-approval-note2">삭제 사유</h3>
                 <div class="estimate-approval-note3">{{ deleteQuotationData.quotationDeleteRequestReason }}</div>
-                <button @click="processContractDeleteRequest(deleteQuotationData.quotationDeleteRequestId)">견적서 삭제</button>
+                <button @click="processContractDeleteRequest(deleteQuotationData.quotationDeleteRequestId)"class="delete-button">견적서 삭제</button>
             </div>
 
             <div class="estimate-approval-attachment">

@@ -2,11 +2,10 @@
     <div class="delete-content7" v-if="deleteOrderData">
         <div class="order-search">
             <h1 class="maintext">수주 삭제 내역</h1>
-            <button @click="processContractDeleteRequest(deleteOrderData.orderDeleteRequestId)">견적서 삭제</button>
-
             <div class="estimate-approval-note1" >
                 <h3 class="estimate-approval-note2">삭제 사유</h3>
                 <div class="estimate-approval-note3">{{ deleteOrderData.orderDeleteRequestReason }}</div>
+                <button @click="processContractDeleteRequest(deleteOrderData.orderDeleteRequestId)"class="delete-button">수주 삭제</button>
             </div>
 
 

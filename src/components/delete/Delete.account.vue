@@ -1,17 +1,15 @@
 <template>
-    <div class="delete-content">
-        <div v-if="!deleteAccountData">로딩 중...</div>
-        <div v-else>
-            <div class="delete-content7">
+    <div class="delete-content7" v-if="deleteAccountData">
+        <div class="order-search">
                 <h1 class="maintext">거래처 삭제 내역</h1>
-                <button @click="processContractDeleteRequest(deleteAccountData.accountDeleteRequestId)">거래처 삭제</button>
-                <div class="delete-approval-note">
+                <div class="estimate-approval-note1" >
                     <h3 class="delete-approval-note2">삭제 사유</h3>
                     <div class="delete-approval-note3">{{ deleteAccountData.accountDeleteRequestReason }}</div>
+                    <button @click="processContractDeleteRequest(deleteAccountData.accountDeleteRequestId)"class="delete-button">거래처 삭제</button>
                 </div>
             </div>
-            <div class="delete-list-box">
-                <table class="delete-table1">
+            <div class="estimate-list-box">
+                <table class="estimate2-table1">
                     <thead>
                         <tr>
                             <th>거래처 코드</th>
@@ -29,7 +27,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <table class="delete-table2">
+                <table class="estimate2-table2">
                     <thead>
                         <tr>
                             <th>기업 상태</th>
@@ -45,7 +43,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <table class="delete-table3">
+                <table class="estimate2-table3">
                     <thead>
                         <tr>
                             <th>업종</th>
@@ -61,7 +59,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <table class="delete-table4">
+                <table class="estimate2-table4">
                     <thead>
                         <tr>
                             <th>비고</th>
@@ -74,20 +72,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="delete-process-box">
-                <h1 class="delete-process-text">Process</h1>
-                <div v-for="note in deleteAccountData.account.accountNotes" :key="note.accountNoteId" class="delete-process-box-detail">
-                    <div class="delete-process-info">
-                        <h4 class="delete-process-writer">{{ note.employee.employeeName }}</h4>
-                        <p class="delete-process-date">{{ note.accountNoteDate }}</p>
-                    </div>
-                    <div class="delete-process-detail">
-                        {{ note.accountNote }}
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
 </template>
 
 <script setup>

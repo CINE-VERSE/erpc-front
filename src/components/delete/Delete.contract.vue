@@ -5,7 +5,7 @@
         <div class="estimate-approval-note1" >
                 <h3 class="estimate-approval-note2">삭제 사유</h3>
                 <div class="estimate-approval-note3">{{ deleteRequestData.contractDeleteRequestReason }}</div>
-        <button @click="processContractDeleteRequest(deleteRequestData.contractDeleteRequestId)">계약서 삭제</button>
+        <button @click="processContractDeleteRequest(deleteRequestData.contractDeleteRequestId)"class="delete-button">계약서 삭제</button>
 </div>
 </div>
         <div class="estimate-list-box">
