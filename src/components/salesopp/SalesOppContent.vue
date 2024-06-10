@@ -181,7 +181,6 @@ const confirmDelete = async () => {
             salesOpp: salesOppData.value
         });
         alert('삭제 요청이 성공적으로 완료되었습니다.');
-        router.push('/salesOpp/list'); 
         deleteRequested.value = true; 
     } catch (error) {
         console.error('Error sending delete request:', error);
@@ -252,6 +251,7 @@ const registerProcess = async () => {
         // 참고사항 입력 초기화
         newProcessDetail.value = '';
         alert('참고사항이 성공적으로 등록되었습니다.');
+        fetchData();
     } catch (error) {
         console.error('Error registering process:', error);
         alert('참고사항 등록 중 오류가 발생했습니다.');
