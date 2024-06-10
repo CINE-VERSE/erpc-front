@@ -110,7 +110,7 @@ const login = async () => {
         }
     } catch (error) {
         console.error('로그인 오류:', error);
-        alert('로그인 실패: 서버 오류');
+        alert('로그인 실패: 사원번호나 비밀번호가 일치하지 않습니다');
     }
 };
 
