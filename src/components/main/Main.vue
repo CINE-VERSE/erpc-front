@@ -20,12 +20,25 @@
                 <div v-else class="login-container">
                     <h1>ERPC</h1>
                     <label for="employee-id">사번</label>
-                    <input type="text" v-model="employeeCode" id="employee-id" name="employee-id" oninput="this.value = this.value.toUpperCase()">
+                    <input 
+                        type="text" 
+                        v-model="employeeCode" 
+                        id="employee-id" 
+                        name="employee-id" 
+                        oninput="this.value = this.value.toUpperCase()"
+                        @keydown.enter.prevent="login"
+                    >
                     <label for="password">비밀 번호</label>
-                    <input type="password" v-model="employeePassword" id="password" name="password">
+                    <input 
+                        type="password" 
+                        v-model="employeePassword" 
+                        id="password" 
+                        name="password" 
+                        @keydown.enter.prevent="login"
+                    >
                     <div class="login-container2">
-                    <button @click="login">로그인</button>
-                    <button class="password-btn" @click="changePassword">비밀번호 찾기</button>
+                        <button @click="login">로그인</button>
+                        <button class="password-btn" @click="changePassword">비밀번호 찾기</button>
                     </div>
                 </div>
             </div>

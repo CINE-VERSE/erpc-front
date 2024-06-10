@@ -7,15 +7,22 @@
       <form @submit.prevent="submitAddAccess">
         <div class="form-group">
           <label for="employeeCode">사원 코드:</label>
-          <input v-model="addAccess.employee.employeeCode" id="employeeCode" placeholder="사원 코드를 입력하세요" @input="updateEmployeeCode" required>
+          <input 
+            v-model="addAccess.employee.employeeCode" 
+            id="employeeCode" 
+            placeholder="사원 코드를 입력하세요" 
+            @input="updateEmployeeCode"
+            @keydown.enter.prevent="handleEnterKey"
+            required>
         </div>
         <div class="form-group">
           <button @click="getEmployeesAccess" type="button">조회</button>
         </div>
-        <div v-if="employeeAccess.length" class="form-group access-rights">
+        <div class="form-group access-rights">
           <label for="accessRights">권한 목록:</label>
           <div v-for="(name, id) in accessRightsMap" :key="id" class="access-checkbox">
-            <input type="checkbox" :value="id" v-model="selectedAccessRights" :checked="employeeCheckedAccessRights.includes(id)">
+            <!-- 사원의 현재 권한을 확인하여 체크박스를 체크 상태로 설정 -->
+            <input type="checkbox" :value="id" v-model="selectedAccessRights">
             {{ name }}
           </div>
         </div>
@@ -109,9 +116,10 @@ const accessRightsMap = {
 // 사원의 보유 권한 조회 함수
 const getEmployeesAccess = async () => {
   try {
+    console.log('getEmployeesAccess 호출됨'); // 디버깅용 로그
     const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${addAccess.value.employee.employeeCode}`);
     employeeAccess.value = response.data;
-    // aggregateAllAccessRights(response.data);
+    // 현재 사원이 보유한 권한 ID를 배열로 저장
     employeeCheckedAccessRights.value = employeeAccess.value.map(access => access.accessRight.accessId);
 
     // 현재 보유한 권한을 선택된 권한으로 설정
@@ -119,6 +127,11 @@ const getEmployeesAccess = async () => {
   } catch (error) {
     console.error('보유 권한 조회 중 에러 발생:', error);
   }
+};
+
+// 엔터 키 이벤트 핸들러 함수
+const handleEnterKey = () => {
+  getEmployeesAccess(); // 조회 기능 호출
 };
 
 // 추가 권한 등록 함수
@@ -178,22 +191,15 @@ function changePage(page) {
   }
 }
 
-
+// 사원 코드 업데이트 함수
 const updateEmployeeCode = (event) => {
-
-addAccess.value.employee.employeeCode = event.target.value.toUpperCase();
-
-employeeCode.value = addAccess.value.employee.employeeCode;
-
+  addAccess.value.employee.employeeCode = event.target.value.toUpperCase();
+  employeeCode.value = addAccess.value.employee.employeeCode;
 };
 
-
-
-// 페이지 로드 시 모든 권한 신청 조회
 onMounted(() => {
   getAllAccessRequests();
 });
-
 </script>
 
 <style>
