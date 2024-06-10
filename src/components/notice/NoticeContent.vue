@@ -147,7 +147,7 @@ button {
 }
 
 .boardtitle {
-    font-size: 100%;
+    font-size: 130%;
     margin-top: 18px;  
     margin-left: 10px;
 }
@@ -171,14 +171,18 @@ button {
 }
 
 .writerdiv {
-    width: 18%;
+    width:  18%;
+    font-size: 13px;
     margin-top: 13px;
+}
+.writer {
+    font-size: 16px; /* 변경된 글자 크기 */
 }
 
 .datediv {
-    width:18%;
+    width:  18%;
     float:right;
-    font-size: 10px;
+    font-size: 13px;
     margin-top: 13px;
     margin-left: 30px;
 }

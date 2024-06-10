@@ -41,23 +41,23 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="order-process-box">
-                    <h1 class="order-process-text">Process</h1>
-                    <div class="order-process-box-detail" v-for="(note, index) in filteredSalesOppNoteData" :key="index">
-                        <div class="order-process-info" v-if="note.employee">
-                            <h4 class="order-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank ? note.employee.employeeRank.employeeRank : '' }}</h4>
-                            <p class="order-process-date">{{ note.salesOppNoteDate }}</p>
+                <div class="order22-process-box">
+                    <h1 class="order22-process-text">Process</h1>
+                    <div class="order22-process-box-detail" v-for="(note, index) in filteredSalesOppNoteData" :key="index">
+                        <div class="order22-process-info" v-if="note.employee">
+                            <h4 class="order22-process-writer">{{ note.employee.employeeName }} {{ note.employee.employeeRank ? note.employee.employeeRank.employeeRank : '' }}</h4>
+                            <p class="order22-process-date">{{ note.salesOppNoteDate }}</p>
                         </div>
-                        <div class="order-process-detail">
+                        <div class="order22-process-detail">
                             {{ note.salesOppNote }}
                         </div>
-                        <div class="order-process-btn">
-                            <button class="order-process-delete" @click="deleteProcess(note.salesOppNoteId)">삭제</button>
+                        <div class="order22-process-btn">
+                            <button class="order22-process-delete" @click="deleteProcess(note.salesOppNoteId)">삭제</button>
                         </div>
                     </div>
-                    <div class="order-process-reply">
-                        <input type="text" v-model="newProcessDetail" class="order-process-reply-box" placeholder="내용을 입력해주세요.">
-                        <button class="order-process-regist" @click="registerProcess">등록하기</button>
+                    <div class="order22-process-reply">
+                        <input type="text" v-model="newProcessDetail" class="order22-process-reply-box" placeholder="내용을 입력해주세요.">
+                        <button class="order22-process-regist" @click="registerProcess">등록하기</button>
                     </div>
                 </div>
             </div>
