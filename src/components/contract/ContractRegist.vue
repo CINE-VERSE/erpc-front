@@ -19,7 +19,7 @@
                         <td class="estimate-test333">
                             <div class="quotation-number-div33">
                                 <input type="text" v-model="quotationCode" class="quotation-number-box33" @input="quotationCode = quotationCode.replace(/\s/g, '')">
-                                <button @click="fetchQuotationData" class="quotation-number-btn33">조회</button>
+                                <button @click="fetchQuotationData" class="quotation-number-btn33">확인</button>
                             </div>
                         </td>
                         <td>{{ employee.employeeName }}</td>

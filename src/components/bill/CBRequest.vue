@@ -18,7 +18,7 @@
                         <td class="order-test333">
                             <div class="order-number-div33">
                                 <input v-model="projectCode" type="text" id="order-number-box33" class="order-number-box33" @input="projectCode = projectCode.replace(/\s/g, '')">
-                                <button @click="fetchOrderData" class="order-number-btn33">조회</button>
+                                <button @click="fetchOrderData" class="order-number-btn33">확인</button>
                             </div>
                         </td>
                         <td>{{ orderData.account.accountCode }}</td>
