@@ -2,7 +2,6 @@
     <div class="order-content11" v-if="orderData">
         <div class="order-search11">
             <h1>수주 정보 조회 내역</h1>
-            <h3 class="maintext2">결재 승인</h3>
             <div class="order-btn">
                 <div class="order-btn2" v-if="!['결재요청', '승인', '반려'].includes(approvalStatus)">
                     <button class="order-request" @click="requestApproval" :disabled="deleteRequested">결재요청</button>

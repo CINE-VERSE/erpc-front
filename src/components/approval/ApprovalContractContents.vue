@@ -33,7 +33,6 @@
                         <th>계약서 코드</th>
                         <th>계약 금액</th>
                         <th>작성 일자</th>
-                        <th>삭제 일자</th>
                         <th>마감 일자</th>
                     </tr>
                 </thead>
@@ -42,7 +41,6 @@
                         <td>{{ approveContractData.contract.contractCode }}</td>
                         <td>{{ approveContractData.contract.contractTotalPrice.toLocaleString() }}</td>
                         <td>{{ approveContractData.contract.contractDate }}</td>
-                        <td>{{ approveContractData.contract.contractDeleteDate }}</td>
                         <td>{{ approveContractData.contract.contractDueDate }}</td>
                     </tr>
                 </tbody>

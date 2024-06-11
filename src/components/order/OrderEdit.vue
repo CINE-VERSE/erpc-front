@@ -20,7 +20,7 @@
                         <td>{{ orderData.employee.employeeName }}</td>
                         <td>{{ orderData.account.accountCode }}</td>
                         <td>{{ orderData.account.accountName }}</td>
-                        <td>{{ orderData.orderTotalPrice }}</td>
+                        <td>{{ orderData.orderTotalPrice.toLocaleString() }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -40,8 +40,8 @@
                         <td>{{ product.product.productCode }}</td>
                         <td>{{ product.product.productName }}</td>
                         <td>{{ product.orderProductCount }}</td>
-                        <td>{{ product.product.productPrice }}</td>
-                        <td>{{ product.orderSupplyPrice }}</td>
+                        <td>{{ product.product.productPrice.toLocaleString() }}</td>
+                        <td>{{ product.orderSupplyPrice.toLocaleString() }}</td>
                         <td>{{ product.orderProductionNote }}</td>
                     </tr>
                 </tbody>

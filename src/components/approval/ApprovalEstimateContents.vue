@@ -33,7 +33,6 @@
                         <th>견적서 코드</th>
                         <th>견적 금액</th>
                         <th>작성 일자</th>
-                        <th>삭제 일자</th>
                         <th>마감 일자</th>
                     </tr>
                 </thead>
@@ -42,7 +41,6 @@
                         <td>{{ approveQuotationData.quotation.quotationCode }}</td>
                         <td>{{ approveQuotationData.quotation.quotationTotalCost.toLocaleString() }}</td>
                         <td>{{ approveQuotationData.quotation.quotationDate }}</td>
-                        <td>{{ approveQuotationData.quotation.quotationDeleteDate }}</td>
                         <td>{{ approveQuotationData.quotation.quotationDueDate }}</td>
                     </tr>
                 </tbody>
