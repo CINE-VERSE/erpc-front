@@ -247,3 +247,96 @@
     width: 300px;
     margin-bottom: 25px;
 }
+
+.order2-table1,
+.order2-table2,
+.order2-table3,
+.order2-table4,
+.order2-table5,
+.order2-table6,
+.order3-table8,
+.order2-table7,
+.shipment-table333,
+.shipment-table2 {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+.order2-table1 th,
+.order2-table1 td,
+.order2-table2 th,
+.order2-table2 td,
+.order2-table3 th,
+.order2-table3 td,
+.order2-table4 th,
+.order2-table4 td,
+.order2-table5 th,
+.order2-table5 td,
+.order2-table6 th,
+.order2-table6 td,
+.order3-table8 th,
+.order3-table8 td,
+.order2-table7 th,
+.order2-table7 td,
+.shipment-table333 th,
+.shipment-table333 td,
+.shipment-table2 th,
+.shipment-table2 td {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-family: GmarketSansMedium;
+}
+
+.order2-table1 th,
+.order2-table2 th,
+.order2-table3 th,
+.order2-table4 th,
+.order2-table5 th,
+.order2-table6 th,
+.order3-table8 th,
+.order2-table7 th,
+.shipment-table333 th,
+.shipment-table2 th {
+    background-color: whitesmoke;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    height: 60px;
+}
+
+.order2-table1 td,
+.order2-table2 td,
+.order2-table3 td,
+.order2-table4 td,
+.order2-table5 td,
+.order2-table6 td,
+.order3-table8 td,
+.order2-table7 td,
+.shipment-table333 td,
+.shipment-table2 td {
+    height: 40px;
+}
+
+/* order3-table8 테이블의 각 열에 대해 너비를 설정 */
+.order3-table8 th:nth-child(1),
+.order3-table8 td:nth-child(1) {
+    width: 300px; /* 첫 번째 열 너비 */
+}
+
+.order3-table8 th:nth-child(2),
+.order3-table8 td:nth-child(2) {
+    width: 300px; /* 두 번째 열 너비 */
+}
+
+.order3-table8 th:nth-child(3),
+.order3-table8 td:nth-child(3) {
+    width: 300px; /* 세 번째 열 너비 */
+}
+
+.order3-table8 th:nth-child(4),
+.order3-table8 td:nth-child(4) {
+    width: 300px; /* 네 번째 열 너비 */
+}

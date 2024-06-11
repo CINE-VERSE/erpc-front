@@ -107,6 +107,42 @@
                     </tr>
                 </tbody>
             </table>
+            <div v-if="approveShipmentData.order.contractCategory.contractCategoryId === 1">
+                <table class="order2-table5">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>수주 금액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>일시납부</td>
+                            <td>{{ approveShipmentData.order.orderTotalPrice.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else>
+                <table class="order3-table8">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>계약금</th>
+                            <th>중도금(선금)</th>
+                            <th>잔금</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>분할납부</td>
+                            <td>{{ approveShipmentData.order.downPayment.toLocaleString() }}</td>
+                            <td>{{ approveShipmentData.order.progressPayment.toLocaleString() }}</td>
+                            <td>{{ approveShipmentData.order.balance.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Approval Popup -->

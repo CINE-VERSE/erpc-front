@@ -107,6 +107,42 @@
                     </tr>
                 </tbody>
             </table>
+            <div v-if="approveContractData.contract.contractCategory.contractCategoryId === 1">
+                <table class="contract2-table5">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>일시납부 금액</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>일시납부</td>
+                            <td>{{ approveContractData.contract.contractTotalPrice.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-else>
+                <table class="contract2-table6">
+                    <thead>
+                        <tr>
+                            <th>납부 형태</th>
+                            <th>계약금</th>
+                            <th>중도금</th>
+                            <th>잔금</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>분할납부</td>
+                            <td>{{ approveContractData.contract.downPayment.toLocaleString() }}</td>
+                            <td>{{ approveContractData.contract.progressPayment.toLocaleString() }}</td>
+                            <td>{{ approveContractData.contract.balance.toLocaleString() }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Approval Popup -->
@@ -217,7 +253,6 @@ const submitRejection = async () => {
     }
 };
 </script>
-
 
 <style>
     @import url('@/assets/css/approval/ApprovalContractContents.css');
