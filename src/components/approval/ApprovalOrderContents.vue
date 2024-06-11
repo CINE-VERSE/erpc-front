@@ -33,7 +33,6 @@
                         <th>수주서 코드</th>
                         <th>수주 금액</th>
                         <th>작성 일자</th>
-                        <th>삭제 일자</th>
                         <th>마감 일자</th>
                     </tr>
                 </thead>
@@ -42,7 +41,6 @@
                         <td>{{ approveShipmentData.order.transaction.transactionCode }}</td>
                         <td>{{ approveShipmentData.order.orderTotalPrice.toLocaleString() }}</td>
                         <td>{{ approveShipmentData.order.orderDate }}</td>
-                        <td>{{ approveShipmentData.order.orderDeleteDate }}</td>
                         <td>{{ approveShipmentData.order.orderDueDate }}</td>
                     </tr>
                 </tbody>
