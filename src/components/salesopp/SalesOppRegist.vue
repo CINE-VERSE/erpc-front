@@ -72,10 +72,19 @@ const validateEmailFormat = (email) => {
 };
 
 const registSalesOpp = async () => {
+    // 전화번호 유효성 검사
+    const phonePattern = /^(02|0[3-9]{1}[0-9]{1})-[0-9]{3,4}-[0-9]{4}$|^(010)-[0-9]{4}-[0-9]{4}$/;
+    if (newOpp.value.oppAccountContact && !phonePattern.test(newOpp.value.oppAccountContact)) {
+        alert('올바른 전화번호 형식을 입력하세요: 02-123-1234 또는 010-1234-1234');
+        return;
+    }
+    
+    // 이메일 유효성 검사
     if (newOpp.value.oppAccountEmail && !validateEmailFormat(newOpp.value.oppAccountEmail)) {
         alert('이메일 형식이 맞지 않습니다.');
         return;
     }
+    
     try {
         const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/regist', newOpp.value);
         alert('영업기회가 성공적으로 등록되었습니다.');

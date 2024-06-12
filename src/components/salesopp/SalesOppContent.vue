@@ -97,7 +97,7 @@ const route = useRoute();
 const router = useRouter();
 const salesOppData = ref({});
 const salesOppNoteData = ref([]);
-const showDeletePopup = ref(false); // 삭제 팝업 제어를 위한 변수
+const showDeletePopup = ref(false);
 const showStatusPopup = ref(false);
 const deleteReason = ref('');
 const newStatus = ref('');
@@ -192,6 +192,7 @@ const confirmDelete = async () => {
 
 // 상태 변경 팝업 열기
 const openStatusPopup = () => {
+    newStatus.value = salesOppData.value.salesOppStatus?.salesOppStatus || '';
     showStatusPopup.value = true;
 };
 
