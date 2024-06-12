@@ -67,7 +67,7 @@
                         <th>입금 코드</th>
                         <th>입금 일자</th>
                         <th>입금 금액</th>
-                        <th>비고</th>
+                        <th>입금 형태</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -80,7 +80,17 @@
                         </td>
                         <td>{{ collectionData.depositDate }}</td>
                         <td>{{ collectionData.depositPrice ? collectionData.depositPrice.toLocaleString() : '' }}</td>
-                        <td><input v-model="taxInvoiceNote" type="text" id="remark-box2" class="remark-box2" placeholder="비고란 입력"></td>
+                        <td>
+                            <div class="contract-dropdown1">
+                                <button class="contract-dropdown-btn1">{{ taxInvoiceNote || '입금 형태 선택' }} ▼</button>
+                                <div class="contract-dropdown-content1">
+                                    <a href="#" @click.prevent="setTaxInvoiceNote('계약금')">계약금</a>
+                                    <a href="#" @click.prevent="setTaxInvoiceNote('중도금')">중도금</a>
+                                    <a href="#" @click.prevent="setTaxInvoiceNote('잔금')">잔금</a>
+                                    <a href="#" @click.prevent="setTaxInvoiceNote('일시금')">일시금</a>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -183,6 +193,9 @@ const handleFileUpload = (event) => {
     files.value = uploadedFiles; // 기존 파일 목록을 초기화하고 새 파일로 교체
 };
 
+const setTaxInvoiceNote = (note) => {
+    taxInvoiceNote.value = note;
+};
 
 const removeFile = (index) => {
     files.value.splice(index, 1);
@@ -193,8 +206,9 @@ const registerRequest = async () => {
     const isOrderValid = orderData.value.transaction.transactionCode;
     const isAccountValid = orderData.value.account.accountCode && orderData.value.account.corporationStatus && orderData.value.account.corporationNum && orderData.value.account.accountName && orderData.value.account.accountRepresentative && orderData.value.account.accountType && orderData.value.account.accountLocation && orderData.value.account.accountContact && orderData.value.account.accountEmail;
     const isCollectionValid = collectionData.value.depositDate && collectionData.value.depositPrice;
+    const isTaxInvoiceNoteValid = taxInvoiceNote.value;
 
-    if (!isOrderValid || !isAccountValid || !isCollectionValid) {
+    if (!isOrderValid || !isAccountValid || !isCollectionValid || !isTaxInvoiceNoteValid) {
         alert('모든 필수 입력란을 채워주세요.');
         return;
     }
@@ -244,4 +258,41 @@ const registerRequest = async () => {
 
 <style>
     @import url('@/assets/css/bill/CBRequest.css');
+
+    .contract-dropdown1 {
+        position: relative;
+        display: inline-block;
+        width: 200px; /* 원하는 넓이 설정 */
+    }
+
+    .contract-dropdown-btn1 {
+        width: 100%;
+        box-sizing: border-box; /* padding과 border를 포함하여 width를 계산 */
+    }
+
+    .contract-dropdown-content1 {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 200px; /* 원하는 넓이 설정 */
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .contract-dropdown-content1 a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .contract-dropdown-content1 a:hover {background-color: #d5e6ff}
+
+    .contract-dropdown1:hover .contract-dropdown-content1 {
+        display: block;
+    }
+
+    .contract-dropdown1:hover .contract-dropdown-btn1 {
+        background-color: #d5e6ff;
+    }
 </style>

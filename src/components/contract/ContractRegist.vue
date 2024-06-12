@@ -105,13 +105,13 @@
                             </div>
                         </td>
                         <td v-if="searchBy === '분할납부'">
-                            <input type="text" v-model="formattedDeposit" class="contract-test6" @input="updateDeposit">
+                            {{ formattedDeposit }}
                         </td>
                         <td v-if="searchBy === '분할납부'">
-                            <input type="text" v-model="formattedIntermediatePayment" class="contract-test7" @input="updateIntermediatePayment">
+                            {{ formattedIntermediatePayment }}
                         </td>
                         <td v-if="searchBy === '분할납부'">
-                            <input type="text" v-model="formattedFinalPayment" class="contract-test8" @input="updateFinalPayment">
+                            {{ formattedFinalPayment }}
                         </td>
                         <td v-if="searchBy === '일시납부'">
                             {{ formattedTotalCost }}
@@ -333,9 +333,6 @@ const formatNumber = (value) => {
     return value ? value.toLocaleString() : '';
 };
 </script>
-
-
-
 
 <style>
     @import url('@/assets/css/contract/ContractRegist.css');
