@@ -8,7 +8,6 @@
         <select v-model="searchCategory">
           <option value="warehouseName">창고 이름</option>
           <option value="warehouseLocation">창고 위치</option>
-          <option value="warehouseUsage">창고 용도</option>
         </select>
         <input type="text" v-model="searchKeyword" placeholder="검색어를 입력하세요">
         <button @click="search">검색</button>
