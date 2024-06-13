@@ -6,7 +6,7 @@ export const getUserIdFromLocalStorage = () => {
 
 export const getEmployeeAccess = async (userId) => {
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access/${userId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/find_access/${userId}`);
         console.log('응답 데이터:', response.data); // 서버 응답 데이터 출력
         
         const accessIds = response.data

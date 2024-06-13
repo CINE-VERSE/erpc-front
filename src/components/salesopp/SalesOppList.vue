@@ -148,7 +148,7 @@ function goToSalesOppContents(salesOppId) {
 // 페이지 로드 시 영업기회 데이터 가져오기
 onMounted(async () => {
   try {
-    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity');
+    const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opportunity');
     approvals.value = response.data;
     filteredApprovals.value = approvals.value;
   } catch (error) {

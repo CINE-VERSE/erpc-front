@@ -150,7 +150,7 @@ const removedFiles = ref([]);
 
 const fetchOrderData = async () => {
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order/${orderRegistrationId}`, {
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/order/${orderRegistrationId}`, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`
             }
@@ -213,7 +213,7 @@ const registerOrder = async () => {
     formData.append('removedFiles', JSON.stringify(removedFiles.value));
 
     try {
-        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order/modify`, formData, {
+        const response = await axios.patch(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/order/modify`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`

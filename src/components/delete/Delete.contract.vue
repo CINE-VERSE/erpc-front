@@ -65,7 +65,7 @@ const deleteRequestData = ref(null);
 const fetchDeleteRequestData = async () => {
     const contractDeleteRequestId = route.params.contractDeleteRequestId;
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/contract/${contractDeleteRequestId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/delete/contract/${contractDeleteRequestId}`);
         deleteRequestData.value = response.data;
     } catch (error) {
         console.error("Error fetching delete request data:", error);

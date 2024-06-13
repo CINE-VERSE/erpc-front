@@ -96,7 +96,7 @@ const aggregateAllAccessRights = (data) => {
 // 보유 권한 조회 함수
 const getEmployeesAccess = async () => {
   try {
-    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${employeeCode.value}`);
+    const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${employeeCode.value}`);
     employeeAccess.value = response.data;
     aggregateAllAccessRights(response.data);
 
@@ -111,7 +111,7 @@ const getEmployeesAccess = async () => {
 const submitAddAccess = async () => {
   try {
     addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
-    await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
+    await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
     alert('추가 권한이 성공적으로 등록되었습니다.');
     addAccess.value.employee.employeeId = '';
     selectedAccessRights.value = [];

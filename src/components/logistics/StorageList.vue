@@ -100,7 +100,7 @@ export default {
   methods: {
     async fetchWarehouseList() {
       try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/warehouse');
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/warehouse');
         this.warehouseList = response.data;
       } catch (error) {
         console.error('창고 목록을 불러오는 중 에러 발생:', error);

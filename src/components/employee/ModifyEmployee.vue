@@ -90,7 +90,7 @@ const fetchEmployeeDetails = async () => {
     if (!employeeId) {
       throw new Error('Employee ID not found in route parameters');
     }
-    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/${employeeId}`);
+    const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees/${employeeId}`);
     employee.value = response.data;
     employee.value.employeePassword = ''; // 비밀번호는 공란으로 설정
   } catch (error) {
@@ -111,7 +111,7 @@ const modifyEmployee = async () => {
       employee.value.employeePassword = newPassword.value;
     }
 
-    const requestURL = `http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/modify?employeeId=${employeeId}`;
+    const requestURL = `http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees/modify?employeeId=${employeeId}`;
     console.log('Request URL:', requestURL);
     await axios.patch(requestURL, employee.value);
     router.push('/employees');

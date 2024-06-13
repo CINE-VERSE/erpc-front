@@ -32,7 +32,7 @@ const router = useRouter(); // useRouter 훅을 사용하여 router 객체를 �
 const fetchEmployeeIdByCode = async (employeeCode) => {
     try {
         // 전체 직원 데이터를 가져옴
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees', {
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees', {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -61,7 +61,7 @@ const changePassword = async () => {
 
         if (employeeId) {
             // 사번 ID를 사용하여 비밀번호 변경 요청을 보냄
-            const response = await axios.patch('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
+            const response = await axios.patch('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees/modify_password', {
                 employeeId: employeeId,
                 employeePassword: employee.value.newPassword,
             }, {

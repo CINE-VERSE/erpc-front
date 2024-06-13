@@ -81,7 +81,7 @@ const showAll = ref(true); // 전체/달성초과 토글 상태
 
 const fetchSalesData = async () => {
     try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales');
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales');
         salesData.value = response.data.sales;
     } catch (error) {
         console.error('Error fetching sales data:', error);
@@ -91,7 +91,7 @@ const fetchSalesData = async () => {
 
 const fetchTeamSalesData = async (teamCodeId) => {
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/team/${teamCodeId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales/team/${teamCodeId}`);
         teamSalesData.value = response.data.sales;
     } catch (error) {
         console.error('Error fetching team sales data:', error);
@@ -101,7 +101,7 @@ const fetchTeamSalesData = async (teamCodeId) => {
 
 const fetchEmployeeSalesData = async (employeeId) => {
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales/employee/${employeeId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales/employee/${employeeId}`);
         employeeSalesData.value = response.data.sales;
     } catch (error) {
         console.error('Error fetching employee sales data:', error);
@@ -240,7 +240,7 @@ const processTargetData = (data) => {
 
 const fetchTargetData = async () => {
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/integrate`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/target/integrate`);
         const data = response.data;
         targetData.value = processTargetData(data);
 
@@ -256,7 +256,7 @@ const fetchTargetData = async () => {
 const fetchTeamData = async (teamCodeId) => {
     try {
         await fetchTeamSalesData(teamCodeId);
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/target/team/${teamCodeId}`);
         const data = response.data;
         targetData.value = processTargetData(data);
 
@@ -269,7 +269,7 @@ const fetchTeamData = async (teamCodeId) => {
 
 const fetchEmployeeData = async () => {
     try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees');
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees');
         const employees = response.data;
 
         const matchingEmployee = employees.find(employee => employee.employeeName === searchQuery.value);
@@ -279,7 +279,7 @@ const fetchEmployeeData = async () => {
             isEmployeeSearchActive.value = true; // 사원명 검색 활성화
             selectedTeam.value = ''; // 팀 필터 초기화
             await fetchEmployeeSalesData(matchingEmployee.employeeId);
-            const employeeResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
+            const employeeResponse = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/target/employee/${matchingEmployee.employeeId}`);
             targetData.value = processTargetData(employeeResponse.data);
             filterData();
         } else {

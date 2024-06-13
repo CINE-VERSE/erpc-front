@@ -68,7 +68,7 @@ const fetchEmployeeData = async () => {
     const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
+            const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees/${userId}`, { withCredentials: true });
             const employeeData = response.data;
             employeeName.value = employeeData.employeeName;
         } catch (error) {
@@ -86,7 +86,7 @@ onMounted(() => {
 
 const login = async () => {
     try {
-        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/login', {
+        const response = await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/login', {
             employeeCode: employeeCode.value,
             employeePassword: employeePassword.value
         }, {

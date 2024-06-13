@@ -67,7 +67,7 @@ const itemsPerPage = ref(10);
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/account/list');
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/account/list');
         customers.value = response.data.sort((a, b) => b.accountId - a.accountId); // Sort by accountId
         filteredCustomers.value = customers.value;
         applyFilter(); // Apply initial filter

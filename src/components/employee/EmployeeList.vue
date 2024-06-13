@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees')
+    axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees')
       .then(response => {
         this.employees = response.data;
       })

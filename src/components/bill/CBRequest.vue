@@ -144,7 +144,7 @@ const files = ref([]);
 
 const fetchOrderData = async () => {
     try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/order', {
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/order', {
             params: {
                 contractCode: projectCode.value
             }
@@ -167,7 +167,7 @@ const fetchOrderData = async () => {
 
 const fetchCollectionData = async () => {
     try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/collection', {
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/collection', {
             params: {
                 depositCode: depositCode.value
             }
@@ -242,7 +242,7 @@ const registerRequest = async () => {
     });
 
     try {
-        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/tax_invoice/regist', formData, {
+        const response = await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/tax_invoice/regist', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

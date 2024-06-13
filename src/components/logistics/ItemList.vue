@@ -106,7 +106,7 @@ export default {
   methods: {
     async fetchProductList() {
       try {
-        const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/product');
+        const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/product');
         this.productList = response.data;
       } catch (error) {
         console.error('품목 목록을 불러오는 중 에러 발생:', error);

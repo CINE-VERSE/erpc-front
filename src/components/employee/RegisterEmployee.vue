@@ -78,7 +78,7 @@ export default {
   methods: {
     async registerEmployee() {
       try {
-        await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/employees/regist', this.employee);
+        await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/employees/regist', this.employee);
         this.$router.push('/employees');
       } catch (error) {
         console.error('Error registering employee:', error);

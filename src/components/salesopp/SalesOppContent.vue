@@ -115,16 +115,16 @@ const fetchData = async () => {
     const salesOppId = route.params.salesOppId;
     try {
         // 영업기회 데이터 가져오기
-        const salesOppResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`);
+        const salesOppResponse = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/${salesOppId}`);
         salesOppData.value = salesOppResponse.data;
 
         // 참고사항 데이터 가져오기 및 필터링
-        const notesResponse = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note?salesOppId=${salesOppId}`);
+        const notesResponse = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opp_note?salesOppId=${salesOppId}`);
         salesOppNoteData.value = notesResponse.data;
 
 
         // 삭제 요청 상태 확인
-        const deleteResponse = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/delete/sales_opp');
+        const deleteResponse = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/delete/sales_opp');
         const deleteData = deleteResponse.data;
         
 
@@ -176,7 +176,7 @@ const closeDeletePopup = () => {
 const confirmDelete = async () => {
     const salesOppId = route.params.salesOppId;
     try {
-        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/delete', {
+        const response = await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/delete', {
             salesOppDeleteRequestReason: deleteReason.value,
             salesOpp: salesOppData.value
         });
@@ -206,7 +206,7 @@ const confirmStatusChange = async () => {
     const salesOppId = route.params.salesOppId;
     try {
         const statusId = getStatusIdByName(newStatus.value);
-        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/status/${salesOppId}`, {
+        const response = await axios.patch(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opportunity/status/${salesOppId}`, {
             salesOppStatus: { salesOppStatusId: statusId }
         });
         salesOppData.value.salesOppStatus.salesOppStatus = newStatus.value;
@@ -240,7 +240,7 @@ const registerProcess = async () => {
 
     try {
         // 새로운 참고사항 등록 요청
-        const response = await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/regist', {
+        const response = await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/regist', {
             salesOppNote: newProcessDetail.value,
             salesOpp: { salesOppId: salesOppId },
             employee: { employeeId: userId }
@@ -267,7 +267,7 @@ const filteredSalesOppNoteData = computed(() => {
 });
 const deleteProcess = async (salesOppNoteId) => {
     try {
-        const response = await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/delete/${salesOppNoteId}`);
+        const response = await axios.patch(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/sales_opp_note/delete/${salesOppNoteId}`);
         const updatedNote = response.data;
         const noteIndex = salesOppNoteData.value.findIndex(note => note.salesOppNoteId === salesOppNoteId);
         alert('참고사항이 삭제되었습니다.');

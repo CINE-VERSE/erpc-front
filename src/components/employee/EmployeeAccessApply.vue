@@ -117,7 +117,7 @@ const accessRightsMap = {
 const getEmployeesAccess = async () => {
   try {
     console.log('getEmployeesAccess 호출됨'); // 디버깅용 로그
-    const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${addAccess.value.employee.employeeCode}`);
+    const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/find_access?employeeCode=${addAccess.value.employee.employeeCode}`);
     employeeAccess.value = response.data;
     // 현재 사원이 보유한 권한 ID를 배열로 저장
     employeeCheckedAccessRights.value = employeeAccess.value.map(access => access.accessRight.accessId);
@@ -139,7 +139,7 @@ const submitAddAccess = async () => {
   try {
     addAccess.value.accessRight = selectedAccessRights.value.map(accessId => ({ accessId }));
 
-    await axios.post('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
+    await axios.post('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/add_access', addAccess.value);
     alert('추가 권한이 성공적으로 등록되었습니다.');
 
     // 초기화
@@ -155,7 +155,7 @@ const submitAddAccess = async () => {
 // 페이지 로드 시 모든 권한 신청 조회
 const getAllAccessRequests = async () => {
   try {
-    const response = await axios.get('http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/list');
+    const response = await axios.get('http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/list');
     allAccessRequests.value = response.data;
     showAllAccessRequests.value = true;
   } catch (error) {
@@ -166,7 +166,7 @@ const getAllAccessRequests = async () => {
 // 권한 삭제 요청 함수
 const deleteRequest = async (accessRequestId) => {
   try {
-    await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/access/process?accessRequestId=${accessRequestId}`);
+    await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/access/process?accessRequestId=${accessRequestId}`);
     alert('권한 요청이 삭제되었습니다.');
     await getAllAccessRequests();
   } catch (error) {

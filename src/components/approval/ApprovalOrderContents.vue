@@ -190,7 +190,7 @@ const fetchApproveShipmentData = async () => {
         return;
     }
     try {
-        const response = await axios.get(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/shipment/${orderRegistrationId}`);
+        const response = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/approval/shipment/${orderRegistrationId}`);
         approveShipmentData.value = response.data;
     } catch (error) {
         console.error("Error fetching approval shipment data:", error);
@@ -221,7 +221,7 @@ const submitApproval = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
+        await axios.patch(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
         actionCompleted.value = true;
         showApprovalPopup.value = false;
         fetchApproveShipmentData();
@@ -248,7 +248,7 @@ const submitRejection = async () => {
         }
     };
     try {
-        await axios.patch(`http://erpc-back-ver2-env.eba-3inzi7ji.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
+        await axios.patch(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/approval/shipment/process`, payload);
         actionCompleted.value = true;
         showRejectPopup.value = false;
         fetchApproveShipmentData();
