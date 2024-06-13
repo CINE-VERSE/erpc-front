@@ -7,7 +7,7 @@
                     <button class="order-request" @click="requestApproval" :disabled="deleteRequested">결재요청</button>
                 </div>
                 <button class="order-edit" @click="goToOrderPage" :disabled="deleteRequested">수정</button>
-                <button class="order-delete" v-if="showDeleteButton" @click="deleteOrder">삭제요청</button>
+                <button class="order-delete" v-if="!deleteRequested" @click="deleteOrder">삭제요청</button>
                 <button class="order-excel" @click="downloadExcel">엑셀다운</button>
             </div>
             <div class="order-approval-note1" v-if="['승인', '반려'].includes(approvalStatus) && orderData.approvalContent">
@@ -248,8 +248,7 @@ const newNote = ref('');
 const employeeName = ref('');
 const employeeId = ref('');
 const taxInvoiceRequestData = ref([]); // 세금계산서 요청 데이터를 저장하는 배열
-const approvalStatus = ref('Pending'); // Default value as Pending
-const showDeleteButton = ref(true); // 삭제 버튼 표시 여부
+const approvalStatus = ref('Pending'); // Default value as Pending // 삭제 버튼 표시 여부
 const deleteRequested = ref(false); // 삭제 요청 상태를 저장
 
 // filteredOrderNotes는 orderDeleteDate가 null인 노트만 반환합니다.
@@ -314,13 +313,24 @@ onMounted(async () => {
         }
 
         // 전체 삭제 요청 데이터를 가져오는 API 호출
-        const deleteResponse = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/delete/order/${orderRegistrationId}`);
+        const deleteResponse = await axios.get(`http://erpc-final-backend-env.eba-i73jvuqm.ap-northeast-2.elasticbeanstalk.com/delete/order`);
         const deleteData = deleteResponse.data;
+        console.log('상태값:', deleteData);
 
         // 현재 수주에 해당하는 삭제 요청 상태를 찾기
-        if (deleteData) {
-            showDeleteButton.value = false; // 삭제 요청이 있으면 삭제 버튼 숨기기
-            deleteRequested.value = true; // 삭제 요청 상태를 true로 설정
+        if (deleteData && Array.isArray(deleteData)) {
+            const currentDeleteRequest = deleteData.find(deleteData => {
+                const isMatch = deleteData.order && deleteData.order.orderRegistrationId == orderRegistrationId;
+                
+                if (isMatch) {
+                    console.log('Found delete request:', deleteData);
+                }
+                
+                return isMatch;
+            });
+            if (currentDeleteRequest) {
+                deleteRequested.value = true;
+            }
         }
 
     } catch (error) {
