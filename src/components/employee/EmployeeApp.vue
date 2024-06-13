@@ -18,8 +18,8 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const accessRights = [
-  { id: 1, name: '자유게시판 읽기' },
-  { id: 2, name: '자유게시판 쓰기' },
+  { id: 1, name: '공지사항 읽기' },
+  { id: 2, name: '공지사항 쓰기' },
   { id: 3, name: '영업기회 읽기' },
   { id: 4, name: '영업기회 쓰기' },
   { id: 5, name: '영업기회 참고사항 쓰기' },
