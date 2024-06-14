@@ -196,6 +196,8 @@ const fetchContractData = async () => {
             }
         });
         contractData.value = response.data;
+        // file
+        contractData.value.contractFile = [];
     } catch (error) {
         console.error('Error fetching contract data:', error);
     }
