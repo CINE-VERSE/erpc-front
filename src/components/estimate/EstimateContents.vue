@@ -241,6 +241,7 @@ const requestApproval = async () => {
             quotation: { quotationId: quotationId },
             approvalRequestDate: currentDate // 현재 날짜를 추가
         });
+        alert('결재 요청이 성공적으로 완료되었습니다.');
         console.log('Approval request sent successfully:', response.data);
         approvalStatus.value = 'Requested'; // 결재 요청 후 상태를 업데이트
         location.reload();
@@ -297,6 +298,7 @@ const confirmDelete = async () => {
             quotationDeleteRequestReason: deleteReason.value,
             quotation: quotationData.value
         });
+        alert('삭제 요청이 성공적으로 완료되었습니다.');
         console.log('Quotation delete request sent successfully:', response.data);
         showDeleteButton.value = false;
         deleteRequested.value = true;
