@@ -18,7 +18,7 @@
                         <td>
                             <div class="item-code-div2">
                                 <input type="text" v-model="product.itemCode"
-                                    class="item-code-box2" @input="product.itemCode = product.itemCode.replace(/\s/g, '')"/>
+                                    class="item-code-box2" @input="product.itemCode = product.itemCode.replace(/\s/g, '').toUpperCase()"/>
                                 <div v-if="index === products.length - 1" class="button-group">
                                     <button @click="fetchProductData(index)" class="item-code-btn2">확인</button>
                                     <button @click="addProductRow" class="item-add-btn2">추가</button>
