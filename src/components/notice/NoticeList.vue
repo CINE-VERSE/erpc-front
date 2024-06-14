@@ -14,7 +14,6 @@
           <!-- 검색 드롭다운 및 입력 -->
           <div id="searchDropdown">
             <select class="form-control" name="search_type" v-model="search_type" style="height: 30px; font-size: 12px;">
-              <option value="titleContent">제목 내용</option>
               <option value="title">제목</option>
               <option value="content">내용</option>
               <option value="writerId">작성자</option>

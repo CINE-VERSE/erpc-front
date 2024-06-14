@@ -86,105 +86,157 @@ function editPost() {
 </script>
 
 <style scoped>
-template {
-    font-family: 'GmarketSansMedium';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+/* General Styling */
+.wrapper {
+    max-width: 1100px;
+    margin: 50px auto; /* Center the wrapper */
+    padding-bottom: 100px;
+}
+
+hr {
+    border: 0;
+    height: 2px;
+    background-color: #6c7aa1;
+    margin: 20px 0;
 }
 
 button {
     font-family: 'GmarketSansMedium';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
     background-color: #6c7aa1;
-    color: rgb(229, 227, 227);
-    border: 1px solid  rgb(229, 227, 227);
-}
-
-.free-board{
-    display: flex;
-    justify-content: left;
-    width: 1100px;
-    height: 70px;
-}
-
-.clickdiv {
-    width: 190px;
-}
-
-.category {
-    font-size: 15px;
-    margin-right: 720px;
-    padding-top: 17px;
-    color: rgb(142, 140, 140);
-}
-
-.boardtitleLine {
-    width:1110px;
-    height: 3px;
-    border: 0;
-    background-color: #6c7aa1;
-}
-
-.titleLine {
-    width:1110px;
-    height: 3px;
-    border: 0;
-    background-color: #6c7aa1;
-}
-
-.wrapper {
-    height: auto;
-    min-height: 100%;
-    width: 68%;
-    margin-top: 50px;
-    padding-bottom: 100px;
-    margin-left: 20%;
-    margin-right: 16%;
-}
-
-.boardname {
-    font-size: 32px;
+    color: white;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.boardtitle {
-    font-size: 130%;
-    margin-top: 18px;  
-    margin-left: 10px;
+button:hover {
+    background-color: #5a6781;
 }
 
-.writer {
-    font-size: 12px;
-}
-
+/* Notice View Styling */
 .allboard {
     display: flex;
-    flex-direction: rows;
-    justify-content: center;
-    width: 1100px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.boardtitlediv, .writerdiv, .datediv {
+    flex: 1;
+    padding: 10px;
 }
 
 .boardtitlediv {
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 0%;
-    width: 500px;
+    flex: 2;
 }
 
-.writerdiv {
-    width:  18%;
-    font-size: 13px;
-    margin-top: 13px;
+.maincontent {
+    max-width: 100%;
+    margin-top: 3%;
 }
+
+.image-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.notice-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 2px solid black;
+}
+
+.content {
+    clear: both;
+    width: 100%;
+    padding: 20px 0;
+}
+
+/* Reply Section Styling */
+.replys {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.allreply {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    border-bottom: 1px solid #6c7aa1;
+}
+
+.replywriterdiv, .replycontentdiv, .replydatediv, .closebuttondiv {
+    flex: 1;
+    padding: 10px;
+}
+
+.replycontentdiv {
+    flex: 2;
+}
+
+textarea {
+    width: 100%;
+    max-width: 100%;
+    height: 100px;
+    padding: 10px;
+    font-family: 'GmarketSansMedium';
+    resize: none;
+}
+
+textarea::placeholder {
+    font-size: 12px;
+}
+
+.btn {
+    display: block;
+    margin: 10px 0;
+    width: 100px;
+    font-size: 16px;
+}
+
+.closebutton2 {
+    background-color: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    padding: 5px 10px;
+}
+
+.closebutton2:hover {
+    background-color: #ccc;
+}
+
+/* Line Styling */
+.replyregistline, .titleLine, .boardtitleLine {
+    width: 100%;
+    height: 2px;
+    border: 0;
+    background-color: #6c7aa1;
+}
+
+.noreply {
+    text-align: center;
+    font-size: 20px;
+    margin: 50px auto;
+}
+
 .writer {
-    font-size: 16px; /* 변경된 글자 크기 */
+    font-size: 16px; 
+    margin-left: 15px;
 }
 
 .datediv {
-    width:  18%;
-    float:right;
-    font-size: 13px;
-    margin-top: 13px;
-    margin-left: 30px;
+  font-size: 13px; 
+  margin-left: 90px;
 }
 .editbtn {
   width: 80px;
@@ -200,63 +252,6 @@ button {
     cursor: pointer;
     margin-left: 15px;
     margin-right: 15px;
-}
-
-.maincontent {
-    max-width: 80%;
-    margin-right: 15%;
-    margin-top: 3%;
-}
-
-.image-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-    grid-auto-rows: 1fr; 
-    align-items: stretch; 
-    margin-bottom: 20px;
-    gap: 10px;
-    width: 1100px;
-}
-
-.image-container img {
-    width: 100%; 
-    object-fit: cover; 
-    border-radius: 5px;
-    border: 2px solid black;
-}
-
-.content {
-    clear: both;        
-    width: 1100px;
-}
-.image-container {
-  width: 100%;
-}
-
-.notice-image {
-  max-width: 100%;
-  height: auto;
-}
-.edit, .delete {
-
-  margin-right: 10px;
-}
-
-/* 회색 배경으로 버튼 스타일 */
-.editbtn, .deletebtn {
-  width: 80px;
-  height: 40px;
-  cursor: pointer;
-  font-family: 'GmarketSansMedium';
-  background-color: #6c7aa1; /* 기본 회색 배경 */
-  color: white; /* 흰색 글자 */
-  border: none; /* 테두리 없음 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.editbtn:hover, .deletebtn:hover {
-  background-color: #5a6781; /* 호버 시 약간 어두운 회색 */
 }
 
 </style>
