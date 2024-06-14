@@ -18,7 +18,7 @@
                     <tr>
                         <td class="estimate-test333">
                             <div class="quotation-number-div33">
-                                <input type="text" v-model="quotationCode" class="quotation-number-box33" @input="quotationCode = quotationCode.replace(/\s/g, '')">
+                                <input type="text" v-model="quotationCode" class="quotation-number-box33" @input="quotationCode = quotationCode.replace(/\s/g, '').toUpperCase()">
                                 <button @click="fetchQuotationData" class="quotation-number-btn33">확인</button>
                             </div>
                         </td>
