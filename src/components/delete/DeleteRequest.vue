@@ -12,8 +12,6 @@
           <option value="account">거래처 삭제</option>
           <option value="order">수주 삭제</option>
         </select>
-        <input type="text" class="delete-request-search-input" v-model="searchQuery" :placeholder="placeholderText" @input="toUpperCase">
-        <button class="delete-request-search-btn" @click="applyFilter">조회하기</button>
       </div>
     </div>
 
@@ -172,28 +170,6 @@ const filteredQuotationDeleteRequests = ref([]);
 const filteredAccountDeleteRequests = ref([]);
 const filteredOrderDeleteRequests = ref([]);
 
-// 플레이스홀더 텍스트를 동적으로 설정
-const placeholderText = computed(() => {
-  switch (selectedDeleteRequestType.value) {
-    case 'salesOpp':
-      return '영업기회 코드로 조회';
-    case 'contract':
-      return '계약서 코드로 조회';
-    case 'quotation':
-      return '견적서 코드로 조회';
-    case 'account':
-      return '거래처 코드로 조회';
-    case 'order':
-      return '수주 코드로 조회';
-    default:
-      return '코드로 조회';
-  }
-});
-
-// 검색어를 대문자로 변환
-const toUpperCase = () => {
-  searchQuery.value = searchQuery.value.toUpperCase();
-};
 
 // 데이터 가져오기 및 필터링 적용
 onMounted(async () => {
